@@ -8,6 +8,7 @@ namespace SibJam
         protected override void Configure(IContainerBuilder builder)
         {
             builder.Register<ICursorShower, CursorShower>(Lifetime.Singleton);
+            builder.Register<ISceneLoader, SceneLoader>(Lifetime.Singleton);
         }
     }
 }
