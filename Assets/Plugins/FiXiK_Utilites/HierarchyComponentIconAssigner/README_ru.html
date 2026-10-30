@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hierarchy Component Icon Assigner — документация</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            padding: 2rem;
+            background-color: #f0f2f5;
+            color: #1a1a2e;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 20px 35px -10px rgba(0,0,0,0.1);
+            padding: 2rem 2rem 3rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            border-bottom: 2px solid #d0d5dd;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            color: #0f172a;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #2563eb;
+            padding-left: 1rem;
+            color: #0f172a;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: #1e293b;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: #1e293b;
+        }
+
+        ul, ol {
+            margin: 0.5rem 0 1rem 1.8rem;
+            color: #1e293b;
+        }
+
+        li {
+            margin: 0.3rem 0;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+            background-color: #eef2ff;
+            padding: 0.2rem 0.4rem;
+            border-radius: 8px;
+            font-size: 0.9em;
+            border: 1px solid #cbd5e1;
+            color: #1e1e2f;
+        }
+
+        pre {
+            background-color: #f8fafc;
+            padding: 1rem;
+            border-radius: 16px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            border: 1px solid #e2e8f0;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            border: none;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #0f172a;
+        }
+
+        blockquote {
+            border-left: 4px solid #2563eb;
+            background-color: #f1f5f9;
+            padding: 0.75rem 1rem;
+            margin: 1rem 0;
+            border-radius: 12px;
+            color: #1e293b;
+        }
+
+        hr {
+            border: none;
+            height: 1px;
+            background: linear-gradient(to right, #e2e8f0, transparent);
+            margin: 2rem 0;
+        }
+
+        .question {
+            font-weight: 700;
+            margin-top: 1.2rem;
+            color: #0f172a;
+        }
+
+        .answer {
+            margin-bottom: 0.8rem;
+            color: #1e293b;
+        }
+
+        footer {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #475569;
+        }
+
+        a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 700px) {
+            body {
+                padding: 1rem;
+            }
+            .container {
+                padding: 1.2rem;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            h2 {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Hierarchy Component Icon Assigner</h1>
+    <p><strong>Версия 2.2.0</strong> | Автор: FiXiK</p>
+    <p>Этот плагин позволяет назначать иконки компонентам и отображать их прямо в окне <strong>Hierarchy</strong> (Иерархия) Unity.<br>
+    Теперь иконки автоматически наследуются: если назначить иконку на абстрактный класс или интерфейс, она будет показываться у всех объектов, имеющих компонент-наследник.</p>
+
+    <h2>Возможности</h2>
+    <ul>
+        <li><strong>Назначение иконок</strong> любым компонентам (MonoBehaviour, ScriptableObject, стандартные компоненты Unity).</li>
+        <li><strong>Наследование иконок</strong> – иконка базового типа отображается у всех его потомков (включая абстрактные классы).</li>
+        <li><strong>Удобный редактор</strong> – окно настройки с перетаскиванием иконок и выпадающим списком типов.</li>
+        <li><strong>Включение/отключение</strong> отрисовки иконок без удаления настроек.</li>
+        <li><strong>Автоматическое создание конфига</strong> при первом запуске.</li>
+        <li><strong>Приветственный диалог</strong> при первой установке.</li>
+    </ul>
+
+    <h2>Что нового в версии 2.2.0</h2>
+    <ul>
+        <li><strong>Поддержка абстрактных компонентов</strong> – иконки теперь можно назначать на абстрактные классы (например, <code>Behaviour</code>, <code>Collider</code>, <code>MonoBehaviour</code>).</li>
+        <li><strong>Наследование иконок</strong> – если на объекте нет прямого совпадения, плагин проверяет все родительские типы и показывает иконку первого подходящего предка.</li>
+        <li><strong>Оптимизированный поиск</strong> – для каждого объекта в иерархии проверяются все компоненты на совместимость с типами, имеющими иконки.</li>
+    </ul>
+    <p><em>Предыдущие версии (≤ 2.1.2) работали только с конкретными (неабстрактными) типами и не поддерживали наследование.</em></p>
+
+    <h2>Установка</h2>
+    <h3>Через .unitypackage (рекомендуется)</h3>
+    <ol>
+        <li>Скачайте последний релиз.</li>
+        <li>Импортируйте <code>.unitypackage</code> через <code>Assets → Import Package → Custom Package</code>.</li>
+        <li>Готово! Плагин автоматически создаст конфиг и покажет приветственное окно.</li>
+    </ol>
+    <h3>Ручная установка</h3>
+    <ol>
+        <li>Скопируйте папку <code>HierarchyComponentIconAssigner</code> в <code>Assets/Plugins/FiXiK_Utilites/</code>.</li>
+        <li>Перезагрузите Unity (или нажмите <code>Ctrl+R</code>).</li>
+        <li>Откройте окно через <code>Tools → Иконки в иерархии сцены</code></li>
+    </ol>
+
+    <h2>Быстрый старт</h2>
+    <ol>
+        <li><strong>Откройте окно настройки</strong><br><code>Tools → Иконки в иерархии сцены</code></li>
+        <li><strong>Включите отрисовку</strong> (галочка <code>Enabled</code> вверху окна).</li>
+        <li><strong>Добавьте новую иконку</strong><br>Нажмите <code>+</code> в поле <code>Component Icon List</code>.</li>
+        <li><strong>Выберите компонент</strong><br>Нажмите на кнопку <code>Компонент не выбран</code> → выберите любой тип из выпадающего списка.</li>
+        <li><strong>Выберите иконку</strong><br>Кликните по серому квадрату → укажите текстуру (можно перетащить из окна Project).</li>
+        <li><strong>Результат</strong><br>В окне Hierarchy у всех объектов с выбранным компонентом (или его наследниками) появится иконка.</li>
+    </ol>
+
+    <h2>Конфигурация</h2>
+    <p>Все настройки хранятся в файле <code>Config.asset</code>, который автоматически создаётся в одной из папок:</p>
+    <ul>
+        <li><code>Assets/Plugins/FiXiK_Utilites/HierarchyComponentIconAssigner/Config.asset</code> (приоритет)</li>
+        <li>Или в папке, где лежит скрипт <code>ConfigLoader.cs</code>.</li>
+    </ul>
+    <p>Чтобы сбросить настройки – удалите этот файл, при следующем запуске он создастся заново.</p>
+    <h3>Ручное редактирование</h3>
+    <p>Вы можете открыть <code>Config.asset</code> в инспекторе Unity и настроить:</p>
+    <ul>
+        <li><code>Enabled</code> – вкл/выкл отрисовку.</li>
+        <li><code>Component Icon List</code> – список пар <code>[Тип компонента] → [Иконка]</code>.</li>
+    </ul>
+
+    <h2>API (для продвинутых пользователей)</h2>
+    <p>Если вы хотите управлять плагином из своего кода (например, включать/выключать отрисовку по условию), используйте:</p>
+    <pre><code>using FiXiK.HierarchyComponentIconAssigner;
+
+// Принудительно обновить кэш и перерисовать иерархию
+HierarchyIconDrawer.Reload();
+
+// Получить текущий конфиг
+Config cfg = ConfigLoader.Config;
+cfg.Enabled = false; // не забудьте сохранить изменения
+EditorUtility.SetDirty(cfg);</code></pre>
+    <blockquote>
+        <p><strong>Примечание:</strong> API доступно только в редакторе (<code>#if UNITY_EDITOR</code>).</p>
+    </blockquote>
+
+    <h2>Требования</h2>
+    <ul>
+        <li><strong>Unity 2020.3</strong> или новее (проверено на 2021.3 LTS, 2022.3, 2023.2).</li>
+        <li>Платформа: любая, поддерживающая редактор Unity (Windows, macOS, Linux).</li>
+        <li>Зависимости: отсутствуют.</li>
+    </ul>
+
+    <h2>Часто задаваемые вопросы</h2>
+    <div class="question">Вопрос: Почему иконка не отображается для абстрактного класса?</div>
+    <div class="answer"><strong>Ответ:</strong> Убедитесь, что вы выбрали <strong>конкретный компонент</strong>, который действительно присутствует на объекте. Абстрактный класс сам по себе не может быть добавлен на GameObject, но его наследники будут отображать иконку. Проверьте, что у объекта есть компонент, производный от выбранного абстрактного типа.</div>
+
+    <div class="question">Вопрос: Как временно отключить иконки?</div>
+    <div class="answer"><strong>Ответ:</strong> Снимите галочку <code>Enabled</code> в окне настроек.</div>
+
+    <div class="question">Вопрос: Можно ли использовать иконки для интерфейсов?</div>
+    <div class="answer"><strong>Ответ:</strong> Да, интерфейсы технически поддерживаются (метод <code>IsAssignableFrom</code> работает). Однако интерфейсы не являются компонентами, поэтому убедитесь, что ваш класс наследует <code>MonoBehaviour</code> и реализует интерфейс.</div>
+
+    <div class="question">Вопрос: Замедляет ли плагин работу редактора?</div>
+    <div class="answer"><strong>Ответ:</strong> При очень большом количестве объектов (>2000) и множестве типов иконок (>20) возможны незначительные задержки. В типичных проектах (до 500 объектов) разница незаметна. Если вы заметили замедления, уменьшите количество типов иконок или отключите отрисовку через <code>Enabled</code>.</div>
+
+    <h2>Лицензия</h2>
+    <p>Лицензия MIT. Вы можете свободно использовать, модифицировать и распространять плагин с указанием авторства.</p>
+
+    <h2>Автор и контакты</h2>
+    <p><strong>FiXiK</strong><br>
+    Telegram: <a href="https://t.me/VL_dogs" target="_blank">@VL_dogs</a><br></p>
+    <p>Если нашли баг или есть предложения – пишите!</p>
+
+    <h2>История изменений (Changelog)</h2>
+    <h3>2.2.0 (2025-04-09)</h3>
+    <ul>
+        <li><strong>Добавлена поддержка абстрактных типов компонентов.</strong></li>
+        <li><strong>Реализовано наследование иконок</strong> – иконка базового класса отображается у всех наследников.</li>
+        <li>Переработан механизм поиска компонентов для повышения совместимости.</li>
+        <li>Исправлена ошибка, из-за которой иконки не отображались на выключенных объектах (теперь проверяются все компоненты независимо от состояния <code>enabled</code>).</li>
+    </ul>
+    <h3>2.1.2 (предыдущая)</h3>
+    <ul>
+        <li>Первая стабильная версия с поддержкой конкретных (неабстрактных) типов.</li>
+    </ul>
+
+    <hr>
+    <footer>
+        &copy; 2025 FiXiK | Документация плагина Hierarchy Component Icon Assigner
+    </footer>
+</div>
+</body>
+</html>
