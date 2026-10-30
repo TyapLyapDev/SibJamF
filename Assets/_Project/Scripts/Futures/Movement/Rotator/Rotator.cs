@@ -1,8 +1,9 @@
+using System;
 using UnityEngine;
+using VContainer;
 
 namespace SibJam
 {
-    [RequireComponent(typeof(IInputReader))]
     public class Rotator : MonoBehaviour
     {
         [SerializeField] private Transform _pitchTransform;
@@ -10,11 +11,14 @@ namespace SibJam
         [SerializeField] private float _maximumPitch = 90;
         [SerializeField] private float _sensitivity = 5f;
 
-        private IInputReader _inputReader;
+        private IPlayerInputReader _inputReader;
         private float _currentPitch;
 
-        private void Awake() =>
-            _inputReader = GetComponent<IInputReader>();
+        [Inject]
+        public void Construct(IPlayerInputReader inputReader)
+        {
+            _inputReader = inputReader ?? throw new ArgumentNullException(nameof(inputReader));
+        }
 
         private void Update() =>
             Rotate(_inputReader.LookDirection);

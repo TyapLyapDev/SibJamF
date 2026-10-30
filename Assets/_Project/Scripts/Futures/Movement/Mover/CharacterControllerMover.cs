@@ -1,9 +1,10 @@
+using System;
 using UnityEngine;
+using VContainer;
 
 namespace SibJam
 {
     [RequireComponent(typeof(CharacterController))]
-    [RequireComponent(typeof(IInputReader))]
     [RequireComponent(typeof(IGroundDetector))]
     public class CharacterControllerMover : MonoBehaviour, IMover
     {
@@ -11,13 +12,18 @@ namespace SibJam
         [SerializeField] private float _sprintSpeed = 9f;
 
         private CharacterController _controller;
-        private IInputReader _inputReader;
+        private IPlayerInputReader _inputReader;
         private IGroundDetector _groundDetector;
+
+        [Inject]
+        public void Construct(IPlayerInputReader inputReader)
+        {
+            _inputReader = inputReader ?? throw new ArgumentNullException(nameof(inputReader));
+        }
 
         private void Awake()
         {
             _controller = GetComponent<CharacterController>();
-            _inputReader = GetComponent<IInputReader>();
             _groundDetector = GetComponent<IGroundDetector>();
         }
 

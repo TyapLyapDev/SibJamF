@@ -1,10 +1,11 @@
+using System;
 using UnityEngine;
+using VContainer;
 
 namespace SibJam
 {
     [RequireComponent(typeof(IGravity))]
     [RequireComponent(typeof(IGroundDetector))]
-    [RequireComponent(typeof(IInputReader))]
     public class Jumper : MonoBehaviour
     {
         [SerializeField] private float _jumpImpulse;
@@ -12,13 +13,18 @@ namespace SibJam
 
         private IGravity _gravity;
         private IGroundDetector _groundChecker;
-        private IInputReader _inputReader;
+        private IPlayerInputReader _inputReader;
+
+        [Inject]
+        public void Construct(IPlayerInputReader inputReader)
+        {
+            _inputReader = inputReader ?? throw new ArgumentNullException(nameof(inputReader));
+        }
 
         private void Awake()
         {
             _gravity = GetComponent<IGravity>();
             _groundChecker = GetComponent<IGroundDetector>();
-            _inputReader = GetComponent<IInputReader>();
         }
 
         private void Update()

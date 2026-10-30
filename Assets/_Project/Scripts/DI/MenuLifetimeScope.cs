@@ -7,7 +7,7 @@ namespace SibJam
     public class MenuLifetimeScope : LifetimeScope
     {
         [SerializeField] private GameExitDialog _gameExitDialog;
-        [SerializeField] private MenuButtons _menuButtons;
+        [SerializeField] private PopUp _menuButtons;
 
         protected override void Configure(IContainerBuilder builder)
         {

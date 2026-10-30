@@ -10,13 +10,13 @@ namespace SibJam
         [SerializeField] private Button _button;
 
         private GameExitDialog _gameExitDialog;
-        private MenuButtons _menuButtons;
+        private PopUp _menuButtons;
 
         [Inject]
-        public void Construct(GameExitDialog gameExitDialog, MenuButtons menuButtons)
+        public void Construct(GameExitDialog gameExitDialog, PopUp menuButtons)
         {
-            _gameExitDialog = gameExitDialog ?? throw new ArgumentNullException(nameof(gameExitDialog));
-            _menuButtons = menuButtons ?? throw new ArgumentNullException(nameof(menuButtons));
+            _gameExitDialog = gameExitDialog != null ? gameExitDialog : throw new ArgumentNullException(nameof(gameExitDialog));
+            _menuButtons = menuButtons != null ? menuButtons : throw new ArgumentNullException(nameof(menuButtons));
         }
 
         private void OnEnable() =>

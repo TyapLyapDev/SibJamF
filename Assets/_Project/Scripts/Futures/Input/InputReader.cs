@@ -1,90 +1,52 @@
-using UnityEngine;
+using System;
 using UnityEngine.InputSystem;
 
 namespace SibJam
 {
-    public class InputReader : MonoBehaviour, IInputReader
+    public class InputReader : IInputReader, IDisposable
     {
-        private const string PlayerActionMapName = "Player";
-        private const string MoveActionName = "Move";
-        private const string SprintActionName = "Sprint";
-        private const string LookActionName = "Look";
-        private const string JumpActionName = "Jump";
+        private const string UiActionMapName = "UI";
+        private const string EscapeActionName = "Escape";
 
-        [SerializeField] private InputActionAsset _inputActions;
+        private readonly InputActionAsset _inputActions;
 
-        private InputAction _moveAction;
-        private InputAction _sprintAction;
-        private InputAction _lookAction;
-        private InputAction _jumpAction;
+        private InputAction _escapeAction;
 
-        public Vector2 MoveDirection { get; private set; }
-
-        public bool IsSprinting { get; private set; }
-
-        public Vector2 LookDirection { get; private set; }
-
-        public bool IsJumpPressed { get; private set; }
-
-        private void Awake()
+        public InputReader(InputActionAsset inputActions)
         {
-            InputActionMap map = _inputActions.FindActionMap(PlayerActionMapName, throwIfNotFound: true);
-            _moveAction = map.FindAction(MoveActionName, throwIfNotFound: true);
-            _sprintAction = map.FindAction(SprintActionName, throwIfNotFound: true);
-            _lookAction = map.FindAction(LookActionName, throwIfNotFound: true);
-            _jumpAction = map.FindAction(JumpActionName, throwIfNotFound: true);
+            _inputActions = inputActions != null ? inputActions : throw new ArgumentNullException(nameof(inputActions));
+            CreateMap();
+            Enable();
         }
 
-        private void OnEnable()
+        public bool IsEscapePressed { get; private set; }
+
+        public void Dispose() =>
+            Disable();
+
+        private void CreateMap()
         {
-            _moveAction.Enable();
-            _sprintAction.Enable();
-            _lookAction.Enable();
-            _jumpAction.Enable();
-
-            _moveAction.performed += OnMove;
-            _moveAction.canceled += OnMove;
-
-            _sprintAction.performed += OnSprint;
-            _sprintAction.canceled += OnSprint;
-
-            _lookAction.performed += OnLook;
-            _lookAction.canceled += OnLook;
-
-            _jumpAction.performed += OnJump;
-            _jumpAction.canceled += OnJump;
+            InputActionMap uiMap = _inputActions.FindActionMap(UiActionMapName, throwIfNotFound: true);
+            _escapeAction = uiMap.FindAction(EscapeActionName, throwIfNotFound: true);
         }
 
-        private void OnDisable()
+        private void Enable()
         {
-            _moveAction.performed -= OnMove;
-            _moveAction.canceled -= OnMove;
+            _escapeAction.Enable();
 
-            _sprintAction.performed -= OnSprint;
-            _sprintAction.canceled -= OnSprint;
-
-            _lookAction.performed -= OnLook;
-            _lookAction.canceled -= OnLook;
-
-            _jumpAction.performed -= OnJump;
-            _jumpAction.canceled -= OnJump;
-
-            _moveAction.Disable();
-            _sprintAction.Disable();
-            _lookAction.Disable();
-            _jumpAction.Disable();
+            _escapeAction.performed += OnEscape;
+            _escapeAction.canceled += OnEscape;
         }
 
-        private void OnMove(InputAction.CallbackContext context) =>
-            MoveDirection = context.ReadValue<Vector2>();
+        private void Disable()
+        {
+            _escapeAction.performed -= OnEscape;
+            _escapeAction.canceled -= OnEscape;
 
-        private void OnSprint(InputAction.CallbackContext context) =>
-            IsSprinting = context.ReadValueAsButton();
+            _escapeAction.Disable();
+        }
 
-        private void OnLook(InputAction.CallbackContext context) =>
-            LookDirection = context.ReadValue<Vector2>();
-
-        private void OnJump(InputAction.CallbackContext context) =>
-            IsJumpPressed = context.ReadValueAsButton();
+        private void OnEscape(InputAction.CallbackContext context) =>
+            IsEscapePressed = context.ReadValueAsButton();
     }
 }

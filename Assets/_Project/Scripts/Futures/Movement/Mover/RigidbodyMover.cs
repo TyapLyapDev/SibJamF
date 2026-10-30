@@ -1,4 +1,6 @@
+using System;
 using UnityEngine;
+using VContainer;
 
 namespace SibJam
 {
@@ -8,13 +10,18 @@ namespace SibJam
         [SerializeField] private float _sprintSpeed = 9f;
 
         private Rigidbody _rigidbody;
-        private IInputReader _inputReader;
+        private IPlayerInputReader _inputReader;
         private IGroundDetector _groundDetector;
+
+        [Inject]
+        public void Construct(IPlayerInputReader inputReader)
+        {
+            _inputReader = inputReader ?? throw new ArgumentNullException(nameof(inputReader));
+        }
 
         private void Awake()
         {
             _rigidbody = GetComponent<Rigidbody>();
-            _inputReader = GetComponent<IInputReader>();
             _groundDetector = GetComponent<IGroundDetector>();
         }
 
