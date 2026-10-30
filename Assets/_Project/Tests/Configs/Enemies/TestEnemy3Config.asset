@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4733f17ec7f4a04bf56f700764101ee, type: 3}
+  m_Name: TestEnemy3Config
+  m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Enemies.EnemyConfig
+  <Prefab>k__BackingField: {fileID: 5758285614513469908, guid: 6da6d459faf423340931a68bdd3f4ea9, type: 3}
+  <MaxHealth>k__BackingField: 200
+  <MoveSpeed>k__BackingField: 2
+  <Damage>k__BackingField: 10
+  <AttackRange>k__BackingField: 1.5
+  <AttackCooldown>k__BackingField: 1
