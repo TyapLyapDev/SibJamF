@@ -17,8 +17,8 @@ using UnityEngine.SceneManagement;
 namespace SibJam.Editor
 {
     // Инструмент для ИИ-агентов (сборка через Unity MCP), не для геймдизайна. Перезаписывает сцену целиком — ручные правки пропадут.
-    // Генерирует сцену GameplayFlow: сейф-комната, лёгкая, 4 обычные, комната босса. Комнаты без потолка, между ними коридоры с подъёмными дверями
-    public static class GameplayFlowBuilder
+    // Генерирует сцену GameplayFlow: сейф-комната, лёгкая, 4 обычные, комната босса. Комнаты и коридоры под потолком, между комнатами коридоры с подъёмными дверями
+    public static partial class GameplayFlowBuilder
     {
         private const string BaseScenePath = "Assets/_Project/Tests/Scenes/CamerasTest.unity";
         // Отсюда берутся игровые системы: GameLifetimeScope, меню паузы, настройки, EventSystem, пост-обработка
@@ -51,6 +51,11 @@ namespace SibJam.Editor
             public string Name;
             public (EnemyConfig enemy, int count)[][] Waves;
             public float Delay = 5f;
+            // Табличка над входом, цвет световых полос и экранов, тематический декор
+            public string Title;
+            public Color Accent;
+            public System.Action<Transform, Material> Decorate;
+            public Material AccentMaterial;
         }
 
         [MenuItem("SibJam/AI Tools/Build Gameplay Flow Scene")]
@@ -109,7 +114,7 @@ namespace SibJam.Editor
             {
                 LocationLoop from = i == 0 ? null : locations[i - 1];
                 LocationDoor exitDoor = i == 0 ? safeRoomExit : doors[i - 1].exit;
-                BuildCorridor(level, gameLoop, i, from, i == 0 ? weaponPickup : null, exitDoor, doors[i].entry, locations[i]);
+                BuildCorridor(level, gameLoop, i, from, i == 0 ? weaponPickup : null, exitDoor, doors[i].entry, locations[i], rooms[i]);
             }
 
             SetArray(gameLoop, "_locations", locations.ToArray());
@@ -118,6 +123,7 @@ namespace SibJam.Editor
             player.transform.SetPositionAndRotation(new Vector3(0f, 0.05f, -Half + 2.5f), Quaternion.identity);
             player.enabled = true;
 
+            SetupAtmosphere();
             ImportGameSystems(scene);
             AddToBuildSettings();
 
@@ -161,19 +167,41 @@ namespace SibJam.Editor
 
         private static RoomSetup[] CreateRoomSetups()
         {
-            var basic = Load<EnemyConfig>($"{EnemiesConfigsFolder}/TestEnemyConfig.asset");
-            var medium = Load<EnemyConfig>($"{EnemiesConfigsFolder}/TestEnemy2Config.asset");
-            var heavy = Load<EnemyConfig>($"{EnemiesConfigsFolder}/TestEnemy3Config.asset");
+            var (basic, medium, heavy) = CreateEnemies();
             var boss = CreateBossConfig(heavy);
 
             return new[]
             {
-                new RoomSetup { Name = "Light", Delay = 4f, Waves = new[] { new[] { (basic, 2) } } },
-                new RoomSetup { Name = "Location_1", Waves = new[] { new[] { (basic, 3) }, new[] { (basic, 2), (medium, 1) } } },
-                new RoomSetup { Name = "Location_2", Waves = new[] { new[] { (basic, 3), (medium, 1) }, new[] { (basic, 2), (medium, 2) } } },
-                new RoomSetup { Name = "Location_3", Waves = new[] { new[] { (medium, 2), (heavy, 1) }, new[] { (basic, 2), (heavy, 2) } } },
-                new RoomSetup { Name = "Location_4", Waves = new[] { new[] { (medium, 3), (heavy, 2) }, new[] { (medium, 2), (heavy, 3) } } },
-                new RoomSetup { Name = "Boss", Delay = 6f, Waves = new[] { new[] { (boss, 1), (basic, 2) }, new[] { (basic, 2), (medium, 1) } } },
+                new RoomSetup
+                {
+                    Name = "Light", Title = "01 // СКЛАД", Accent = new Color(1f, 0.6f, 0.15f), Decorate = DecorateWarehouse,
+                    Delay = 4f, Waves = new[] { new[] { (basic, 2) } },
+                },
+                new RoomSetup
+                {
+                    Name = "Location_1", Title = "02 // СЕРВЕРНАЯ", Accent = new Color(0.2f, 0.8f, 1f), Decorate = DecorateServers,
+                    Waves = new[] { new[] { (basic, 3) }, new[] { (basic, 2), (medium, 1) } },
+                },
+                new RoomSetup
+                {
+                    Name = "Location_2", Title = "03 // ЛАБОРАТОРИЯ", Accent = new Color(0.3f, 1f, 0.45f), Decorate = DecorateLab,
+                    Waves = new[] { new[] { (basic, 3), (medium, 1) }, new[] { (basic, 2), (medium, 2) } },
+                },
+                new RoomSetup
+                {
+                    Name = "Location_3", Title = "04 // ГЕНЕРАТОРНАЯ", Accent = new Color(1f, 0.45f, 0.1f), Decorate = DecorateGenerator,
+                    Waves = new[] { new[] { (medium, 2), (heavy, 1) }, new[] { (basic, 2), (heavy, 2) } },
+                },
+                new RoomSetup
+                {
+                    Name = "Location_4", Title = "05 // СБОРОЧНЫЙ ЦЕХ", Accent = new Color(0.85f, 0.3f, 1f), Decorate = DecorateAssembly,
+                    Waves = new[] { new[] { (medium, 3), (heavy, 2) }, new[] { (medium, 2), (heavy, 3) } },
+                },
+                new RoomSetup
+                {
+                    Name = "Boss", Title = "06 // ЯДРО", Accent = new Color(1f, 0.1f, 0.08f), Decorate = DecorateCore,
+                    Delay = 6f, Waves = new[] { new[] { (boss, 1), (basic, 2) }, new[] { (basic, 2), (medium, 1) } },
+                },
             };
         }
 
@@ -191,13 +219,17 @@ namespace SibJam.Editor
             LocationDoor entryDoor = BuildDoorWall("Wall_Entry", room, -Half, true);
             LocationDoor exitDoor = BuildDoorWall("Wall_Exit", room, Half, hasExit);
 
-            // Волны
+            setup.AccentMaterial = CreateDecorMaterial($"Accent_{setup.Name}", setup.Accent, 0.5f, 0f, 1.3f);
+            DecorateShell(room, setup.AccentMaterial, true, hasExit);
+            setup.Decorate(Group("Decor", room, Vector3.zero), setup.AccentMaterial);
+
+            // Волны. Пивот врагов — у ног, точки спавна на полу
             var waves = new GameObject("Waves");
             waves.transform.SetParent(room, false);
             var spawner = waves.AddComponent<WaveSpawner>();
             var spawnPoints = new[]
             {
-                new Vector3(-5f, 1f, 5f), new Vector3(5f, 1f, 5f), new Vector3(-6f, 1f, 0f), new Vector3(6f, 1f, 0f), new Vector3(0f, 1f, 6f),
+                new Vector3(-5f, 0f, 5f), new Vector3(5f, 0f, 5f), new Vector3(-6f, 0f, 0f), new Vector3(6f, 0f, 0f), new Vector3(0f, 0f, 6f),
             }.Select((p, i) => CreatePoint($"SpawnPoint_{i + 1}", waves.transform, p, Quaternion.Euler(0f, 180f, 0f))).ToArray();
             SetArray(spawner, "_spawnPoints", spawnPoints);
 
@@ -237,10 +269,12 @@ namespace SibJam.Editor
             CreateBlock($"{name}_R", room, new Vector3(sideX, WallHeight / 2f, z), new Vector3(sideWidth, WallHeight, WallThickness), _wallMaterial);
 
             var door = CreateBlock($"{name}_Door", room, new Vector3(0f, WallHeight / 2f, z), new Vector3(GapWidth, WallHeight, WallThickness * 0.8f), _doorMaterial);
+            DecorateDoor(door);
+            BuildDoorFrame(room, z);
             return door.AddComponent<LocationDoor>();
         }
 
-        private static void BuildCorridor(Transform parent, GameLoop gameLoop, int index, LocationLoop from, WeaponPickup requiredPickup, LocationDoor exitDoor, LocationDoor entryDoor, LocationLoop to)
+        private static void BuildCorridor(Transform parent, GameLoop gameLoop, int index, LocationLoop from, WeaponPickup requiredPickup, LocationDoor exitDoor, LocationDoor entryDoor, LocationLoop to, RoomSetup toSetup)
         {
             float startZ = index * RoomStep + Half;
             float centerZ = startZ + CorridorLength / 2f;
@@ -252,6 +286,7 @@ namespace SibJam.Editor
             CreateBlock("Floor", corridor, new Vector3(0f, -0.25f, 0f), new Vector3(GapWidth + WallThickness * 2f, 0.5f, CorridorLength), _floorMaterial);
             CreateBlock("Wall_Left", corridor, new Vector3(-wallX, WallHeight / 2f, 0f), new Vector3(WallThickness, WallHeight, CorridorLength), _wallMaterial);
             CreateBlock("Wall_Right", corridor, new Vector3(wallX, WallHeight / 2f, 0f), new Vector3(WallThickness, WallHeight, CorridorLength), _wallMaterial);
+            DecorateCorridor(corridor, toSetup.Title, toSetup.AccentMaterial);
 
             // Зашёл чуть дальше выхода — выход закрывается; подошёл к дальней двери — локация стартует и дверь открывается;
             // прошёл в комнату — дверь закрывается
@@ -290,27 +325,24 @@ namespace SibJam.Editor
             BuildDoorWall("Wall_Entry", room, -Half, false);
             LocationDoor exitDoor = BuildDoorWall("Wall_Exit", room, Half, true);
 
-            var decor = new GameObject("Decor").transform;
-            decor.SetParent(room, false);
+            var accent = CreateDecorMaterial("Accent_SafeRoom", new Color(0.55f, 0.75f, 1f), 0.5f, 0f, 1.2f);
+            DecorateShell(room, accent, false, true);
+            var decor = Group("Decor", room, Vector3.zero);
+            DecorateSafeRoom(decor, accent);
 
             // Разбитые камеры валяются под местами крепления
             var brokenCameras = new[] { new Vector3(-Half + 1f, 0.2f, -1f), new Vector3(Half - 1.2f, 0.2f, 4f), new Vector3(-4f, 0.2f, Half - 1f) };
             for (int i = 0; i < brokenCameras.Length; i++)
             {
-                var brokenCamera = CreateBlock($"BrokenCamera_{i + 1}", decor, brokenCameras[i], new Vector3(0.6f, 0.4f, 0.6f), _brokenCameraMaterial);
-                brokenCamera.transform.localRotation = Quaternion.Euler(25f, 40f * i + 15f, 30f);
+                var brokenCamera = Group($"BrokenCamera_{i + 1}", decor, brokenCameras[i]);
+                BuildCameraModel(brokenCamera, _brokenCameraMaterial, _hazardMaterial);
+                brokenCamera.localRotation = Quaternion.Euler(25f, 40f * i + 15f, 30f);
             }
 
-            // Убитые враги — лежащие капсулы
-            var deadEnemies = new[] { new Vector3(-4f, 0.5f, 3f), new Vector3(5f, 0.5f, -2f), new Vector3(2f, 0.5f, 6f) };
+            // Убитые охранники лежат на спине
+            var deadEnemies = new[] { new Vector3(-3f, 0.22f, 3.6f), new Vector3(5f, 0.22f, -1f), new Vector3(2.5f, 0.22f, 6.5f) };
             for (int i = 0; i < deadEnemies.Length; i++)
-            {
-                var enemy = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-                enemy.name = $"DeadEnemy_{i + 1}";
-                enemy.transform.SetParent(decor, false);
-                enemy.transform.SetLocalPositionAndRotation(deadEnemies[i], Quaternion.Euler(90f, 70f * i + 20f, 0f));
-                enemy.GetComponent<MeshRenderer>().sharedMaterial = _deadEnemyMaterial;
-            }
+                BuildStaticMob($"DeadEnemy_{i + 1}", decor, i == 1 ? GunnerModel : MeleeModel, deadEnemies[i], new Vector3(-90f, 70f * i + 20f, 0f), 1f, _deadEnemyMaterial);
 
             WeaponPickup pickup = BuildWeaponPickup(room, weapon, new Vector3(0f, 1f, -Half + 7f));
             BuildNote(room, new Vector3(-2.5f, 0f, -Half + 5f));
@@ -410,7 +442,23 @@ namespace SibJam.Editor
 
         private static SecurityCamera CreateSecurityCamera(Transform parent, int number, Vector3 localPosition)
         {
-            var go = CreateBlock($"SecurityCamera_{number}", parent, localPosition, new Vector3(0.6f, 0.6f, 0.6f), _cameraMaterial);
+            // Смотрит в комнату, от ближайшей стены. Хитбокс прежний — куб 0.6; крепление отдельно, остаётся на стене после поломки
+            Vector3 inward = Mathf.Abs(localPosition.x) > Mathf.Abs(localPosition.z)
+                ? new Vector3(-Mathf.Sign(localPosition.x), 0f, 0f)
+                : new Vector3(0f, 0f, -Mathf.Sign(localPosition.z));
+            var rotation = Quaternion.LookRotation(inward);
+
+            var mount = new GameObject($"CameraMount_{number}").transform;
+            mount.SetParent(parent, false);
+            mount.SetLocalPositionAndRotation(localPosition, rotation);
+            Box("Plate", mount, new Vector3(0f, 0.25f, -0.33f), new Vector3(0.3f, 0.3f, 0.06f), _darkMetalMaterial);
+            Box("Arm", mount, new Vector3(0f, 0.25f, -0.22f), new Vector3(0.07f, 0.07f, 0.2f), _darkMetalMaterial);
+
+            var go = new GameObject($"SecurityCamera_{number}");
+            go.transform.SetParent(parent, false);
+            go.transform.SetLocalPositionAndRotation(localPosition, rotation);
+            BuildCameraModel(go.transform, _cameraMaterial, _medicalMaterial);
+            go.AddComponent<BoxCollider>().size = Vector3.one * 0.6f;
             return go.AddComponent<SecurityCamera>();
         }
 
@@ -435,6 +483,8 @@ namespace SibJam.Editor
             string prefabPath = $"{ConfigsFolder}/Boss.prefab";
             var instance = (GameObject)PrefabUtility.InstantiatePrefab(source.Prefab.gameObject);
             instance.transform.localScale = Vector3.one * 2.5f;
+            foreach (var renderer in instance.GetComponentsInChildren<Renderer>())
+                renderer.sharedMaterial = _bossMaterial;
             var prefab = PrefabUtility.SaveAsPrefabAsset(instance, prefabPath);
             Object.DestroyImmediate(instance);
 
@@ -473,34 +523,37 @@ namespace SibJam.Editor
 
         private static void CreateMaterials()
         {
-            _floorMaterial = CreateMaterial("Floor", new Color(0.35f, 0.36f, 0.38f));
-            _wallMaterial = CreateMaterial("Wall", new Color(0.18f, 0.2f, 0.24f));
-            _doorMaterial = CreateMaterial("Door", new Color(0.95f, 0.7f, 0.1f));
+            _floorMaterial = CreateMaterial("Floor", new Color(0.21f, 0.22f, 0.24f), 0.3f);
+            _wallMaterial = CreateMaterial("Wall", new Color(0.17f, 0.19f, 0.23f), 0.25f);
+            _doorMaterial = CreateMaterial("Door", new Color(0.95f, 0.7f, 0.1f), 0.45f, 0.3f);
             _cameraMaterial = CreateMaterial("SecurityCamera", new Color(0.9f, 0.1f, 0.1f));
-            _weaponMaterial = CreateMaterial("Weapon", new Color(0.1f, 0.85f, 0.95f));
+            _weaponMaterial = CreateMaterial("Weapon", new Color(0.1f, 0.85f, 0.95f), 0.8f, 0f, 1.5f);
             _brokenCameraMaterial = CreateMaterial("BrokenCamera", new Color(0.25f, 0.08f, 0.08f));
             _deadEnemyMaterial = CreateMaterial("DeadEnemy", new Color(0.3f, 0.25f, 0.22f));
             _noteMaterial = CreateMaterial("Note", new Color(0.92f, 0.88f, 0.75f));
+            CreateDecorMaterials();
         }
 
-        private static Material CreateMaterial(string name, Color color)
+        private static Material CreateMaterial(string name, Color color, float smoothness = 0.2f, float metallic = 0f,
+            float emission = 0f, bool transparent = false, string folder = ConfigsFolder)
         {
             var shader = GraphicsSettings.currentRenderPipeline != null
                 ? GraphicsSettings.currentRenderPipeline.defaultMaterial.shader
                 : Shader.Find("Standard");
-            string path = $"{ConfigsFolder}/{name}.mat";
-            var existing = AssetDatabase.LoadAssetAtPath<Material>(path);
+            string path = $"{folder}/{name}.mat";
+            var material = AssetDatabase.LoadAssetAtPath<Material>(path);
 
             // Материал правим на месте: CopySerialized теряет теги рендера, а пересоздание меняет GUID
-            if (existing != null)
+            if (material == null)
             {
-                existing.shader = shader;
-                existing.color = color;
-                EditorUtility.SetDirty(existing);
-                return existing;
+                material = new Material(shader);
+                AssetDatabase.CreateAsset(material, path);
             }
 
-            return CreateAsset(new Material(shader) { color = color }, path);
+            material.shader = shader;
+            ApplyMaterialSettings(material, color, smoothness, metallic, emission, transparent);
+            EditorUtility.SetDirty(material);
+            return material;
         }
 
         // Существующий ассет обновляется на месте, чтобы не менялся GUID и не ломались ссылки в git
