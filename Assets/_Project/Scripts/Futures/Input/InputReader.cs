@@ -10,6 +10,7 @@ namespace SibJam
         private const string SprintActionName = "Sprint";
         private const string LookActionName = "Look";
         private const string JumpActionName = "Jump";
+        private const string AttackActionName = "Attack";
 
         [SerializeField] private InputActionAsset _inputActions;
 
@@ -17,6 +18,7 @@ namespace SibJam
         private InputAction _sprintAction;
         private InputAction _lookAction;
         private InputAction _jumpAction;
+        private InputAction _attackAction;
 
         public Vector2 MoveDirection { get; private set; }
 
@@ -26,6 +28,8 @@ namespace SibJam
 
         public bool IsJumpPressed { get; private set; }
 
+        public bool IsAttackPressed { get; private set; }
+
         private void Awake()
         {
             InputActionMap map = _inputActions.FindActionMap(PlayerActionMapName, throwIfNotFound: true);
@@ -33,6 +37,7 @@ namespace SibJam
             _sprintAction = map.FindAction(SprintActionName, throwIfNotFound: true);
             _lookAction = map.FindAction(LookActionName, throwIfNotFound: true);
             _jumpAction = map.FindAction(JumpActionName, throwIfNotFound: true);
+            _attackAction = map.FindAction(AttackActionName, throwIfNotFound: true);
         }
 
         private void OnEnable()
@@ -41,6 +46,7 @@ namespace SibJam
             _sprintAction.Enable();
             _lookAction.Enable();
             _jumpAction.Enable();
+            _attackAction.Enable();
 
             _moveAction.performed += OnMove;
             _moveAction.canceled += OnMove;
@@ -53,6 +59,9 @@ namespace SibJam
 
             _jumpAction.performed += OnJump;
             _jumpAction.canceled += OnJump;
+
+            _attackAction.performed += OnAttack;
+            _attackAction.canceled += OnAttack;
         }
 
         private void OnDisable()
@@ -69,10 +78,14 @@ namespace SibJam
             _jumpAction.performed -= OnJump;
             _jumpAction.canceled -= OnJump;
 
+            _attackAction.performed -= OnAttack;
+            _attackAction.canceled -= OnAttack;
+
             _moveAction.Disable();
             _sprintAction.Disable();
             _lookAction.Disable();
             _jumpAction.Disable();
+            _attackAction.Disable();
         }
 
         private void OnMove(InputAction.CallbackContext context) =>
@@ -86,5 +99,8 @@ namespace SibJam
 
         private void OnJump(InputAction.CallbackContext context) =>
             IsJumpPressed = context.ReadValueAsButton();
+
+        private void OnAttack(InputAction.CallbackContext context) =>
+            IsAttackPressed = context.ReadValueAsButton();
     }
 }

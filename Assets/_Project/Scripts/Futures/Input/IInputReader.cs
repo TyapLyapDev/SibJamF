@@ -11,5 +11,7 @@ namespace SibJam
         public Vector2 LookDirection { get; }
 
         public bool IsJumpPressed { get; }
+
+        public bool IsAttackPressed { get; }
     }
 }
