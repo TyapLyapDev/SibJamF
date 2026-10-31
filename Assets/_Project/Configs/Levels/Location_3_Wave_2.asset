@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Location_3_Wave_2
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Waves.WaveConfig
   Enemies:
-  - Enemy: {fileID: 11400000, guid: af7b124e6b023484f993f29cd76ec768, type: 2}
+  - Enemy: {fileID: 11400000, guid: b2d6de9f93fdc244abf9709256327fb8, type: 2}
     Count: 2
-  - Enemy: {fileID: 11400000, guid: fae43a8bef5f7964684b13b63b2dc0bd, type: 2}
+  - Enemy: {fileID: 11400000, guid: f27f88a250fce6140bf008ea91457a6c, type: 2}
     Count: 2
