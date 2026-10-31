@@ -1,11 +1,12 @@
+using System;
 using _Project.Scripts.Enemies;
 using SibJam.SecurityCameras;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using VContainer;
 
 namespace SibJam.Waves.Testing
 {
-    [RequireComponent(typeof(IInputReader))]
     public class RaycastEnemyDamager : MonoBehaviour
     {
         [SerializeField] private Transform _aimTransform;
@@ -15,11 +16,14 @@ namespace SibJam.Waves.Testing
 
         private readonly ICursorShower _cursorShower = new CursorShower();
 
-        private IInputReader _inputReader;
+        private IPlayerInputReader _inputReader;
         private bool _wasAttackPressed;
 
-        private void Awake() =>
-            _inputReader = GetComponent<IInputReader>();
+        [Inject]
+        public void Construct(IPlayerInputReader inputReader)
+        {
+            _inputReader = inputReader ?? throw new ArgumentNullException(nameof(inputReader));
+        }
 
         private void OnEnable() =>
             _cursorShower.Hide();
