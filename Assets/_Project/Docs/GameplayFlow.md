@@ -40,7 +40,11 @@ F1/F2 работают только в редакторе и development-бил�
 | `MeleeWeapon` | меч: удар по врагам и камерам |
 | `DebugCheats` | F1 / F2 |
 
-Логика волн и локаций — в [GameLoop.md](GameLoop.md) и [Waves.md](Waves.md).
+Подробнее:
+- [Passages.md](Passages.md) — коридоры и двери
+- [Weapons.md](Weapons.md) — меч, подбор, отладка
+- [GameLoop.md](GameLoop.md), [Waves.md](Waves.md) — локации и волны
+- [GameplayFlowBuilder.md](GameplayFlowBuilder.md) — генератор сцены
 
 ## Что настраивать
 
@@ -48,4 +52,4 @@ F1/F2 работают только в редакторе и development-бил�
 - **Состав волн:** `Configs/Levels/<Комната>_Wave_N`.
 - **Меч:** поля `MeleeWeapon` на игроке: урон, дальность, перезарядка.
 
-Сцену собрал ИИ-генератор (`AITools`). Если менять её руками, генератор больше не запускать: он перезапишет сцену.
+Сцену собрал ИИ-генератор, см. [GameplayFlowBuilder.md](GameplayFlowBuilder.md). Если менять её руками, генератор больше не запускать: он перезапишет сцену.

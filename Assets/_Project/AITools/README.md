@@ -7,5 +7,7 @@
 |---|---|---|
 | `Editor/GameplayFlowBuilder.cs` | SibJam → AI Tools → Build Gameplay Flow Scene | Собирает `Scenes/GameplayFlow.unity` с нуля: комнаты, коридоры-сейфзоны, двери, волны, камеры, босс |
 
-⚠ Запуск **полностью перезаписывает** сцену и конфиги в `Configs/Levels` — ручные правки пропадут.
+⚠ Запуск **полностью перезаписывает** сцену — ручные правки пропадут. Конфиги в `Configs/Levels` обновляются на месте (GUID сохраняются).
 Когда комнаты начнут дорабатывать вручную, генератор больше не запускать.
+
+Подробно: [Docs/GameplayFlowBuilder.md](../Docs/GameplayFlowBuilder.md).
