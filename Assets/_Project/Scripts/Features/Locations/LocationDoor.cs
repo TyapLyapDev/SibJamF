@@ -7,6 +7,8 @@ namespace SibJam.Locations
     public class LocationDoor : MonoBehaviour
     {
         [SerializeField, Min(0f)] private float _liftHeight = 4.5f;
+        [Tooltip("Куда уезжает дверь, в осях родителя: вверх — подъёмная, вбок — откатная")]
+        [SerializeField] private Vector3 _openDirection = Vector3.up;
         [SerializeField, Min(0.01f)] private float _duration = 1.2f;
 
         private Vector3 _closedPosition;
@@ -27,7 +29,7 @@ namespace SibJam.Locations
             if (_moving != null)
                 StopCoroutine(_moving);
 
-            Vector3 target = open ? _closedPosition + Vector3.up * _liftHeight : _closedPosition;
+            Vector3 target = open ? _closedPosition + _openDirection.normalized * _liftHeight : _closedPosition;
             _moving = StartCoroutine(Move(target, finished));
         }
 

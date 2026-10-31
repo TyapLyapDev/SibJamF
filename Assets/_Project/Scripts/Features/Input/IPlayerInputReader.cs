@@ -14,6 +14,8 @@ namespace SibJam
 
         public bool IsAttackPressed { get; }
 
+        public bool IsBlockPressed { get; }
+
         public void Enable();
 
         public void Disable();
