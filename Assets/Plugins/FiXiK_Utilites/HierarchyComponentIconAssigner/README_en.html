@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hierarchy Component Icon Assigner — Documentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            padding: 2rem;
+            background-color: #f0f2f5;
+            color: #1a1a2e;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 20px 35px -10px rgba(0,0,0,0.1);
+            padding: 2rem 2rem 3rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            border-bottom: 2px solid #d0d5dd;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            color: #0f172a;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #2563eb;
+            padding-left: 1rem;
+            color: #0f172a;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: #1e293b;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: #1e293b;
+        }
+
+        ul, ol {
+            margin: 0.5rem 0 1rem 1.8rem;
+            color: #1e293b;
+        }
+
+        li {
+            margin: 0.3rem 0;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+            background-color: #eef2ff;
+            padding: 0.2rem 0.4rem;
+            border-radius: 8px;
+            font-size: 0.9em;
+            border: 1px solid #cbd5e1;
+            color: #1e1e2f;
+        }
+
+        pre {
+            background-color: #f8fafc;
+            padding: 1rem;
+            border-radius: 16px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            border: 1px solid #e2e8f0;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            border: none;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #0f172a;
+        }
+
+        blockquote {
+            border-left: 4px solid #2563eb;
+            background-color: #f1f5f9;
+            padding: 0.75rem 1rem;
+            margin: 1rem 0;
+            border-radius: 12px;
+            color: #1e293b;
+        }
+
+        hr {
+            border: none;
+            height: 1px;
+            background: linear-gradient(to right, #e2e8f0, transparent);
+            margin: 2rem 0;
+        }
+
+        .question {
+            font-weight: 700;
+            margin-top: 1.2rem;
+            color: #0f172a;
+        }
+
+        .answer {
+            margin-bottom: 0.8rem;
+            color: #1e293b;
+        }
+
+        footer {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #475569;
+        }
+
+        a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 700px) {
+            body {
+                padding: 1rem;
+            }
+            .container {
+                padding: 1.2rem;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            h2 {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Hierarchy Component Icon Assigner</h1>
+    <p><strong>Version 2.2.0</strong> | Author: FiXiK</p>
+    <p>This plugin allows you to assign icons to components and display them directly in the Unity <strong>Hierarchy</strong> window.<br>
+    Icons now automatically inherit: if you assign an icon to an abstract class or interface, it will appear on all objects that have a derived component.</p>
+
+    <h2>Features</h2>
+    <ul>
+        <li><strong>Assign icons</strong> to any component (MonoBehaviour, ScriptableObject, standard Unity components).</li>
+        <li><strong>Icon inheritance</strong> – base type icon is displayed for all its descendants (including abstract classes).</li>
+        <li><strong>Convenient editor</strong> – settings window with drag-and-drop for icons and a dropdown list of types.</li>
+        <li><strong>Enable/disable</strong> icon rendering without removing settings.</li>
+        <li><strong>Auto-generated config</strong> on first launch.</li>
+        <li><strong>Welcome dialog</strong> on first installation.</li>
+    </ul>
+
+    <h2>What's New in Version 2.2.0</h2>
+    <ul>
+        <li><strong>Support for abstract components</strong> – icons can now be assigned to abstract classes (e.g., <code>Behaviour</code>, <code>Collider</code>, <code>MonoBehaviour</code>).</li>
+        <li><strong>Icon inheritance</strong> – if an object has no direct match, the plugin checks all parent types and shows the icon of the first matching ancestor.</li>
+        <li><strong>Optimized lookup</strong> – for each object in the hierarchy, all components are checked for compatibility with types that have icons.</li>
+    </ul>
+    <p><em>Previous versions (≤ 2.1.2) only worked with concrete (non‑abstract) types and did not support inheritance.</em></p>
+
+    <h2>Installation</h2>
+    <h3>Via .unitypackage (recommended)</h3>
+    <ol>
+        <li>Download the latest release.</li>
+        <li>Import the <code>.unitypackage</code> via <code>Assets → Import Package → Custom Package</code>.</li>
+        <li>Done! The plugin will automatically create a config and show the welcome window.</li>
+    </ol>
+    <h3>Manual installation</h3>
+    <ol>
+        <li>Copy the <code>HierarchyComponentIconAssigner</code> folder into <code>Assets/Plugins/FiXiK_Utilites/</code>.</li>
+        <li>Reload Unity (or press <code>Ctrl+R</code>).</li>
+        <li>Open the window via <code>Tools → Hierarchy Scene Icons</code> (or <code>Иконки в иерархии сцены</code> in the Russian interface).</li>
+    </ol>
+
+    <h2>Quick Start</h2>
+    <ol>
+        <li><strong>Open the settings window</strong><br><code>Tools → Hierarchy Scene Icons</code> (or <code>Иконки в иерархии сцены</code>)</li>
+        <li><strong>Enable rendering</strong> (tick <code>Enabled</code> at the top of the window).</li>
+        <li><strong>Add a new icon</strong><br>Press <code>+</code> in the <code>Component Icon List</code> field.</li>
+        <li><strong>Select a component</strong><br>Click the button <code>No component selected</code> → choose any type from the dropdown.</li>
+        <li><strong>Pick an icon</strong><br>Click the grey square → select a texture (or drag one from the Project window).</li>
+        <li><strong>Result</strong><br>In the Hierarchy window, all objects that have the selected component (or its descendants) will display the icon.</li>
+    </ol>
+
+    <h2>Configuration</h2>
+    <p>All settings are stored in the <code>Config.asset</code> file, which is automatically created in one of the following folders:</p>
+    <ul>
+        <li><code>Assets/Plugins/FiXiK_Utilites/HierarchyComponentIconAssigner/Config.asset</code> (priority)</li>
+        <li>Or in the folder where the <code>ConfigLoader.cs</code> script is located.</li>
+    </ul>
+    <p>To reset the settings – delete this file, it will be recreated on the next launch.</p>
+    <h3>Manual editing</h3>
+    <p>You can open <code>Config.asset</code> in the Unity Inspector and adjust:</p>
+    <ul>
+        <li><code>Enabled</code> – turn icon rendering on/off.</li>
+        <li><code>Component Icon List</code> – the list of <code>[Component Type] → [Icon]</code> pairs.</li>
+    </ul>
+
+    <h2>API (for advanced users)</h2>
+    <p>If you want to control the plugin from your own code (e.g., enable/disable rendering based on some condition), use:</p>
+    <pre><code>using FiXiK.HierarchyComponentIconAssigner;
+
+// Force refresh the cache and repaint the hierarchy
+HierarchyIconDrawer.Reload();
+
+// Get the current config
+Config cfg = ConfigLoader.Config;
+cfg.Enabled = false; // don't forget to save changes
+EditorUtility.SetDirty(cfg);</code></pre>
+    <blockquote>
+        <p><strong>Note:</strong> The API is only available in the Editor (<code>#if UNITY_EDITOR</code>).</p>
+    </blockquote>
+
+    <h2>Requirements</h2>
+    <ul>
+        <li><strong>Unity 2020.3</strong> or newer (tested on 2021.3 LTS, 2022.3, 2023.2).</li>
+        <li>Platform: any that supports the Unity Editor (Windows, macOS, Linux).</li>
+        <li>Dependencies: none.</li>
+    </ul>
+
+    <h2>Frequently Asked Questions</h2>
+    <div class="question">Q: Why is the icon not showing for an abstract class?</div>
+    <div class="answer"><strong>A:</strong> Make sure you have selected a <strong>concrete component</strong> that is actually attached to the object. An abstract class itself cannot be added to a GameObject, but its descendants will display the icon. Check that the object has a component derived from the selected abstract type.</div>
+
+    <div class="question">Q: How can I temporarily disable icons?</div>
+    <div class="answer"><strong>A:</strong> Uncheck the <code>Enabled</code> box in the settings window.</div>
+
+    <div class="question">Q: Can I use icons for interfaces?</div>
+    <div class="answer"><strong>A:</strong> Yes, interfaces are technically supported (the <code>IsAssignableFrom</code> method works). However, interfaces are not components, so ensure your class inherits <code>MonoBehaviour</code> and implements the interface.</div>
+
+    <div class="question">Q: Does the plugin slow down the editor?</div>
+    <div class="answer"><strong>A:</strong> With a very large number of objects (>2000) and many icon types (>20), you may notice minor delays. In typical projects (up to 500 objects), the difference is negligible. If you experience slowdowns, reduce the number of icon types or disable rendering via <code>Enabled</code>.</div>
+
+    <h2>License</h2>
+    <p>MIT License. You are free to use, modify, and distribute the plugin with attribution.</p>
+
+    <h2>Author & Contacts</h2>
+    <p><strong>FiXiK</strong><br>
+    Telegram: <a href="https://t.me/VL_dogs" target="_blank">@VL_dogs</a><br></p>
+    <p>If you find a bug or have a suggestion – feel free to write!</p>
+
+    <h2>Changelog</h2>
+    <h3>2.2.0 (2025-04-09)</h3>
+    <ul>
+        <li><strong>Added support for abstract component types.</strong></li>
+        <li><strong>Implemented icon inheritance</strong> – base class icon is displayed for all descendants.</li>
+        <li>Reworked component lookup mechanism for better compatibility.</li>
+        <li>Fixed a bug where icons did not appear on disabled objects (now all components are checked regardless of <code>enabled</code> state).</li>
+    </ul>
+    <h3>2.1.2 (previous)</h3>
+    <ul>
+        <li>First stable version with support for concrete (non‑abstract) types.</li>
+    </ul>
+
+    <hr>
+    <footer>
+        &copy; 2025 FiXiK | Hierarchy Component Icon Assigner Documentation
+    </footer>
+</div>
+</body>
+</html>

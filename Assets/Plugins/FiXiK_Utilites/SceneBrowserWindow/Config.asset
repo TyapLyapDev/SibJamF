@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a05556f481647e544bd7d785e4cd1179, type: 3}
+  m_Name: Config
+  m_EditorClassIdentifier: 
+  HiddenScenes:
+  - Assets/PluginYourGames/Modules/Authorization/Example/Scenes/Authorization.unity
+  - Assets/Canopus-III_Low-Poly_Sci-Fi_Desert_Units_Set_3/scenes_yup/Canopus-III_Low-Poly_Sci-Fi_Desert_Units_Set_3
+    updated rotation.unity
+  - Assets/PluginYourGames/Modules/EnvirData/Example/Scenes/Envir.unity
+  - Assets/PluginYourGames/Example/Scenes/ExampleYG2.unity
+  - Assets/PluginYourGames/Modules/InterstitialAdv/Example/Scenes/InterstitialAdv.unity
+  - Assets/PluginYourGames/Modules/Localization/Example/Scenes/Localization.unity
+  - Assets/Canopus-III_Low-Poly_Sci-Fi_Desert_Units_Set_1/scenes_yup/Low-Poly_Sci-Fi_Desert_Units_Set
+    updated rotation.unity
+  - Assets/Canopus-III_Low-Poly_Sci-Fi_Desert_Units_Set_2/scenes_yup/Low-Poly_Sci-Fi_Desert_Units_Set_2
+    updated rotation.unity
+  - Assets/_Project/Scenes/PrefabsScene.unity
+  - Assets/_Project/Scenes/TestLevel.unity
+  - Assets/Violet Theme Ui/Scenes/Violet UI.unity
