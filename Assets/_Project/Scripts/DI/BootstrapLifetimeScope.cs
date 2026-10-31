@@ -7,6 +7,7 @@ namespace SibJam
     {
         protected override void Configure(IContainerBuilder builder)
         {
+            builder.RegisterEntryPoint<Bootstrap>(Lifetime.Singleton);
         }
     }
 }
