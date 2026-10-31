@@ -10,17 +10,19 @@ namespace SibJam.Waves
         private readonly EnemySpawner _enemySpawner = new();
         private int _lastSpawnPointIndex = -1;
 
-        public Wave Spawn(WaveConfig config)
+        public Wave Spawn(WaveConfig config) => Spawn(config, WaveDifficulty.Default);
+
+        public Wave Spawn(WaveConfig config, WaveDifficulty difficulty)
         {
             var wave = new Wave();
             if (config == null) return wave;
 
             foreach (var entry in config.Enemies)
             {
-                for (var i = 0; i < entry.Count; i++)
+                for (var i = 0; i < entry.Count + difficulty.ExtraEnemiesPerEntry; i++)
                 {
                     var spawnPoint = GetSpawnPoint();
-                    var enemy = _enemySpawner.Spawn(entry.Enemy, spawnPoint.position, spawnPoint.rotation);
+                    var enemy = _enemySpawner.Spawn(entry.Enemy, spawnPoint.position, spawnPoint.rotation, difficulty.StatsMultiplier);
                     if (enemy != null)
                         wave.BindEnemy(enemy);
                 }

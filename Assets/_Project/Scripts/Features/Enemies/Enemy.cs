@@ -10,9 +10,13 @@ namespace _Project.Scripts.Enemies
         public float Health { get; private set; }
         public bool IsDead { get; private set; }
 
-        public void Init(EnemyConfig config)
+        // Множитель силы от роста сложности волн: хп сейчас, урон — когда появится атака
+        public float StatsMultiplier { get; private set; } = 1f;
+
+        public void Init(EnemyConfig config, float statsMultiplier = 1f)
         {
-            Health = config.MaxHealth;
+            StatsMultiplier = statsMultiplier;
+            Health = config.MaxHealth * statsMultiplier;
             IsDead = false;
         }
 

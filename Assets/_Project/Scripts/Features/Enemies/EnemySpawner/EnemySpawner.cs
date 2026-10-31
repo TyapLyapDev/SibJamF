@@ -10,7 +10,7 @@ namespace _Project.Scripts.EnemySpawner
             return Spawn(enemyConfig, spawnPosition, Quaternion.identity);
         }
 
-        public Enemy Spawn(EnemyConfig enemyConfig, Vector3 spawnPosition, Quaternion rotation)
+        public Enemy Spawn(EnemyConfig enemyConfig, Vector3 spawnPosition, Quaternion rotation, float statsMultiplier = 1f)
         {
             if (enemyConfig == null || enemyConfig.Prefab == null)
             {
@@ -19,7 +19,7 @@ namespace _Project.Scripts.EnemySpawner
             }
 
             var enemy = Object.Instantiate(enemyConfig.Prefab, spawnPosition, rotation);
-            enemy.Init(enemyConfig);
+            enemy.Init(enemyConfig, statsMultiplier);
             return enemy;
         }
     }

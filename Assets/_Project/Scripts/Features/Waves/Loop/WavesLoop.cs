@@ -29,7 +29,9 @@ namespace SibJam.Waves
                 new WaveSequence(configs.Select(config => config.Wave).ToList()),
                 new DelaySequence(configs.Select(config => config.DelayInSeconds).ToList()),
                 _waveSpawner,
-                _wavesLoopConfig.RepeatLastWave);
+                _wavesLoopConfig.RepeatLastWave,
+                _wavesLoopConfig.StatsGrowthPerWave,
+                _wavesLoopConfig.ExtraEnemiesPerRepeat);
         }
 
         private void OnEnable() => _stateMachine.Completed += OnCompleted;
