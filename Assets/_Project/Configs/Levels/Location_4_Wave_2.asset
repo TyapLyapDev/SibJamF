@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45c00907aaa446f0a71be244a804e620, type: 3}
+  m_Name: Location_4_Wave_2
+  m_EditorClassIdentifier: Assembly-CSharp::SibJam.Waves.WaveConfig
+  Enemies:
+  - Enemy: {fileID: 11400000, guid: 3009864894638fb478f0818b8690397d, type: 2}
+    Count: 2
+  - Enemy: {fileID: 11400000, guid: fae43a8bef5f7964684b13b63b2dc0bd, type: 2}
+    Count: 3

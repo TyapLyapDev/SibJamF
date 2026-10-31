@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4338306c9c2c4ce49396268413094b14, type: 3}
+  m_Name: Boss_WavesLoop
+  m_EditorClassIdentifier: Assembly-CSharp::SibJam.Waves.WavesLoopConfig
+  WavesWithDelay:
+  - Wave: {fileID: 11400000, guid: 29b86e8fcd1f00a4c814e193dded5e22, type: 2}
+    DelayInSeconds: 6
+  - Wave: {fileID: 11400000, guid: 3ad00a0a045dafe4dbe7a01208211c2f, type: 2}
+    DelayInSeconds: 6
+  RepeatLastWave: 1
+  StatsGrowthPerWave: 0.2
+  ExtraEnemiesPerRepeat: 1
