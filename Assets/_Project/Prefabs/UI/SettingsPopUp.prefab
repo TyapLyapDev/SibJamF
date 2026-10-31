@@ -679,19 +679,48 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4536902904497984270, guid: c479557761cfac645819cc7c0bd6da46, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2470818256839049174}
   m_SourcePrefab: {fileID: 100100000, guid: c479557761cfac645819cc7c0bd6da46, type: 3}
 --- !u!224 &849786765016597539 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1788138890558098288, guid: c479557761cfac645819cc7c0bd6da46, type: 3}
   m_PrefabInstance: {fileID: 1376890200564846419}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &3309551374859508829 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4536902904497984270, guid: c479557761cfac645819cc7c0bd6da46, type: 3}
+  m_PrefabInstance: {fileID: 1376890200564846419}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2470818256839049174
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3309551374859508829}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21c15d87d892f4c40afde2aec6ddbeb0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SibJam.SliderSfxPreview
+  _clips:
+  - {fileID: 8300000, guid: 9a7cc55255f1cb0478ba082b0a5429be, type: 3}
+  - {fileID: 8300000, guid: b8d7e57b4d06072478c69875bfcbf8d8, type: 3}
+  - {fileID: 8300000, guid: 97f16eb7502d2014ba9114f67f8279f9, type: 3}
+  - {fileID: 8300000, guid: 0c1dbae364504d74e813e782615c1767, type: 3}
+  - {fileID: 8300000, guid: 6e0604faaf294104c96e5a5c1eda5a45, type: 3}
+  - {fileID: 8300000, guid: d5607ce5dce52574b80536b352f78bbc, type: 3}
+  - {fileID: 8300000, guid: a09bea6dd281e4a48ad39049415938d6, type: 3}
+  _interval: 1
 --- !u!114 &4609975402448008577 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3234251264071170770, guid: c479557761cfac645819cc7c0bd6da46, type: 3}
   m_PrefabInstance: {fileID: 1376890200564846419}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 3309551374859508829}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
@@ -1055,19 +1084,48 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4536902904497984270, guid: c479557761cfac645819cc7c0bd6da46, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3762103325778337090}
   m_SourcePrefab: {fileID: 100100000, guid: c479557761cfac645819cc7c0bd6da46, type: 3}
 --- !u!114 &4852380511840856222 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3234251264071170770, guid: c479557761cfac645819cc7c0bd6da46, type: 3}
   m_PrefabInstance: {fileID: 8049410545605710412}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 5855542740340097346}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
+--- !u!1 &5855542740340097346 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4536902904497984270, guid: c479557761cfac645819cc7c0bd6da46, type: 3}
+  m_PrefabInstance: {fileID: 8049410545605710412}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3762103325778337090
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5855542740340097346}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21c15d87d892f4c40afde2aec6ddbeb0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SibJam.SliderSfxPreview
+  _clips:
+  - {fileID: 8300000, guid: 9a7cc55255f1cb0478ba082b0a5429be, type: 3}
+  - {fileID: 8300000, guid: b8d7e57b4d06072478c69875bfcbf8d8, type: 3}
+  - {fileID: 8300000, guid: 97f16eb7502d2014ba9114f67f8279f9, type: 3}
+  - {fileID: 8300000, guid: 0c1dbae364504d74e813e782615c1767, type: 3}
+  - {fileID: 8300000, guid: 6e0604faaf294104c96e5a5c1eda5a45, type: 3}
+  - {fileID: 8300000, guid: d5607ce5dce52574b80536b352f78bbc, type: 3}
+  - {fileID: 8300000, guid: a09bea6dd281e4a48ad39049415938d6, type: 3}
+  _interval: 0.5
 --- !u!224 &8603562929286699324 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1788138890558098288, guid: c479557761cfac645819cc7c0bd6da46, type: 3}
