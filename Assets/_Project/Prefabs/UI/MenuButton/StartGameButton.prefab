@@ -149,6 +149,11 @@ GameObject:
   - component: {fileID: 7386160674355082658}
   - component: {fileID: 738200237393519900}
   - component: {fileID: 855110724412984208}
+  - component: {fileID: 5391365530444106202}
+  - component: {fileID: 7993335369354635232}
+  - component: {fileID: 2721499327378475638}
+  - component: {fileID: 2959683011839180820}
+  - component: {fileID: 5622951439270842046}
   m_Layer: 5
   m_Name: StartGameButton
   m_TagString: Untagged
@@ -258,3 +263,80 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &5391365530444106202
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8995265104969042687}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9cc306da68026eb46af23c72bedb384e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HoverShake
+  _settings: {fileID: 11400000, guid: 732bfe2c6ccff22449314e2044397ad8, type: 2}
+  _useUnscaledTime: 1
+--- !u!114 &7993335369354635232
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8995265104969042687}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63d0b954cba1b3b4ebe25a0d457e7270, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SibJam.HoverColor
+  _settings: {fileID: 11400000, guid: 9336b15d9dc15554caad23a887f552cd, type: 2}
+  _text: {fileID: 537564784504003319}
+  _useUnscaledTime: 1
+--- !u!114 &2721499327378475638
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8995265104969042687}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3172a577e91ef8478057edc5d56a511, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SibJam.HoverScale
+  _settings: {fileID: 11400000, guid: 808758c250eb40b4f879ba0b7bd0a0b3, type: 2}
+  _useUnscaledTime: 1
+--- !u!114 &2959683011839180820
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8995265104969042687}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ecdd650b4d859d4e9f78ae2c246e6d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SibJam.HoverSound
+  _clips:
+  - {fileID: 8300000, guid: 9a7cc55255f1cb0478ba082b0a5429be, type: 3}
+  - {fileID: 8300000, guid: b8d7e57b4d06072478c69875bfcbf8d8, type: 3}
+  - {fileID: 8300000, guid: 97f16eb7502d2014ba9114f67f8279f9, type: 3}
+  - {fileID: 8300000, guid: 0c1dbae364504d74e813e782615c1767, type: 3}
+  - {fileID: 8300000, guid: 6e0604faaf294104c96e5a5c1eda5a45, type: 3}
+  - {fileID: 8300000, guid: d5607ce5dce52574b80536b352f78bbc, type: 3}
+  - {fileID: 8300000, guid: a09bea6dd281e4a48ad39049415938d6, type: 3}
+--- !u!114 &5622951439270842046
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8995265104969042687}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 430188a666532334fa6f34f4cb17fc0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SibJam.ClickSound
+  _clips:
+  - {fileID: 8300000, guid: dbc7a1d1f32245145acccd837989bef1, type: 3}
