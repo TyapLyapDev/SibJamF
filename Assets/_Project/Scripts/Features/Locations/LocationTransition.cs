@@ -5,7 +5,7 @@ namespace SibJam.Locations
 {
     public class LocationTransition : MonoBehaviour
     {
-        [SerializeField] private WavesLifeCycle _fromLocation;
+        [SerializeField] private WavesLoop _fromLocation;
         [SerializeField] private Transform _player;
         [SerializeField] private Transform _targetPoint;
 

@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace SibJam.Waves
 {
-    [CreateAssetMenu(fileName = "WavesLifeCycleConfig", menuName = "SibJam/Waves LifeCycle Config")]
-    public class WavesLifeCycleConfig : ScriptableObject
+    [CreateAssetMenu(fileName = "WavesLoopConfig", menuName = "SibJam/Waves Loop Config")]
+    public class WavesLoopConfig : ScriptableObject
     {
         public List<WaveWithDelayConfig> WavesWithDelay = new();
         [Tooltip("После последней волны повторять её бесконечно. Иначе цикл завершается")]

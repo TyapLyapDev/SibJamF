@@ -4,7 +4,7 @@ namespace SibJam.Waves
 {
     public class WavesTrigger : MonoBehaviour
     {
-        [SerializeField] private WavesLifeCycle _wavesLifeCycle;
+        [SerializeField] private WavesLoop _wavesLoop;
         [SerializeField] private string _playerTag = "Player";
 
         private void OnTriggerEnter(Collider other) => Trigger(other.gameObject);
@@ -14,9 +14,9 @@ namespace SibJam.Waves
         private void Trigger(GameObject other)
         {
             if (!other.CompareTag(_playerTag)) return;
-            if (_wavesLifeCycle.IsRunning) return;
+            if (_wavesLoop.IsRunning) return;
 
-            _wavesLifeCycle.LaunchWaves();
+            _wavesLoop.LaunchWaves();
             gameObject.SetActive(false);
         }
     }

@@ -17,20 +17,20 @@
 |---|---|
 | `Enemy Config` | префаб врага (с компонентом `Enemy`), хп, скорость, атака |
 | `Wave Config` | список врагов: `EnemyConfig` + количество |
-| `Waves LifeCycle Config` | список волн с паузой **после** каждой, галка `RepeatLastWave` |
+| `Waves Loop Config` | список волн с паузой **после** каждой, галка `RepeatLastWave` |
 
 ## На сцене
 
 | Компонент | Зачем |
 |---|---|
-| `WavesLifeCycle` | ведёт цикл. Поля: конфиг цикла и `WaveSpawner` |
+| `WavesLoop` | ведёт цикл. Поля: конфиг цикла и `WaveSpawner` |
 | `WaveSpawner` | спавнит врагов в точках `_spawnPoints` (случайная, не равна предыдущей) |
 | `WavesTrigger` | на коллайдере с `Is Trigger`. Игрок с тегом `Player` входит — волны стартуют, триггер выключается |
 | `LocationTransition` | когда цикл локации завершился, переносит игрока в точку |
 
 Игроку нужен Rigidbody (можно кинематический), иначе триггер не сработает.
 
-## API `WavesLifeCycle`
+## API `WavesLoop`
 
 - `LaunchWaves()` — запустить цикл
 - `CompleteWaves()` — завершить досрочно (вызовет `Completed`; живые враги остаются)

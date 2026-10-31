@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4338306c9c2c4ce49396268413094b14, type: 3}
-  m_Name: TestWavesLifeCycleConfig
-  m_EditorClassIdentifier: Assembly-CSharp::SibJam.Waves.WavesLifeCycleConfig
+  m_Name: TestWavesLoopConfig
+  m_EditorClassIdentifier: Assembly-CSharp::SibJam.Waves.WavesLoopConfig
   WavesWithDelay:
   - Wave: {fileID: 11400000, guid: e045c0ef2124a064a852a9402248763a, type: 2}
     DelayInSeconds: 3
@@ -19,4 +19,4 @@ MonoBehaviour:
     DelayInSeconds: 3
   - Wave: {fileID: 11400000, guid: d17bc004947a31b4283376f8e4057e19, type: 2}
     DelayInSeconds: 4
-  RepeatLastWave: 0
+  RepeatLastWave: 1
