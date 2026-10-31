@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using _Project.Scripts.Enemies;
 using SibJam.Locations;
@@ -11,15 +12,19 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.SceneManagement;
 
 namespace SibJam.Editor
 {
     // Инструмент для ИИ-агентов (сборка через Unity MCP), не для геймдизайна. Перезаписывает сцену целиком — ручные правки пропадут.
-    // Генерирует сцену LevelFlow: сейф-комната, лёгкая, 4 обычные, комната босса. Комнаты без потолка, между ними коридоры с подъёмными дверями
-    public static class LevelFlowBuilder
+    // Генерирует сцену GameplayFlow: сейф-комната, лёгкая, 4 обычные, комната босса. Комнаты без потолка, между ними коридоры с подъёмными дверями
+    public static class GameplayFlowBuilder
     {
         private const string BaseScenePath = "Assets/_Project/Tests/Scenes/CamerasTest.unity";
-        private const string ScenePath = "Assets/_Project/Scenes/LevelFlow.unity";
+        // Отсюда берутся игровые системы: GameLifetimeScope, меню паузы, настройки, EventSystem, пост-обработка
+        private const string GameScenePath = "Assets/_Project/Scenes/Game.unity";
+        private static readonly string[] GameSceneRoots = { "Scope", "Global Volume", "UI", "EventSystem" };
+        private const string ScenePath = "Assets/_Project/Scenes/GameplayFlow.unity";
         private const string ConfigsFolder = "Assets/_Project/Configs/Levels";
         private const string NoteFontPath = "Assets/_Project/Resources/Fonts & Materials/RubikGlitch-Regular SDF.asset";
         private const string EnemiesConfigsFolder = "Assets/_Project/Tests/Configs/Enemies";
@@ -48,7 +53,7 @@ namespace SibJam.Editor
             public float Delay = 5f;
         }
 
-        [MenuItem("SibJam/AI Tools/Build Level Flow Scene")]
+        [MenuItem("SibJam/AI Tools/Build Gameplay Flow Scene")]
         public static void Build()
         {
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
@@ -56,8 +61,16 @@ namespace SibJam.Editor
             EnsureFolder(ConfigsFolder);
             CreateMaterials();
 
-            AssetDatabase.DeleteAsset(ScenePath);
-            AssetDatabase.CopyAsset(BaseScenePath, ScenePath);
+            // Перезаписываем содержимое, сохраняя .meta: GUID сцены не меняется (Build Settings, ссылки)
+            if (File.Exists(ScenePath))
+            {
+                File.Copy(BaseScenePath, ScenePath, true);
+                AssetDatabase.ImportAsset(ScenePath, ImportAssetOptions.ForceUpdate);
+            }
+            else
+            {
+                AssetDatabase.CopyAsset(BaseScenePath, ScenePath);
+            }
             var scene = EditorSceneManager.OpenScene(ScenePath);
 
             foreach (GameObject root in scene.GetRootGameObjects())
@@ -72,9 +85,6 @@ namespace SibJam.Editor
 
             var player = Object.FindAnyObjectByType<CharacterController>();
             var weapon = CreateMeleeWeapon(player);
-
-            // Курсор скрыт с самого старта, независимо от оружия
-            new GameObject("CursorLocker").AddComponent<CursorLocker>();
 
             var cheats = new GameObject("DebugCheats").AddComponent<SibJam.Debugging.DebugCheats>();
             SetObject(cheats, "_gameLoop", gameLoop);
@@ -108,10 +118,45 @@ namespace SibJam.Editor
             player.transform.SetPositionAndRotation(new Vector3(0f, 0.05f, -Half + 2.5f), Quaternion.identity);
             player.enabled = true;
 
+            ImportGameSystems(scene);
+            AddToBuildSettings();
+
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
             AssetDatabase.SaveAssets();
-            Debug.Log($"[LevelFlowBuilder] Сцена собрана: {ScenePath}");
+            Debug.Log($"[GameplayFlowBuilder] Сцена собрана: {ScenePath}");
+        }
+
+        // Делает GameplayFlow полноценной игровой сценой: переносит игровые системы из Game вместо тестового скоупа
+        private static void ImportGameSystems(Scene scene)
+        {
+            var testScope = Object.FindAnyObjectByType<TestLifetimeScope>();
+            var injected = testScope != null ? GetArray<GameObject>(testScope, "autoInjectGameObjects") : new List<GameObject>();
+
+            if (testScope != null)
+                Object.DestroyImmediate(testScope.gameObject);
+
+            var gameScene = EditorSceneManager.OpenScene(GameScenePath, OpenSceneMode.Additive);
+
+            foreach (GameObject root in gameScene.GetRootGameObjects())
+            {
+                if (GameSceneRoots.Contains(root.name))
+                    SceneManager.MoveGameObjectToScene(root, scene);
+            }
+
+            var gameScope = Object.FindObjectsByType<GameLifetimeScope>().First(s => s.gameObject.scene == scene);
+            injected.AddRange(GetArray<GameObject>(gameScope, "autoInjectGameObjects").Where(go => go != null && go.scene == scene));
+            SetArray(gameScope, "autoInjectGameObjects", injected.Distinct().ToArray());
+
+            EditorSceneManager.CloseScene(gameScene, true);
+            SceneManager.SetActiveScene(scene);
+        }
+
+        private static void AddToBuildSettings()
+        {
+            var scenes = EditorBuildSettings.scenes.Where(s => s.path != ScenePath).ToList();
+            scenes.Add(new EditorBuildSettingsScene(ScenePath, true));
+            EditorBuildSettings.scenes = scenes.ToArray();
         }
 
         private static RoomSetup[] CreateRoomSetups()
@@ -461,6 +506,17 @@ namespace SibJam.Editor
             var serialized = new SerializedObject(target);
             serialized.FindProperty(field).objectReferenceValue = value;
             serialized.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static List<T> GetArray<T>(Object target, string field) where T : Object
+        {
+            var property = new SerializedObject(target).FindProperty(field);
+            var values = new List<T>();
+
+            for (int i = 0; i < property.arraySize; i++)
+                values.Add(property.GetArrayElementAtIndex(i).objectReferenceValue as T);
+
+            return values;
         }
 
         private static void SetArray(Object target, string field, Object[] values)

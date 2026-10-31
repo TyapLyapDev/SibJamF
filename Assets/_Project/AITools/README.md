@@ -5,7 +5,7 @@
 
 | Скрипт | Меню | Что делает |
 |---|---|---|
-| `Editor/LevelFlowBuilder.cs` | SibJam → AI Tools → Build Level Flow Scene | Собирает `Scenes/LevelFlow.unity` с нуля: комнаты, коридоры-сейфзоны, двери, волны, камеры, босс |
+| `Editor/GameplayFlowBuilder.cs` | SibJam → AI Tools → Build Gameplay Flow Scene | Собирает `Scenes/GameplayFlow.unity` с нуля: комнаты, коридоры-сейфзоны, двери, волны, камеры, босс |
 
 ⚠ Запуск **полностью перезаписывает** сцену и конфиги в `Configs/Levels` — ручные правки пропадут.
 Когда комнаты начнут дорабатывать вручную, генератор больше не запускать.

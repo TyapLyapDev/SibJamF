@@ -1,6 +1,6 @@
-# Прохождение уровня (LevelFlow)
+# Прохождение уровня (GameplayFlow)
 
-Сцена: `Assets/_Project/Scenes/LevelFlow.unity`
+Сцена: `Assets/_Project/Scenes/GameplayFlow.unity` — **игровая сцена**: её открывает кнопка «Играть» в меню (`SceneNames.GameplayFlow`). Игровые системы (`GameLifetimeScope`, меню паузы на Esc, настройки) перенесены из `Game`.
 
 ## Порядок комнат
 
@@ -23,7 +23,7 @@
 |---|---|
 | WASD | перемещение |
 | ЛКМ | удар мечом (2.5 м перед камерой) |
-| Esc / клик | отпустить / залочить курсор |
+| Esc | меню паузы |
 | F1 | **debug:** убить всех врагов |
 | F2 | **debug:** сломать камеры текущей локации |
 
@@ -38,7 +38,6 @@ F1/F2 работают только в редакторе и development-бил�
 | `LocationDoor` | дверь поднимается / опускается |
 | `WeaponPickup` | подбор меча, включает `MeleeWeapon` |
 | `MeleeWeapon` | меч: удар по врагам и камерам |
-| `CursorLocker` | курсор скрыт с самого старта |
 | `DebugCheats` | F1 / F2 |
 
 Логика волн и локаций — в [GameLoop.md](GameLoop.md) и [Waves.md](Waves.md).

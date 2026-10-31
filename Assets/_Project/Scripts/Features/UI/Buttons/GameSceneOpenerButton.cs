@@ -22,6 +22,6 @@ namespace SibJam
             _button.onClick.RemoveListener(OnClick);
 
         private void OnClick() =>
-            _sceneLoader.Load(SceneNames.Game);
+            _sceneLoader.Load(SceneNames.GameplayFlow);
     }
 }
