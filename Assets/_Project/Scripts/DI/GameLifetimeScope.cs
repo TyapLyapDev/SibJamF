@@ -9,6 +9,7 @@ namespace SibJam
         [SerializeField] private GameExitDialog _gameExitDialog;
         [SerializeField] private PopUp _gameButtons;
         [SerializeField] private Settings _settings;
+        [SerializeField] private Anticlicker _anticlicker;
 
         protected override void Configure(IContainerBuilder builder)
         {
@@ -18,6 +19,7 @@ namespace SibJam
             builder.RegisterComponent(_gameExitDialog);
             builder.RegisterComponent(_gameButtons);
             builder.RegisterComponent(_settings);
+            builder.RegisterComponent(_anticlicker);
         }
     }
 }

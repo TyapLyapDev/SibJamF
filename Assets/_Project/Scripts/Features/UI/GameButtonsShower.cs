@@ -10,6 +10,7 @@ namespace SibJam
         private readonly ICursorShower _cursorShower;
         private readonly IPauseSwitcher _pauseSwitcher;
         private readonly PopUp _gameButtons;
+        private readonly Anticlicker _anticlicker;
 
         private bool _isShow;
         private bool _wasEscapePressed;
@@ -19,13 +20,15 @@ namespace SibJam
             IPlayerInputReader playerInputReader,
             ICursorShower cursorShower,
             IPauseSwitcher pauseSwitcher,
-            PopUp gameButtons)
+            PopUp gameButtons,
+            Anticlicker anticlicker)
         {
             _inputReader = inputReader ?? throw new ArgumentNullException(nameof(inputReader));
             _playerInputReader = playerInputReader ?? throw new ArgumentNullException(nameof(playerInputReader));
             _cursorShower = cursorShower ?? throw new ArgumentException(nameof(cursorShower));
             _pauseSwitcher = pauseSwitcher ?? throw new ArgumentNullException(nameof(pauseSwitcher));
             _gameButtons = gameButtons != null ? gameButtons : throw new ArgumentNullException(nameof(gameButtons));
+            _anticlicker = anticlicker != null ? anticlicker : throw new ArgumentNullException(nameof(anticlicker));
         }
 
         public void Tick()
@@ -52,6 +55,7 @@ namespace SibJam
             _cursorShower.Show();
             _playerInputReader.Disable();
             _pauseSwitcher.Pause();
+            _anticlicker.Show();
         }
 
         public void Hide()
@@ -61,6 +65,7 @@ namespace SibJam
             _cursorShower.Hide();
             _playerInputReader.Enable();
             _pauseSwitcher.Unpause();
+            _anticlicker.Hide();
         }
     }
 }

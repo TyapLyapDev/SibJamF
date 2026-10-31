@@ -1046,6 +1046,7 @@ MonoBehaviour:
   _gameExitDialog: {fileID: 449139114}
   _gameButtons: {fileID: 1003894744}
   _settings: {fileID: 1107141202}
+  _anticlicker: {fileID: 1534920813}
 --- !u!4 &90248782
 Transform:
   m_ObjectHideFlags: 0
@@ -13081,7 +13082,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!224 &1369826413
 RectTransform:
@@ -15015,13 +15016,14 @@ GameObject:
   - component: {fileID: 1534920810}
   - component: {fileID: 1534920812}
   - component: {fileID: 1534920811}
+  - component: {fileID: 1534920813}
   m_Layer: 5
   m_Name: Anticlicker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1534920810
 RectTransform:
   m_ObjectHideFlags: 0
@@ -15054,7 +15056,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.59607846}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.8509804}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -15079,6 +15081,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1534920809}
   m_CullTransparentMesh: 1
+--- !u!114 &1534920813
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1534920809}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2333064b93ce2a445aa962300f484e19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SibJam.Anticlicker
 --- !u!1 &1562689618
 GameObject:
   m_ObjectHideFlags: 0
@@ -16232,7 +16246,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 4279900698
   m_fontColor: {r: 0.1, g: 0.1, b: 0.1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -16245,7 +16259,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2

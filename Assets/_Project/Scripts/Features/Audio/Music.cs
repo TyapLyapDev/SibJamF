@@ -1,29 +1,32 @@
 using UnityEngine;
 
-public class Music : MonoBehaviour
+namespace SibJam
 {
-    [SerializeField] private AudioSource _source;
-    [SerializeField] private AudioClip _menu;
-    [SerializeField] private AudioClip _game;
-
-    public void PlayMenu()
+    public class Music : MonoBehaviour
     {
-        Play(_menu);
-    }
+        [SerializeField] private AudioSource _source;
+        [SerializeField] private AudioClip _menu;
+        [SerializeField] private AudioClip _game;
 
-    public void PlayGame()
-    {
-        Play(_game);
-    }
+        public void PlayMenu()
+        {
+            Play(_menu);
+        }
 
-    public void Pause()
-    {
-        _source.Pause();
-    }
+        public void PlayGame()
+        {
+            Play(_game);
+        }
 
-    private void Play(AudioClip clip)
-    {
-        _source.clip = clip;
-        _source.Play();
+        public void Pause()
+        {
+            _source.Pause();
+        }
+
+        private void Play(AudioClip clip)
+        {
+            _source.clip = clip;
+            _source.Play();
+        }
     }
 }
