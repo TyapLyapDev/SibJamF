@@ -158,7 +158,6 @@ GameObject:
   - component: {fileID: 6052845009996309599}
   - component: {fileID: 9023991001960477169}
   - component: {fileID: 309471003807619959}
-  - component: {fileID: 2515049910931525189}
   - component: {fileID: 5392770592696378694}
   - component: {fileID: 3795421255006730995}
   m_Layer: 0
@@ -252,19 +251,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c8c779749e7bcd47807e0cbd3d64e91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovementLesson.Gravity
---- !u!114 &2515049910931525189
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8531677155835455200}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f9c70eb01233d6d4e8b8d94e206be1da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MovementLesson.InputReader
-  _inputActions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
 --- !u!114 &5392770592696378694
 MonoBehaviour:
   m_ObjectHideFlags: 0
