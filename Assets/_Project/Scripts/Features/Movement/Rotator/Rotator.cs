@@ -9,15 +9,16 @@ namespace SibJam
         [SerializeField] private Transform _pitchTransform;
         [SerializeField] private float _minimumPitch = -90;
         [SerializeField] private float _maximumPitch = 90;
-        [SerializeField] private float _sensitivity = 5f;
 
         private IPlayerInputReader _inputReader;
+        private ISaver _saver;
         private float _currentPitch;
 
         [Inject]
-        public void Construct(IPlayerInputReader inputReader)
+        public void Construct(IPlayerInputReader inputReader, ISaver saver)
         {
             _inputReader = inputReader ?? throw new ArgumentNullException(nameof(inputReader));
+            _saver = saver ?? throw new ArgumentNullException(nameof(saver));
         }
 
         private void Update() =>
@@ -31,8 +32,10 @@ namespace SibJam
             if (_pitchTransform == null || transform == null)
                 return;
 
-            float pitchDelta = lookInput.y * _sensitivity;
-            float yawDelta = lookInput.x * _sensitivity;
+            float sensitivity = _saver.Data.MouseSensitivity;
+
+            float pitchDelta = lookInput.y * sensitivity;
+            float yawDelta = lookInput.x * sensitivity;
 
             _currentPitch = Mathf.Clamp(_currentPitch - pitchDelta, _minimumPitch, _maximumPitch);
             _pitchTransform.localRotation = Quaternion.Euler(_currentPitch, 0f, 0f);

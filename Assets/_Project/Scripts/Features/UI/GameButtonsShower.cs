@@ -37,22 +37,30 @@ namespace SibJam
                 _isShow = !_isShow;
 
                 if (_isShow)
-                {
-                    _gameButtons.Show();
-                    _cursorShower.Show();
-                    _playerInputReader.Disable();
-                    _pauseSwitcher.Pause();
-                }
+                    Show();
                 else
-                {
-                    _gameButtons.Hide();
-                    _cursorShower.Hide();
-                    _playerInputReader.Enable();
-                    _pauseSwitcher.Unpause();
-                }
+                    Hide();
             }
 
             _wasEscapePressed = isEscapePressed;
+        }
+
+        public void Show()
+        {
+            _isShow = true;
+            _gameButtons.Show();
+            _cursorShower.Show();
+            _playerInputReader.Disable();
+            _pauseSwitcher.Pause();
+        }
+
+        public void Hide()
+        {
+            _isShow = false;
+            _gameButtons.Hide();
+            _cursorShower.Hide();
+            _playerInputReader.Enable();
+            _pauseSwitcher.Unpause();
         }
     }
 }
