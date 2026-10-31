@@ -149,7 +149,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 776d55ecad39302419a8c3a64c165b56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Waves.WavesTrigger
-  _wavesLifeCycle: {fileID: 134305124}
+  _wavesLoop: {fileID: 134305124}
   _playerTag: Player
 --- !u!65 &88802633
 BoxCollider:
@@ -264,8 +264,8 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ae8926089a7b4efaa2810c1390b8fa2e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SibJam.Waves.WavesLifeCycle
-  _wavesLifeCycleConfig: {fileID: 11400000, guid: 8de1360b1106b7b479dfe535b1489387, type: 2}
+  m_EditorClassIdentifier: Assembly-CSharp::SibJam.Waves.WavesLoop
+  _wavesLoopConfig: {fileID: 11400000, guid: 8de1360b1106b7b479dfe535b1489387, type: 2}
   _waveSpawner: {fileID: 134305125}
 --- !u!114 &134305125
 MonoBehaviour:
@@ -300,7 +300,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b60bbcfb0c4e5644f8a1b4d21895c345, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Waves.Testing.WavesDebugView
-  _wavesLifeCycle: {fileID: 134305124}
+  _wavesLoop: {fileID: 134305124}
   _screenPosition: {x: 10, y: 10}
 --- !u!114 &134305127
 MonoBehaviour:
@@ -629,7 +629,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 776d55ecad39302419a8c3a64c165b56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Waves.WavesTrigger
-  _wavesLifeCycle: {fileID: 1939774290}
+  _wavesLoop: {fileID: 1939774290}
   _playerTag: Player
 --- !u!65 &834441633
 BoxCollider:
@@ -1738,8 +1738,8 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ae8926089a7b4efaa2810c1390b8fa2e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SibJam.Waves.WavesLifeCycle
-  _wavesLifeCycleConfig: {fileID: 11400000, guid: b7c0cefc9a9fa1540b64e0c4ac061805, type: 2}
+  m_EditorClassIdentifier: Assembly-CSharp::SibJam.Waves.WavesLoop
+  _wavesLoopConfig: {fileID: 11400000, guid: b7c0cefc9a9fa1540b64e0c4ac061805, type: 2}
   _waveSpawner: {fileID: 1939774291}
 --- !u!114 &1939774291
 MonoBehaviour:
@@ -1774,7 +1774,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b60bbcfb0c4e5644f8a1b4d21895c345, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Waves.Testing.WavesDebugView
-  _wavesLifeCycle: {fileID: 1939774290}
+  _wavesLoop: {fileID: 1939774290}
   _screenPosition: {x: 10, y: 220}
 --- !u!4 &1939774293
 Transform:

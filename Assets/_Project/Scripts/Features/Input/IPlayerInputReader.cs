@@ -12,6 +12,8 @@ namespace SibJam
 
         public bool IsJumpPressed { get; }
 
+        public bool IsAttackPressed { get; }
+
         public void Enable();
 
         public void Disable();
