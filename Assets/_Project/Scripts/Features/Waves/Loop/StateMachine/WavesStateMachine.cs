@@ -8,13 +8,20 @@ namespace SibJam.Waves
         private readonly DelaySequence _delays;
         private readonly WaveSpawner _waveSpawner;
         private readonly bool _repeatLastWave;
+        private readonly float _statsGrowthPerWave;
+        private readonly int _extraEnemiesPerRepeat;
 
-        public WavesStateMachine(WaveSequence waves, DelaySequence delays, WaveSpawner waveSpawner, bool repeatLastWave)
+        private int _spawnedWavesCount;
+
+        public WavesStateMachine(WaveSequence waves, DelaySequence delays, WaveSpawner waveSpawner, bool repeatLastWave,
+            float statsGrowthPerWave = 0f, int extraEnemiesPerRepeat = 0)
         {
             _waves = waves;
             _delays = delays;
             _waveSpawner = waveSpawner;
             _repeatLastWave = repeatLastWave;
+            _statsGrowthPerWave = statsGrowthPerWave;
+            _extraEnemiesPerRepeat = extraEnemiesPerRepeat;
         }
 
         public event Action Completed;
@@ -37,6 +44,7 @@ namespace SibJam.Waves
             _waves.Reset();
             _delays.Reset();
             CurrentWave = null;
+            _spawnedWavesCount = 0;
 
             if (_waves.IsEmpty)
                 EnterCompleted();
@@ -98,7 +106,13 @@ namespace SibJam.Waves
         private void EnterWave()
         {
             DelayTimeLeft = 0f;
-            CurrentWave = _waveSpawner.Spawn(_waves.Next());
+            bool isRepeat = !_waves.HasNext && _spawnedWavesCount > 0;
+            WaveConfig config = _waves.Next();
+            int repeats = isRepeat ? _spawnedWavesCount - _waves.CurrentIndex : 0;
+            var difficulty = new WaveDifficulty(repeats * _extraEnemiesPerRepeat, 1f + _spawnedWavesCount * _statsGrowthPerWave);
+
+            CurrentWave = _waveSpawner.Spawn(config, difficulty);
+            _spawnedWavesCount++;
             SetState(WavesLoopState.Wave);
         }
 
