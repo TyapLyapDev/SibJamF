@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,6 +8,8 @@ namespace SibJam
     {
         [SerializeField] private AudioSource _sourcePrefab;
         [SerializeField] private int _poolSize = 4;
+        [SerializeField] private AudioClip _menuOpen;
+        [SerializeField] private AudioClip _menuClose;
 
         private readonly List<AudioSource> _sources = new();
         private int _nextIndex;
@@ -51,5 +54,11 @@ namespace SibJam
 
             target.PlayOneShot(clip);
         }
+
+        public void PlayMenuOpen() =>
+            Play(_menuOpen);
+
+        public void PlayMenuClose() =>
+            Play(_menuClose);
     }
 }

@@ -221,8 +221,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Music
   _source: {fileID: 1497399640414434541}
-  _menu: {fileID: 8300000, guid: 7359c1a25756e1440a83fcc792b3b8b7, type: 3}
-  _game: {fileID: 8300000, guid: 0c789ded0b63b7042811b8dd780908ef, type: 3}
+  _menu: {fileID: 8300000, guid: dd127d40cbdce1b439e16e45f5775475, type: 3}
+  _game: {fileID: 8300000, guid: 87cd940f5477da3499c8d3cbdd2f2bca, type: 3}
 --- !u!1 &5022525249900094740
 GameObject:
   m_ObjectHideFlags: 0
@@ -323,3 +323,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.UiSfxService
   _sourcePrefab: {fileID: 2668032432095145171, guid: fd3496d9ab3f5004c9c99b6d139e4cf2, type: 3}
   _poolSize: 4
+  _menuOpen: {fileID: 8300000, guid: 8a31d04efb754a84f982f7e77b143436, type: 3}
+  _menuClose: {fileID: 8300000, guid: c358c3573055c1d479d1d6c1bb349d96, type: 3}

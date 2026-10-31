@@ -9,6 +9,7 @@ namespace SibJam
         private readonly IPlayerInputReader _playerInputReader;
         private readonly ICursorShower _cursorShower;
         private readonly IPauseSwitcher _pauseSwitcher;
+        private readonly UiSfxService _sfxService;
         private readonly PopUp _gameButtons;
         private readonly Anticlicker _anticlicker;
 
@@ -21,7 +22,8 @@ namespace SibJam
             ICursorShower cursorShower,
             IPauseSwitcher pauseSwitcher,
             PopUp gameButtons,
-            Anticlicker anticlicker)
+            Anticlicker anticlicker,
+            UiSfxService sfxService)
         {
             _inputReader = inputReader ?? throw new ArgumentNullException(nameof(inputReader));
             _playerInputReader = playerInputReader ?? throw new ArgumentNullException(nameof(playerInputReader));
@@ -29,6 +31,7 @@ namespace SibJam
             _pauseSwitcher = pauseSwitcher ?? throw new ArgumentNullException(nameof(pauseSwitcher));
             _gameButtons = gameButtons != null ? gameButtons : throw new ArgumentNullException(nameof(gameButtons));
             _anticlicker = anticlicker != null ? anticlicker : throw new ArgumentNullException(nameof(anticlicker));
+            _sfxService = sfxService != null ? sfxService : throw new ArgumentNullException(nameof(sfxService));
         }
 
         public void Tick()
@@ -40,9 +43,15 @@ namespace SibJam
                 _isShow = !_isShow;
 
                 if (_isShow)
+                {
                     Show();
+                    _sfxService.PlayMenuOpen();
+                }
                 else
+                {
                     Hide();
+                    _sfxService.PlayMenuClose();
+                }
             }
 
             _wasEscapePressed = isEscapePressed;
@@ -55,7 +64,7 @@ namespace SibJam
             _cursorShower.Show();
             _playerInputReader.Disable();
             _pauseSwitcher.Pause();
-            _anticlicker.Show();
+            _anticlicker.Show();            
         }
 
         public void Hide()

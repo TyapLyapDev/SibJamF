@@ -1077,6 +1077,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1893631614}
     m_Modifications:
+    - target: {fileID: 5622951439270842046, guid: 84cb7276ccf26e245951be6719730cf5, type: 3}
+      propertyPath: '_clips.Array.data[0]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 5be242b95e814eb4e9d653e25b7a043e, type: 3}
     - target: {fileID: 7715288883470720235, guid: 84cb7276ccf26e245951be6719730cf5, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0

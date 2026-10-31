@@ -92,7 +92,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
+  m_fontSize: 28.55
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -339,4 +339,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.ClickSound
   _clips:
-  - {fileID: 8300000, guid: dbc7a1d1f32245145acccd837989bef1, type: 3}
+  - {fileID: 8300000, guid: 2b23d25a93c71a34482e23f9991b0614, type: 3}
