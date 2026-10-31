@@ -423,7 +423,7 @@ namespace SibJam.Editor
             {
                 var wave = ScriptableObject.CreateInstance<WaveConfig>();
                 wave.Enemies = setup.Waves[i].Select(e => new WaveEnemyEntry { Enemy = e.enemy, Count = e.count }).ToList();
-                CreateAsset(wave, $"{ConfigsFolder}/{setup.Name}_Wave_{i + 1}.asset");
+                wave = CreateAsset(wave, $"{ConfigsFolder}/{setup.Name}_Wave_{i + 1}.asset");
                 config.WavesWithDelay.Add(new WaveWithDelayConfig { Wave = wave, DelayInSeconds = setup.Delay });
             }
 
@@ -488,15 +488,38 @@ namespace SibJam.Editor
             var shader = GraphicsSettings.currentRenderPipeline != null
                 ? GraphicsSettings.currentRenderPipeline.defaultMaterial.shader
                 : Shader.Find("Standard");
-            var material = new Material(shader) { color = color };
-            return CreateAsset(material, $"{ConfigsFolder}/{name}.mat");
+            string path = $"{ConfigsFolder}/{name}.mat";
+            var existing = AssetDatabase.LoadAssetAtPath<Material>(path);
+
+            // Материал правим на месте: CopySerialized теряет теги рендера, а пересоздание меняет GUID
+            if (existing != null)
+            {
+                existing.shader = shader;
+                existing.color = color;
+                EditorUtility.SetDirty(existing);
+                return existing;
+            }
+
+            return CreateAsset(new Material(shader) { color = color }, path);
         }
 
+        // Существующий ассет обновляется на месте, чтобы не менялся GUID и не ломались ссылки в git
         private static T CreateAsset<T>(T asset, string path) where T : Object
         {
-            AssetDatabase.DeleteAsset(path);
-            AssetDatabase.CreateAsset(asset, path);
-            return asset;
+            var existing = AssetDatabase.LoadAssetAtPath<T>(path);
+
+            if (existing == null)
+            {
+                AssetDatabase.DeleteAsset(path);
+                AssetDatabase.CreateAsset(asset, path);
+                return asset;
+            }
+
+            EditorUtility.CopySerialized(asset, existing);
+            existing.name = System.IO.Path.GetFileNameWithoutExtension(path);
+            EditorUtility.SetDirty(existing);
+            Object.DestroyImmediate(asset);
+            return existing;
         }
 
         private static T Load<T>(string path) where T : Object => AssetDatabase.LoadAssetAtPath<T>(path);
