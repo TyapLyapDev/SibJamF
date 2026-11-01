@@ -27,7 +27,7 @@ namespace SibJam.Cutscenes
 
         [Header("Звук и реплики")]
         [SerializeField] private AudioSource _voiceSource;
-        [SerializeField] private SubtitleView _subtitles;
+        [SerializeField] private Subtitles _subtitles;
         [SerializeField] private CutsceneCue[] _cues;
 
         [Header("Экран")]
@@ -195,6 +195,9 @@ namespace SibJam.Cutscenes
                 AudioSource source = cue.Source != null ? cue.Source : _voiceSource;
                 source.PlayOneShot(cue.Clip);
             }
+
+            if (!string.IsNullOrEmpty(cue.Text))
+                _subtitles.Show(cue.Speaker, cue.Text, cue.SubtitleDuration);
 
             cue.Event?.Invoke();
         }

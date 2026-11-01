@@ -12,6 +12,8 @@ namespace SibJam
         [SerializeField] private TMP_Text _text;
         [SerializeField] private CanvasGroup _canvasGroup;
         [SerializeField, Min(0f)] private float _fadeDuration = 0.2f;
+        [Tooltip("Цвет имени говорящего перед репликой")]
+        [SerializeField] private Color _speakerColor = new Color(1f, 0.75f, 0.35f);
 
         [Header("Update")]
         [Tooltip("Игнорировать Time.timeScale (например, если субтитры должны быть видны в паузе)")]
@@ -19,6 +21,7 @@ namespace SibJam
 
         private Tween _fadeTween;
         private Coroutine _animationCoroutine;
+        private Coroutine _hideCoroutine;
 
         public bool IsAnimating => _animationCoroutine != null;
 
@@ -46,36 +49,47 @@ namespace SibJam
                 Debug.LogError($"[Subtitles] CanvasGroup не назначен на '{name}'.", this);
         }
 
-        private void OnDisable() => StopAnimation();
+        private void OnDisable() => StopRoutines();
 
-        public void Show(SubtitleConfig config)
+        public void Show(SubtitleConfig config, float duration = 0f)
         {
             if (config == null)
                 throw new ArgumentNullException(nameof(config));
 
-            Show(config.Text, config.Animation);
+            Show(config.Speaker, config.Text, duration, config.Animation);
         }
 
-        public void Show(string text, SubtitleAnimation animation = null)
+        public void Show(string text, SubtitleAnimation animation = null) =>
+            Show(null, text, 0f, animation);
+
+        // duration > 0 — субтитр сам скроется через столько секунд после показа (но не раньше конца анимации)
+        public void Show(string speaker, string text, float duration, SubtitleAnimation animation = null)
         {
             if (string.IsNullOrEmpty(text))
                 return;
 
-            StopAnimation();
+            StopRoutines();
+
+            string line = string.IsNullOrEmpty(speaker)
+                ? text
+                : $"<color=#{ColorUtility.ToHtmlStringRGB(_speakerColor)}>{speaker}:</color> {text}";
 
             _text.maxVisibleCharacters = int.MaxValue;
 
             if (animation != null)
-                _animationCoroutine = StartCoroutine(PlayAnimation(animation, text));
+                _animationCoroutine = StartCoroutine(PlayAnimation(animation, line));
             else
-                _text.text = text;
+                _text.text = line;
+
+            if (duration > 0f)
+                _hideCoroutine = StartCoroutine(HideAfter(duration));
 
             FadeTo(1f);
         }
 
         public void Hide()
         {
-            StopAnimation();
+            StopRoutines();
             FadeTo(0f);
         }
 
@@ -85,12 +99,32 @@ namespace SibJam
             _animationCoroutine = null;
         }
 
-        private void StopAnimation()
+        private IEnumerator HideAfter(float duration)
+        {
+            if (_useUnscaledTime)
+                yield return new WaitForSecondsRealtime(duration);
+            else
+                yield return new WaitForSeconds(duration);
+
+            while (IsAnimating)
+                yield return null;
+
+            _hideCoroutine = null;
+            FadeTo(0f);
+        }
+
+        private void StopRoutines()
         {
             if (_animationCoroutine != null)
             {
                 StopCoroutine(_animationCoroutine);
                 _animationCoroutine = null;
+            }
+
+            if (_hideCoroutine != null)
+            {
+                StopCoroutine(_hideCoroutine);
+                _hideCoroutine = null;
             }
         }
 

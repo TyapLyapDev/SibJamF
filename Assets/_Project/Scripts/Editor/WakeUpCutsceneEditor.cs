@@ -361,7 +361,7 @@ namespace SibJam.EditorTools
             return clip != null ? clip.length : DefaultSubtitleDuration;
         }
 
-        // Последний субтитр, который на этой секунде висит на экране (как SubtitleView: новый заменяет старый)
+        // Последний субтитр, который на этой секунде висит на экране (как Subtitles: новый заменяет старый)
         private string GetSubtitleAt(float time)
         {
             string result = null;
