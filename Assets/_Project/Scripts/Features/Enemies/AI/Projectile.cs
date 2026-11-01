@@ -12,6 +12,8 @@ namespace _Project.Scripts.Enemies
         [SerializeField] private LayerMask _hitMask = ~0;
         [Tooltip("Во сколько раз быстрее летит отбитый снаряд")]
         [SerializeField, Min(1f)] private float _reflectSpeedMultiplier = 1.5f;
+        [Tooltip("За сколько метров до игрока снаряд уже можно отбить: окно парирования короткое, без запаса в него не попасть")]
+        [SerializeField, Min(0f)] private float _parryReach = 3f;
 
         private readonly RaycastHit[] _hits = new RaycastHit[8];
 
@@ -45,6 +47,10 @@ namespace _Project.Scripts.Enemies
             }
 
             var step = _speed * deltaTime;
+
+            if (!_isReflected && TryParryAhead())
+                return;
+
             if (TryFindHit(step, out var hit))
             {
                 OnHit(hit);
@@ -72,6 +78,24 @@ namespace _Project.Scripts.Enemies
             }
 
             return best < float.MaxValue;
+        }
+
+        private bool TryParryAhead()
+        {
+            var count = Physics.SphereCastNonAlloc(transform.position, _radius, _direction, _hits, _parryReach, _hitMask, QueryTriggerInteraction.Ignore);
+
+            for (var i = 0; i < count; i++)
+            {
+                var target = _hits[i].collider.GetComponentInParent<PlayerTarget>();
+
+                if (target != null && target.TryParry(new HitInfo(_damage, _source, _direction, parryable: true)))
+                {
+                    Reflect();
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private bool IsOwn(Collider collider)

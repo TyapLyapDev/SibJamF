@@ -14,7 +14,7 @@ namespace SibJam.Weapons
         Parried
     }
 
-    // Меч: по ЛКМ — рубящий удар сферой перед прицелом, урон врагам и удары по камерам; по ПКМ — блок, в начале блока окно парирования.
+    // Меч: по ЛКМ — рубящий удар сферой перед прицелом, урон врагам и удары по камерам; по ПКМ — короткое парирование (кнопку не зажать, есть перезарядка).
     // С руками (_arms) удар наносится в кадр анимации, без них — сразу, а модель машет кодом
     public class MeleeWeapon : MonoBehaviour
     {
@@ -30,18 +30,37 @@ namespace SibJam.Weapons
         [SerializeField, Min(0f)] private float _cooldown = 0.45f;
         [SerializeField] private LayerMask _hitMask = ~0;
 
+        [Header("Блок")]
+        [Tooltip("Сколько ударов или снарядов выдерживает блок, последний пробивает его")]
+        [SerializeField, Min(1)] private int _guardHits = 2;
+        [Tooltip("Если по блоку не били столько секунд — он снова держит все удары")]
+        [SerializeField, Min(0f)] private float _guardRecoverDelay = 2f;
+        [Tooltip("Сколько нельзя снова поднять блок после пробития")]
+        [SerializeField, Min(0f)] private float _guardBreakDuration = 1.2f;
+
+        [Header("Контратака")]
+        [Tooltip("Сколько после блока или парирования есть на удар с бонусным уроном")]
+        [SerializeField, Min(0f)] private float _counterWindow = 0.8f;
+
         private IPlayerInputReader _inputReader;
         private bool _wasAttackPressed;
+        private int _guardLeft;
+        private float _lastGuardHitTime;
+        private float _blockLockedUntil;
+        private float _counterUntil = -1f;
+        private bool _isCounterAttack;
         private float _nextAttackTime;
         private float _blockStartTime;
         private Quaternion _modelRestRotation;
 
         public event Action Blocked;
         public event Action Parried;
+        public event Action GuardBroken;
 
         public bool IsBlocking { get; private set; }
 
         public bool IsInParryWindow => IsBlocking && Time.time - _blockStartTime <= ParryWindow;
+        public bool IsCounterReady => Time.time <= _counterUntil;
 
         private float Damage => _config != null ? _config.Damage : _damage;
         private float Range => _config != null ? _config.Range : _range;
@@ -59,6 +78,8 @@ namespace SibJam.Weapons
         {
             if (_model != null)
                 _modelRestRotation = _model.localRotation;
+
+            _guardLeft = _guardHits;
 
             if (_arms != null && _config != null)
                 _arms.Equip(_config);
@@ -85,11 +106,16 @@ namespace SibJam.Weapons
         {
             bool canAct = CursorLocker.IsLocked;
 
-            SetBlocking(canAct && _inputReader.IsBlockPressed);
+            if (Time.time - _lastGuardHitTime >= _guardRecoverDelay)
+                _guardLeft = _guardHits;
+
+            // Блок держится, пока зажата ПКМ; в самом начале — окно парирования. Пробитый блок какое-то время не поднять
+            SetBlocking(canAct && _inputReader.IsBlockPressed && Time.time >= _blockLockedUntil && Time.time >= _nextAttackTime);
 
             bool isAttackPressed = _inputReader.IsAttackPressed;
 
-            if (isAttackPressed && !_wasAttackPressed && canAct && !IsBlocking && Time.time >= _nextAttackTime)
+            // Контратаку можно начать прямо из блока
+            if (isAttackPressed && !_wasAttackPressed && canAct && (!IsBlocking || IsCounterReady) && Time.time >= _nextAttackTime)
                 Attack();
 
             _wasAttackPressed = isAttackPressed;
@@ -108,22 +134,44 @@ namespace SibJam.Weapons
         {
             if (IsInParryWindow)
             {
+                OpenCounterWindow();
                 Parried?.Invoke();
                 return IncomingHitResult.Parried;
             }
 
             if (IsBlocking)
             {
+                OpenCounterWindow();
                 Blocked?.Invoke();
+                TakeGuardHit();
                 return IncomingHitResult.Blocked;
             }
 
             return IncomingHitResult.Hit;
         }
 
+        private void OpenCounterWindow() => _counterUntil = Time.time + _counterWindow;
+
+        private void TakeGuardHit()
+        {
+            _lastGuardHitTime = Time.time;
+            _guardLeft--;
+
+            if (_guardLeft > 0)
+                return;
+
+            _blockLockedUntil = Time.time + _guardBreakDuration;
+            _guardLeft = _guardHits;
+            SetBlocking(false);
+            GuardBroken?.Invoke();
+        }
+
         private void Attack()
         {
             _nextAttackTime = Time.time + Cooldown;
+            _isCounterAttack = IsCounterReady;
+            _counterUntil = -1f;
+            SetBlocking(false);
 
             if (_arms != null)
             {
@@ -147,7 +195,7 @@ namespace SibJam.Weapons
 
                 if (enemy != null)
                 {
-                    enemy.TakeDamage(Damage);
+                    enemy.TakeDamage(_isCounterAttack ? Damage * enemy.CounterDamageMultiplier : Damage);
                     continue;
                 }
 

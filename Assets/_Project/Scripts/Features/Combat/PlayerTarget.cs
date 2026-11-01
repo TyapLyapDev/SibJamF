@@ -12,8 +12,8 @@ namespace SibJam.Combat
         [SerializeField] private MeleeWeapon _weapon;
         [Tooltip("Парировать можно только то, что летит спереди: угол от взгляда до источника удара")]
         [SerializeField, Range(0f, 180f)] private float _parryAngle = 75f;
-        [Tooltip("Доля урона, которая проходит сквозь блок после окна парирования. 1 — долгий блок не защищает")]
-        [SerializeField, Range(0f, 1f)] private float _blockDamageMultiplier = 1f;
+        [Tooltip("Доля урона, которая проходит сквозь блок. 0 — блок держит удар полностью (пока его не пробьют)")]
+        [SerializeField, Range(0f, 1f)] private float _blockDamageMultiplier;
 
         public Vector3 Position => transform.position;
         public Vector3 AimPoint => _aimPoint != null ? _aimPoint.position : transform.position + Vector3.up;
@@ -21,22 +21,27 @@ namespace SibJam.Combat
 
         public HitResult TakeHit(HitInfo hit)
         {
+            if (TryParry(hit))
+                return HitResult.Parried;
+
             var damage = hit.Damage;
 
-            if (_weapon != null && _weapon.isActiveAndEnabled && hit.Parryable && IsFacing(hit.Direction))
-            {
-                switch (_weapon.ResolveIncomingHit())
-                {
-                    case IncomingHitResult.Parried:
-                        return HitResult.Parried;
-                    case IncomingHitResult.Blocked:
-                        damage *= _blockDamageMultiplier;
-                        break;
-                }
-            }
+            // Блок держит удар, но каждый попавший в него удар расшатывает его (см. MeleeWeapon)
+            if (_weapon != null && _weapon.isActiveAndEnabled && _weapon.IsBlocking && IsFacing(hit.Direction)
+                && _weapon.ResolveIncomingHit() == IncomingHitResult.Blocked)
+                damage *= _blockDamageMultiplier;
 
             _health.TakeDamage(damage);
             return HitResult.Hit;
+        }
+
+        // Отбит ли удар окном парирования. Снаряды зовут это заранее, на подлёте, чтобы попасть в окно было реально
+        public bool TryParry(HitInfo hit)
+        {
+            if (_weapon == null || !_weapon.isActiveAndEnabled || !hit.Parryable || !_weapon.IsInParryWindow || !IsFacing(hit.Direction))
+                return false;
+
+            return _weapon.ResolveIncomingHit() == IncomingHitResult.Parried;
         }
 
         // Direction — куда летит удар, значит источник в обратной стороне
