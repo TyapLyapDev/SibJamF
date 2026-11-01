@@ -3,15 +3,14 @@ using UnityEngine;
 
 namespace SibJam.Credits
 {
-    // Финальные титры: экран темнеет, текст плывёт снизу вверх, в конце остаётся последняя строка
+    // Финальные титры на сервисном канвасе: экран темнеет, текст плывёт снизу вверх, в конце остаётся последняя строка.
+    // Показывать через сервис EndCredits
     public class CreditsView : MonoBehaviour
     {
         [SerializeField] private CanvasGroup _group;
         [SerializeField] private RectTransform _content;
         [SerializeField, Min(0.01f)] private float _fadeDuration = 1.5f;
         [SerializeField, Min(1f)] private float _scrollSpeed = 70f;
-
-        public bool IsShowing { get; private set; }
 
         private void Awake()
         {
@@ -20,14 +19,7 @@ namespace SibJam.Credits
             _content.gameObject.SetActive(false);
         }
 
-        public void Show()
-        {
-            if (IsShowing)
-                return;
-
-            IsShowing = true;
-            StartCoroutine(Showing());
-        }
+        public void Play() => StartCoroutine(Showing());
 
         private IEnumerator Showing()
         {
