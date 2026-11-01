@@ -94302,10 +94302,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "SIBJAM F\n\n\n<size=32>\u041A\u043E\u043C\u0430\u043D\u0434\u0430</size>\n\n[\u0432\u043F\u0438\u0448\u0438
-    \u0438\u043C\u0435\u043D\u0430 \u0432 \u043E\u0431\u044A\u0435\u043A\u0442\u0435
-    BossFight/Credits/Content]\n\n\n\n\u0421\u043F\u0430\u0441\u0438\u0431\u043E
-    \u0437\u0430 \u0438\u0433\u0440\u0443!"
+  m_text: "<size=72><b>RACCOON TEAM</b></size>\n<size=30><color=#8E99A8>SIBJAM</color></size>\n\n\n\n<size=26><color=#8E99A8>\u0422\u0418\u041C\u041B\u0418\u0414,
+    3D-\u0425\u0423\u0414\u041E\u0416\u041D\u0418\u041A</color></size>\n<size=46>siponikk</size>\n\n\n<size=26><color=#8E99A8>\u0410\u0420\u0422-\u041B\u0418\u0414</color></size>\n<size=46>Ywniak</size>\n\n\n<size=26><color=#8E99A8>\u0425\u0423\u0414\u041E\u0416\u041D\u0418\u041A,
+    \u0410\u041D\u0418\u041C\u0410\u0422\u041E\u0420</color></size>\n<size=46>yuamethys</size>\n\n\n<size=26><color=#8E99A8>\u0413\u0415\u0419\u041C\u0414\u0418\u0417\u0410\u0419\u041D\u0415\u0420</color></size>\n<size=46>Evelina</size>\n\n\n<size=26><color=#8E99A8>\u041F\u0420\u041E\u0413\u0420\u0410\u041C\u041C\u0418\u0421\u0422\u042B</color></size>\n<size=46>rixtarpat\nFixik</size>\n\n\n<size=26><color=#8E99A8>\u0421\u0410\u0423\u041D\u0414-\u0414\u0418\u0417\u0410\u0419\u041D</color></size>\n<size=46>Aezakmi</size>\n\n\n<size=26><color=#8E99A8>\u041A\u041E\u041C\u041F\u041E\u0417\u0418\u0422\u041E\u0420</color></size>\n<size=46>Zlame</size>\n\n\n<size=26><color=#8E99A8>\u041E\u0417\u0412\u0423\u0427\u041A\u0410</color></size>\n<size=46>kesata</size>\n\n\n\n<size=40>\u0421\u043F\u0430\u0441\u0438\u0431\u043E
+    \u0437\u0430 \u0438\u0433\u0440\u0443!</size>"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 71f4f8465629b22408c6866213f93cf0, type: 2}
   m_sharedMaterial: {fileID: 5498367877830545881, guid: 71f4f8465629b22408c6866213f93cf0, type: 2}
