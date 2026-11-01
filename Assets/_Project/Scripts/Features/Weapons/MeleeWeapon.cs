@@ -7,10 +7,22 @@ using VContainer;
 
 namespace SibJam.Weapons
 {
-    // Меч: по ЛКМ — рубящий удар сферой перед прицелом, урон врагам и удары по камерам
+    public enum IncomingHitResult
+    {
+        Hit,
+        Blocked,
+        Parried
+    }
+
+    // Меч: по ЛКМ — рубящий удар сферой перед прицелом, урон врагам и удары по камерам; по ПКМ — блок, в начале блока окно парирования.
+    // С руками (_arms) удар наносится в кадр анимации, без них — сразу, а модель машет кодом
     public class MeleeWeapon : MonoBehaviour
     {
         [SerializeField] private Transform _aimTransform;
+        [SerializeField] private PlayerArms _arms;
+        [SerializeField] private WeaponConfig _config;
+
+        [Header("Без рук: модель и параметры по умолчанию")]
         [SerializeField] private Transform _model;
         [SerializeField, Min(0f)] private float _damage = 50f;
         [SerializeField, Min(0f)] private float _range = 2.5f;
@@ -21,7 +33,21 @@ namespace SibJam.Weapons
         private IPlayerInputReader _inputReader;
         private bool _wasAttackPressed;
         private float _nextAttackTime;
+        private float _blockStartTime;
         private Quaternion _modelRestRotation;
+
+        public event Action Blocked;
+        public event Action Parried;
+
+        public bool IsBlocking { get; private set; }
+
+        public bool IsInParryWindow => IsBlocking && Time.time - _blockStartTime <= ParryWindow;
+
+        private float Damage => _config != null ? _config.Damage : _damage;
+        private float Range => _config != null ? _config.Range : _range;
+        private float Radius => _config != null ? _config.Radius : _radius;
+        private float Cooldown => _config != null ? _config.Cooldown : _cooldown;
+        private float ParryWindow => _config != null ? _config.ParryWindow : 0.2f;
 
         [Inject]
         public void Construct(IPlayerInputReader inputReader)
@@ -33,30 +59,87 @@ namespace SibJam.Weapons
         {
             if (_model != null)
                 _modelRestRotation = _model.localRotation;
+
+            if (_arms != null && _config != null)
+                _arms.Equip(_config);
         }
 
-        private void OnEnable() => SetModelVisible(true);
+        private void OnEnable()
+        {
+            SetModelVisible(true);
 
-        private void OnDisable() => SetModelVisible(false);
+            if (_arms != null)
+                _arms.AttackHit += DealDamage;
+        }
+
+        private void OnDisable()
+        {
+            SetModelVisible(false);
+            SetBlocking(false);
+
+            if (_arms != null)
+                _arms.AttackHit -= DealDamage;
+        }
 
         private void Update()
         {
+            bool canAct = CursorLocker.IsLocked;
+
+            SetBlocking(canAct && _inputReader.IsBlockPressed);
+
             bool isAttackPressed = _inputReader.IsAttackPressed;
 
-            if (isAttackPressed && !_wasAttackPressed && CursorLocker.IsLocked && Time.time >= _nextAttackTime)
+            if (isAttackPressed && !_wasAttackPressed && canAct && !IsBlocking && Time.time >= _nextAttackTime)
                 Attack();
 
             _wasAttackPressed = isAttackPressed;
         }
 
+        public void Equip(WeaponConfig config)
+        {
+            _config = config;
+
+            if (_arms != null && config != null)
+                _arms.Equip(config);
+        }
+
+        // Для урона по игроку: решает, отбит ли удар
+        public IncomingHitResult ResolveIncomingHit()
+        {
+            if (IsInParryWindow)
+            {
+                Parried?.Invoke();
+                return IncomingHitResult.Parried;
+            }
+
+            if (IsBlocking)
+            {
+                Blocked?.Invoke();
+                return IncomingHitResult.Blocked;
+            }
+
+            return IncomingHitResult.Hit;
+        }
+
         private void Attack()
         {
-            _nextAttackTime = Time.time + _cooldown;
+            _nextAttackTime = Time.time + Cooldown;
+
+            if (_arms != null)
+            {
+                _arms.PlayAttack();
+                return;
+            }
 
             if (_model != null)
                 StartCoroutine(Swing());
 
-            var hits = Physics.SphereCastAll(_aimTransform.position, _radius, _aimTransform.forward, _range, _hitMask, QueryTriggerInteraction.Ignore);
+            DealDamage();
+        }
+
+        private void DealDamage()
+        {
+            var hits = Physics.SphereCastAll(_aimTransform.position, Radius, _aimTransform.forward, Range, _hitMask, QueryTriggerInteraction.Ignore);
 
             foreach (RaycastHit hit in hits)
             {
@@ -64,7 +147,7 @@ namespace SibJam.Weapons
 
                 if (enemy != null)
                 {
-                    enemy.TakeDamage(_damage);
+                    enemy.TakeDamage(Damage);
                     continue;
                 }
 
@@ -73,6 +156,20 @@ namespace SibJam.Weapons
                 if (securityCamera != null)
                     securityCamera.TakeHit();
             }
+        }
+
+        private void SetBlocking(bool isBlocking)
+        {
+            if (IsBlocking == isBlocking)
+                return;
+
+            IsBlocking = isBlocking;
+
+            if (isBlocking)
+                _blockStartTime = Time.time;
+
+            if (_arms != null)
+                _arms.SetBlocking(isBlocking);
         }
 
         private IEnumerator Swing()
@@ -95,6 +192,9 @@ namespace SibJam.Weapons
         {
             if (_model != null)
                 _model.gameObject.SetActive(visible);
+
+            if (_arms != null)
+                _arms.gameObject.SetActive(visible);
         }
     }
 }
