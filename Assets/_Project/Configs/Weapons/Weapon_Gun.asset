@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6f1689dde72c672489bd888b710949f9, type: 3}
-  m_Name: Weapon_Blaster
+  m_Name: Weapon_Gun
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Weapons.WeaponConfig
-  <ModelPrefab>k__BackingField: {fileID: 3069873136149650578, guid: cbabb43b37b12a2468d39eed4d467ac8, type: 3}
+  <ModelPrefab>k__BackingField: {fileID: 4419025153884131444, guid: 37b956d2002dc0541b955c45b257ab88, type: 3}
   <ModelPosition>k__BackingField: {x: 0, y: 0, z: 0}
-  <ModelRotation>k__BackingField: {x: 0, y: 180, z: 90}
+  <ModelRotation>k__BackingField: {x: 0, y: 180, z: 270}
   <ModelScale>k__BackingField: {x: 1, y: 1, z: 1}
   <AnimatorOverride>k__BackingField: {fileID: 0}
   <Damage>k__BackingField: 50
