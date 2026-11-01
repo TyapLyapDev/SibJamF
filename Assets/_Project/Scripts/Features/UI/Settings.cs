@@ -97,14 +97,7 @@ namespace SibJam
             _buttonsPopUp.Show();
         }
 
-        private void ApplyVolume(string mixerParameter, float linearValue)
-        {
-            if (_audioMixer == null)
-                return;
-
-            float clampedValue = Mathf.Max(linearValue, 0.0001f);
-            float decibels = Mathf.Log10(clampedValue) * 20f;
-            _audioMixer.SetFloat(mixerParameter, decibels);
-        }
+        private void ApplyVolume(string mixerParameter, float linearValue) =>
+            AudioVolume.Apply(_audioMixer, mixerParameter, linearValue);
     }
 }

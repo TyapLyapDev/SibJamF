@@ -11,6 +11,7 @@ namespace SibJam
         [SerializeField] private InputActionAsset _inputActions;
         [SerializeField] private Music _music;
         [SerializeField] private AudioMixer _mixer;
+        [SerializeField] private UiSfxService _uiSfxService;
 
         protected override void Configure(IContainerBuilder builder)
         {
@@ -22,6 +23,7 @@ namespace SibJam
             builder.Register<ISaver, Saver>(Lifetime.Singleton);
             builder.RegisterComponent(_music);
             builder.RegisterComponent(_mixer);
+            builder.RegisterComponent(_uiSfxService);
 
             builder.RegisterBuildCallback(v =>
             {

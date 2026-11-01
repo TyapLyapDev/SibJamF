@@ -12,6 +12,7 @@ namespace SibJam
         private const string LookActionName = "Look";
         private const string JumpActionName = "Jump";
         private const string AttackActionName = "Attack";
+        private const string BlockActionName = "Block";
 
         private readonly InputActionAsset _inputActions;
 
@@ -20,6 +21,7 @@ namespace SibJam
         private InputAction _lookAction;
         private InputAction _jumpAction;
         private InputAction _attackAction;
+        private InputAction _blockAction;
 
         public PlayerInputReader(InputActionAsset inputActions)
         {
@@ -38,6 +40,8 @@ namespace SibJam
 
         public bool IsAttackPressed { get; private set; }
 
+        public bool IsBlockPressed { get; private set; }
+
         public void Dispose() =>
             Disable();
 
@@ -49,6 +53,7 @@ namespace SibJam
             _lookAction = map.FindAction(LookActionName, throwIfNotFound: true);
             _jumpAction = map.FindAction(JumpActionName, throwIfNotFound: true);
             _attackAction = map.FindAction(AttackActionName, throwIfNotFound: true);
+            _blockAction = map.FindAction(BlockActionName, throwIfNotFound: true);
         }
 
         public void Enable()
@@ -58,6 +63,7 @@ namespace SibJam
             _lookAction.Enable();
             _jumpAction.Enable();
             _attackAction.Enable();
+            _blockAction.Enable();
 
             _moveAction.performed += OnMove;
             _moveAction.canceled += OnMove;
@@ -73,6 +79,9 @@ namespace SibJam
 
             _attackAction.performed += OnAttack;
             _attackAction.canceled += OnAttack;
+
+            _blockAction.performed += OnBlock;
+            _blockAction.canceled += OnBlock;
         }
 
         public void Disable()
@@ -92,17 +101,22 @@ namespace SibJam
             _attackAction.performed -= OnAttack;
             _attackAction.canceled -= OnAttack;
 
+            _blockAction.performed -= OnBlock;
+            _blockAction.canceled -= OnBlock;
+
             _moveAction.Disable();
             _sprintAction.Disable();
             _lookAction.Disable();
             _jumpAction.Disable();
             _attackAction.Disable();
+            _blockAction.Disable();
 
             MoveDirection = Vector2.zero;
             LookDirection = Vector2.zero;
             IsSprinting = false;
             IsJumpPressed = false;
             IsAttackPressed = false;
+            IsBlockPressed = false;
         }
 
         private void OnMove(InputAction.CallbackContext context) =>
@@ -119,5 +133,8 @@ namespace SibJam
 
         private void OnAttack(InputAction.CallbackContext context) =>
             IsAttackPressed = context.ReadValueAsButton();
+
+        private void OnBlock(InputAction.CallbackContext context) =>
+            IsBlockPressed = context.ReadValueAsButton();
     }
 }
