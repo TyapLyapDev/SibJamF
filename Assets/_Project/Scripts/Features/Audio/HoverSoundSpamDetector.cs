@@ -65,10 +65,6 @@ namespace SibJam
             CurrentCount = 0;
             _resetAt = 0f;
 
-            Debug.Log(
-                $"[HoverSoundSpamDetector] Порог {_requiredCount} срабатываний достигнут за {_resetTime:0.##} с на '{name}'.",
-                this);
-
             Triggered?.Invoke();
         }
     }

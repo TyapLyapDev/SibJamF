@@ -294,6 +294,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dce8865f4edc26042bb01b24bba642ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.EasterEggWindow
+  _clip: {fileID: 8300000, guid: a6a703d3466d0fe4d94b56b8bcdfc852, type: 3}
 --- !u!222 &1761439534862856159
 CanvasRenderer:
   m_ObjectHideFlags: 0
