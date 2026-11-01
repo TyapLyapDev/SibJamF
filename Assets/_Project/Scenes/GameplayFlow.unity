@@ -11582,6 +11582,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Locations.LocationDoor
   _liftHeight: 4.5
+  _openDirection: {x: 0, y: 1, z: 0}
   _duration: 1.2
 --- !u!23 &85253173
 MeshRenderer:
@@ -30976,6 +30977,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Locations.LocationDoor
   _liftHeight: 4.5
+  _openDirection: {x: 0, y: 1, z: 0}
   _duration: 1.2
 --- !u!23 &249681437
 MeshRenderer:
@@ -41684,6 +41686,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Locations.LocationDoor
   _liftHeight: 4.5
+  _openDirection: {x: 0, y: 1, z: 0}
   _duration: 1.2
 --- !u!23 &322087664
 MeshRenderer:
@@ -55941,6 +55944,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Locations.LocationDoor
   _liftHeight: 4.5
+  _openDirection: {x: 0, y: 1, z: 0}
   _duration: 1.2
 --- !u!23 &419363171
 MeshRenderer:
@@ -95688,6 +95692,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Locations.LocationDoor
   _liftHeight: 4.5
+  _openDirection: {x: 0, y: 1, z: 0}
   _duration: 1.2
 --- !u!23 &734779808
 MeshRenderer:
@@ -111612,6 +111617,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Locations.LocationDoor
   _liftHeight: 4.5
+  _openDirection: {x: 0, y: 1, z: 0}
   _duration: 1.2
 --- !u!23 &850459665
 MeshRenderer:
@@ -112828,6 +112834,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Locations.LocationDoor
   _liftHeight: 4.5
+  _openDirection: {x: 0, y: 1, z: 0}
   _duration: 1.2
 --- !u!23 &859277428
 MeshRenderer:
@@ -118136,6 +118143,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Locations.LocationDoor
   _liftHeight: 4.5
+  _openDirection: {x: 0, y: 1, z: 0}
   _duration: 1.2
 --- !u!23 &892361830
 MeshRenderer:
@@ -140054,6 +140062,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Weapons.MeleeWeapon
   _aimTransform: {fileID: 1045372329}
+  _arms: {fileID: 0}
+  _config: {fileID: 0}
   _model: {fileID: 1809727460}
   _damage: 50
   _range: 2.5
@@ -185409,7 +185419,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!224 &1369826413
 RectTransform:
@@ -191891,6 +191901,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Locations.LocationDoor
   _liftHeight: 4.5
+  _openDirection: {x: 0, y: 1, z: 0}
   _duration: 1.2
 --- !u!23 &1414126159
 MeshRenderer:
@@ -198302,6 +198313,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Locations.LocationDoor
   _liftHeight: 4.5
+  _openDirection: {x: 0, y: 1, z: 0}
   _duration: 1.2
 --- !u!23 &1460236305
 MeshRenderer:
@@ -218699,6 +218711,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Locations.LocationDoor
   _liftHeight: 4.5
+  _openDirection: {x: 0, y: 1, z: 0}
   _duration: 1.2
 --- !u!23 &1609395841
 MeshRenderer:
@@ -260546,6 +260559,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Locations.LocationDoor
   _liftHeight: 4.5
+  _openDirection: {x: 0, y: 1, z: 0}
   _duration: 1.2
 --- !u!23 &1938153749
 MeshRenderer:
