@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -14,6 +15,8 @@ namespace SibJam
         private UiSfxService _uiSfxService;
         private readonly List<RaycastResult> _raycastResults = new();
         private bool _wasOver;
+
+        public event Action Played;
 
         [Inject]
         public void Construct(UiSfxService uiSfxService)
@@ -36,8 +39,10 @@ namespace SibJam
             if (_clips == null || _clips.Length == 0)
                 return;
 
-            AudioClip clip = _clips[Random.Range(0, _clips.Length)];
+            AudioClip clip = _clips[UnityEngine.Random.Range(0, _clips.Length)];
             _uiSfxService.Play(clip);
+
+            Played?.Invoke();
         }
     }
 }
