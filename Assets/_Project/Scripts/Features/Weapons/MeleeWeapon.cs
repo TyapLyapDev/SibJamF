@@ -154,7 +154,16 @@ namespace SibJam.Weapons
                 SecurityCamera securityCamera = hit.collider.GetComponentInParent<SecurityCamera>();
 
                 if (securityCamera != null)
+                {
                     securityCamera.TakeHit();
+                    continue;
+                }
+
+                IMeleeHitTarget target = hit.collider.GetComponentInParent<IMeleeHitTarget>();
+
+                // У попаданий, которые начались внутри сферы, точка нулевая — берём ближайшую точку коллайдера
+                if (target != null)
+                    target.TakeMeleeHit(hit.point != Vector3.zero ? hit.point : hit.collider.ClosestPoint(_aimTransform.position));
             }
         }
 

@@ -9,6 +9,11 @@ ModelImporter:
       assembly: UnityEngine.CoreModule
       name: M_Atlasbase
     second: {fileID: 2100000, guid: 4bbfbda14c1e6f94780f982823944f66, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Emissive
+    second: {fileID: 2100000, guid: 58b858dda0a1af64b9173f5b6333c3bd, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
