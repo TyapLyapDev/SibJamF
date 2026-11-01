@@ -63,6 +63,8 @@ namespace SibJam.Locations
         private void OnCamerasDestroyed()
         {
             _wavesLoop.StopSpawning();
+            // Иначе застрявший где-то враг навсегда держит дверь закрытой
+            _wavesLoop.KillRemainingEnemies();
             TryComplete();
         }
 

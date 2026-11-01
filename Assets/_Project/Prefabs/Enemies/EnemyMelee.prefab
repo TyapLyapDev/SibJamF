@@ -159,9 +159,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f62b0ecaff58634b9007f21f550d2a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Enemies.MeleeAttack
-  _windupDuration: 0.9
+  _windupDuration: 0.65
   _activeDuration: 0.15
-  _recoveryDuration: 0.5
+  _recoveryDuration: 0.35
   _hitReach: 2
   _hitAngle: 60
   _windupIndicator: {fileID: 0}

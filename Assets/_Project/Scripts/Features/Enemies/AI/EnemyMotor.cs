@@ -15,9 +15,18 @@ namespace _Project.Scripts.Enemies
         [SerializeField, Min(0f)] private float _knockbackGroundDrag = 10f;
         [SerializeField, Min(0.1f)] private float _knockbackMaxDuration = 2f;
 
+        [Header("Падение за пределы локации")]
+        [Tooltip("Если в этом радиусе нет навмеша, связанного с местом удара (крыши не считаются), — враг вылетел за пределы и падает")]
+        [SerializeField, Min(0.1f)] private float _offMeshRadius = 1.5f;
+        [Tooltip("На сколько ниже последней земли нужно упасть, чтобы умереть")]
+        [SerializeField, Min(0.1f)] private float _fallKillDepth = 5f;
+
+        public event System.Action FellOff;
+
         private NavMeshAgent _agent;
         private Coroutine _knockbackRoutine;
         private bool _isDisabled;
+        private NavMeshPath _connectivityPath;
 
         public bool IsKnockedBack { get; private set; }
 
@@ -99,10 +108,14 @@ namespace _Project.Scripts.Enemies
             _agent.enabled = false;
 
             Vector3 position = transform.position;
+            Vector3 origin = position;
+            if (NavMesh.SamplePosition(position, out NavMeshHit originHit, 2f, NavMesh.AllAreas))
+                origin = originHit.position;
             float groundY = position.y;
+            float lastGroundY = groundY;
             bool isAirborne = velocity.y > 0f;
 
-            for (float time = 0f; time < _knockbackMaxDuration; time += Time.deltaTime)
+            for (float time = 0f; time < _knockbackMaxDuration || float.IsNegativeInfinity(groundY); time += Time.deltaTime)
             {
                 float deltaTime = Time.deltaTime;
                 Vector3 horizontal = new Vector3(velocity.x, 0f, velocity.z);
@@ -118,8 +131,26 @@ namespace _Project.Scripts.Enemies
 
                 position += step;
 
-                if (NavMesh.SamplePosition(position, out NavMeshHit navHit, 3f, NavMesh.AllAreas))
+                // Под ногами нет навмеша — вылетел за пределы локации, дальше только падение
+                if (TrySampleConnected(position, origin, _offMeshRadius, out NavMeshHit navHit))
                     groundY = navHit.position.y;
+                else
+                {
+                    isAirborne = true;
+                    groundY = float.NegativeInfinity;
+                }
+
+                if (position.y < lastGroundY - _fallKillDepth)
+                {
+                    transform.position = position;
+                    IsKnockedBack = false;
+                    _knockbackRoutine = null;
+                    FellOff?.Invoke();
+                    yield break;
+                }
+
+                if (!float.IsNegativeInfinity(groundY))
+                    lastGroundY = groundY;
 
                 if (isAirborne)
                 {
@@ -145,13 +176,31 @@ namespace _Project.Scripts.Enemies
                 yield return null;
             }
 
-            if (NavMesh.SamplePosition(transform.position, out NavMeshHit landHit, 5f, NavMesh.AllAreas))
-                transform.position = landHit.position;
+            if (!TrySampleConnected(transform.position, origin, 5f, out NavMeshHit landHit))
+            {
+                IsKnockedBack = false;
+                _knockbackRoutine = null;
+                FellOff?.Invoke();
+                yield break;
+            }
+
+            transform.position = landHit.position;
 
             _agent.enabled = true;
             _agent.Warp(transform.position);
             IsKnockedBack = false;
             _knockbackRoutine = null;
+        }
+
+        // Навмеш есть и на крышах — засчитываем только тот, что связан путём с местом удара
+        private bool TrySampleConnected(Vector3 position, Vector3 origin, float radius, out NavMeshHit hit)
+        {
+            if (!NavMesh.SamplePosition(position, out hit, radius, NavMesh.AllAreas))
+                return false;
+
+            _connectivityPath ??= new NavMeshPath();
+            return NavMesh.CalculatePath(origin, hit.position, NavMesh.AllAreas, _connectivityPath)
+                && _connectivityPath.status == NavMeshPathStatus.PathComplete;
         }
     }
 }

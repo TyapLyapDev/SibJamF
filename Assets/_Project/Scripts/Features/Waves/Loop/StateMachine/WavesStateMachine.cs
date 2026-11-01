@@ -10,11 +10,12 @@ namespace SibJam.Waves
         private readonly bool _repeatLastWave;
         private readonly float _statsGrowthPerWave;
         private readonly int _extraEnemiesPerRepeat;
+        private readonly int _nextWaveAtAliveEnemies;
 
         private int _spawnedWavesCount;
 
         public WavesStateMachine(WaveSequence waves, DelaySequence delays, WaveSpawner waveSpawner, bool repeatLastWave,
-            float statsGrowthPerWave = 0f, int extraEnemiesPerRepeat = 0)
+            float statsGrowthPerWave = 0f, int extraEnemiesPerRepeat = 0, int nextWaveAtAliveEnemies = 0)
         {
             _waves = waves;
             _delays = delays;
@@ -22,6 +23,7 @@ namespace SibJam.Waves
             _repeatLastWave = repeatLastWave;
             _statsGrowthPerWave = statsGrowthPerWave;
             _extraEnemiesPerRepeat = extraEnemiesPerRepeat;
+            _nextWaveAtAliveEnemies = nextWaveAtAliveEnemies;
         }
 
         public event Action Completed;
@@ -78,7 +80,7 @@ namespace SibJam.Waves
             switch (State)
             {
                 case WavesLoopState.Wave:
-                    if (CurrentWave.IsCompleted)
+                    if (IsCurrentWaveCleared())
                         OnWaveCleared();
                     break;
 
@@ -93,6 +95,13 @@ namespace SibJam.Waves
                         EnterCompleted();
                     break;
             }
+        }
+
+        // Волна из одного врага ждёт его смерти, иначе хватает остаться _nextWaveAtAliveEnemies
+        private bool IsCurrentWaveCleared()
+        {
+            int alive = CurrentWave.AliveCount;
+            return alive == 0 || (CurrentWave.TotalCount > _nextWaveAtAliveEnemies && alive <= _nextWaveAtAliveEnemies);
         }
 
         private void OnWaveCleared()
@@ -111,7 +120,9 @@ namespace SibJam.Waves
             int repeats = isRepeat ? _spawnedWavesCount - _waves.CurrentIndex : 0;
             var difficulty = new WaveDifficulty(repeats * _extraEnemiesPerRepeat, 1f + _spawnedWavesCount * _statsGrowthPerWave);
 
+            Wave previous = CurrentWave;
             CurrentWave = _waveSpawner.Spawn(config, difficulty);
+            CurrentWave.Absorb(previous);
             _spawnedWavesCount++;
             SetState(WavesLoopState.Wave);
         }

@@ -196,9 +196,6 @@ namespace SibJam.Cutscenes
                 source.PlayOneShot(cue.Clip);
             }
 
-            if (!string.IsNullOrEmpty(cue.Text))
-                _subtitles.Show(cue.Speaker, cue.Text, cue.SubtitleDuration);
-
             cue.Event?.Invoke();
         }
 

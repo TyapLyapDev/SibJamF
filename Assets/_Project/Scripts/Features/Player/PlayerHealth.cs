@@ -13,6 +13,10 @@ namespace SibJam.Player
         [SerializeField, Min(0f)] private float _regenDelay = 3f;
         [SerializeField, Min(0f)] private float _healOnKill = 5f;
 
+        [Header("Fall")]
+        [Tooltip("На сколько ниже последней земли нужно упасть, чтобы умереть")]
+        [SerializeField, Min(0.1f)] private float _fallKillDepth = 8f;
+
         public event Action Changed;
         public event Action<float> Damaged;
         public event Action Died;
@@ -30,18 +34,46 @@ namespace SibJam.Player
         public bool IsDead => Current <= 0f;
 
         private float _lastDamageTime = float.NegativeInfinity;
+        private CharacterController _controller;
+        private float? _lastGroundedY;
 
-        private void OnEnable() => Enemy.Killed += OnEnemyKilled;
+        private void Awake() => _controller = GetComponentInParent<CharacterController>();
+
+        private void OnEnable()
+        {
+            Enemy.Killed += OnEnemyKilled;
+            // После телепорта на респаун старая высота земли невалидна
+            _lastGroundedY = null;
+        }
+
         private void OnDisable() => Enemy.Killed -= OnEnemyKilled;
 
         private void OnEnemyKilled(Enemy _) => Heal(_healOnKill);
 
         private void Update()
         {
+            CheckFall();
+
             if (IsDead || Current >= _max || _regenPerSecond <= 0f) return;
             if (Time.time - _lastDamageTime < _regenDelay) return;
 
             Heal(_regenPerSecond * Time.deltaTime);
+        }
+
+        // Упал с моста/за пределы локации — смерть
+        private void CheckFall()
+        {
+            if (IsDead || _controller == null || !_controller.enabled) return;
+
+            float y = _controller.transform.position.y;
+            if (_controller.isGrounded)
+            {
+                _lastGroundedY = y;
+                return;
+            }
+
+            if (_lastGroundedY.HasValue && y < _lastGroundedY.Value - _fallKillDepth)
+                TakeDamage(Current);
         }
 
         public void TakeDamage(float amount)

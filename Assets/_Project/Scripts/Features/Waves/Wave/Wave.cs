@@ -12,6 +12,25 @@ namespace SibJam.Waves
 
         public int AliveCount => _enemies.Count(enemy => enemy != null && !enemy.IsDead);
 
+        public int TotalCount => _enemies.Count;
+
         public bool IsCompleted => AliveCount == 0;
+
+        // Недобитые враги прошлой волны переходят в новую, чтобы их по-прежнему ждали и добивали
+        public void Absorb(Wave other)
+        {
+            if (other == null) return;
+
+            _enemies.AddRange(other._enemies.Where(enemy => enemy != null && !enemy.IsDead));
+        }
+
+        public void KillAll()
+        {
+            foreach (Enemy enemy in _enemies.ToList())
+            {
+                if (enemy != null && !enemy.IsDead)
+                    enemy.Die();
+            }
+        }
     }
 }

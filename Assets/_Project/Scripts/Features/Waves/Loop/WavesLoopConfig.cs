@@ -15,5 +15,7 @@ namespace SibJam.Waves
         [Min(0f)] public float StatsGrowthPerWave = 0.2f;
         [Tooltip("Сколько врагов добавлять к каждой записи волны за каждый повтор последней волны")]
         [Min(0)] public int ExtraEnemiesPerRepeat = 1;
+        [Tooltip("Следующая волна приходит, когда живых врагов осталось столько или меньше — чтобы камеры нельзя было спокойно ломать, пока один враг бродит далеко. 0 — ждать всех")]
+        [Min(0)] public int NextWaveAtAliveEnemies = 1;
     }
 }

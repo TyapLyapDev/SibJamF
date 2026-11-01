@@ -5,7 +5,7 @@ using UnityEngine;
 namespace SibJam.Combat
 {
     // Вешается на игрока: точка, за которой охотятся враги. Удар сперва проверяется мечом (парирование), остаток урона идёт в PlayerHealth
-    public class PlayerTarget : MonoBehaviour, IEnemyTarget
+    public class PlayerTarget : MonoBehaviour, IEnemyTarget, IPlayerHitReceiver
     {
         [SerializeField] private Transform _aimPoint;
         [SerializeField] private PlayerHealth _health;
@@ -33,6 +33,33 @@ namespace SibJam.Combat
 
             _health.TakeDamage(damage);
             return HitResult.Hit;
+        }
+
+        // Удары босса: блок/парирование мечом, остаток урона в PlayerHealth
+        public IncomingHitResult ReceiveHit(PlayerHit hit)
+        {
+            if (_health.IsDead) return IncomingHitResult.Hit;
+
+            var result = IncomingHitResult.Hit;
+            var facing = hit.Source is not Component source || IsFacing(transform.position - source.transform.position);
+
+            if (hit.CanBlock && facing && _weapon != null && _weapon.isActiveAndEnabled
+                && (_weapon.IsBlocking || _weapon.IsInParryWindow))
+                result = _weapon.ResolveIncomingHit();
+
+            // Нельзя парировать — значит, в окне парирования удар просто блокируется
+            if (result == IncomingHitResult.Parried && !hit.CanParry)
+                result = IncomingHitResult.Blocked;
+
+            var damage = result switch
+            {
+                IncomingHitResult.Parried => 0f,
+                IncomingHitResult.Blocked => hit.BlockedDamage,
+                _ => hit.Damage
+            };
+
+            _health.TakeDamage(damage);
+            return result;
         }
 
         // Отбит ли удар окном парирования. Снаряды зовут это заранее, на подлёте, чтобы попасть в окно было реально

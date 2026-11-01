@@ -38,6 +38,12 @@ namespace _Project.Scripts.Enemies
             if (!TryGetComponent(out _healthBar))
                 _healthBar = gameObject.AddComponent<WorldHealthBar>();
 
+            if (TryGetComponent(out EnemyMotor motor))
+            {
+                motor.FellOff -= Die;
+                motor.FellOff += Die;
+            }
+
             if (TryGetComponent(out EnemyBrain brain))
                 brain.Init(config, target);
         }

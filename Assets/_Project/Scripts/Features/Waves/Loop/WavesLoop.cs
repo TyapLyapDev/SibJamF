@@ -31,7 +31,8 @@ namespace SibJam.Waves
                 _waveSpawner,
                 _wavesLoopConfig.RepeatLastWave,
                 _wavesLoopConfig.StatsGrowthPerWave,
-                _wavesLoopConfig.ExtraEnemiesPerRepeat);
+                _wavesLoopConfig.ExtraEnemiesPerRepeat,
+                _wavesLoopConfig.NextWaveAtAliveEnemies);
         }
 
         private void OnEnable() => _stateMachine.Completed += OnCompleted;
@@ -43,6 +44,9 @@ namespace SibJam.Waves
         public void LaunchWaves() => _stateMachine.Launch();
 
         public void StopSpawning() => _stateMachine.StopSpawning();
+
+        // Камеры уничтожены — оставшиеся враги отключаются вместе с ними
+        public void KillRemainingEnemies() => _stateMachine.CurrentWave?.KillAll();
 
         public void CompleteWaves() => _stateMachine.Complete();
 

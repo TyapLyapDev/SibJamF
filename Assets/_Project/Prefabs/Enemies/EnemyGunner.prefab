@@ -174,8 +174,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a2cd74f426e0814d82a7ca4c9e87d81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Enemies.RangedAttack
-  _windupDuration: 0.8
-  _recoveryDuration: 0.6
+  _windupDuration: 0.6
+  _recoveryDuration: 0.45
   _projectilePrefab: {fileID: 6213979822494930533, guid: efbef7121b403664695c4e2451da5699, type: 3}
   _muzzle: {fileID: 7560955068620383890}
   _projectileSpeed: 26

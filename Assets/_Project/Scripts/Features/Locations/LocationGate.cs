@@ -16,6 +16,8 @@ namespace SibJam.Locations
         [SerializeField] private LocationLoop _toLocation;
         [Tooltip("Можно оставить пустым, если комнаты соединены открыто")]
         [SerializeField] private LocationDoor _door;
+        [Tooltip("Ещё двери на этом же проходе — открываются и закрываются вместе с _door")]
+        [SerializeField] private LocationDoor[] _extraDoors;
         [SerializeField] private PassageZone _roomEntryZone;
 
         private bool _isEntered;
@@ -65,6 +67,9 @@ namespace SibJam.Locations
         {
             if (_door != null)
                 _door.Open();
+
+            foreach (LocationDoor door in _extraDoors)
+                door.Open();
         }
 
         private void OnRoomEntered()
@@ -77,6 +82,9 @@ namespace SibJam.Locations
 
             if (_door != null)
                 _door.Close();
+
+            foreach (LocationDoor door in _extraDoors)
+                door.Close();
         }
     }
 }

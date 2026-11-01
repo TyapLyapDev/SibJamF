@@ -8,7 +8,7 @@ namespace _Project.Scripts.Enemies
     {
         private static readonly HashSet<object> Holders = new();
 
-        public static int MaxAttackers { get; set; } = 2;
+        public static int MaxAttackers { get; set; } = 3;
 
         public static bool TryTake(object holder)
         {
