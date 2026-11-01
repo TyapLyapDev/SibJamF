@@ -1,5 +1,6 @@
 using SibJam.Boss;
 using SibJam.Checkpoints;
+using SibJam.Credits;
 using SibJam.Cutscenes;
 using SibJam.Defeat;
 using SibJam.Player;
@@ -20,6 +21,8 @@ namespace SibJam
         [SerializeField, FormerlySerializedAs("_subtitles")] private SubtitlesView _subtitlesView;
         [Tooltip("Голос героя на сервисном объекте реплик")]
         [SerializeField, FormerlySerializedAs("_voiceLinePlayer")] private VoiceSource _voiceSource;
+        [Tooltip("Финальные титры на сервисном канвасе (пусто — сцена без них)")]
+        [SerializeField] private CreditsView _creditsView;
 
         [Header("Чекпоинты и поражение (пусто — сцена без них)")]
         [SerializeField] private GameLoop _gameLoop;
@@ -43,6 +46,12 @@ namespace SibJam
             builder.Register<Subtitles>(Lifetime.Singleton);
             builder.RegisterComponent(_voiceSource);
             builder.Register<VoiceLinePlayer>(Lifetime.Singleton);
+
+            if (_creditsView != null)
+            {
+                builder.RegisterComponent(_creditsView);
+                builder.Register<EndCredits>(Lifetime.Singleton);
+            }
 
             if (_playerHealth != null)
                 builder.RegisterComponent(_playerHealth).As<IPlayerHealthInfo>().AsSelf();

@@ -29,12 +29,12 @@ namespace SibJam.Boss
         [SerializeField] private TMP_Text _counter;
         [SerializeField] private Image _staggerBar;
         [SerializeField] private TMP_Text _hint;
-        [SerializeField] private CreditsView _credits;
         [SerializeField, Min(0f)] private float _creditsDelay = 4f;
 
         private Coroutine _window;
         private int _broken;
         private Music _music;
+        private EndCredits _credits;
 
         public event Action Started;
         public event Action Won;
@@ -44,9 +44,10 @@ namespace SibJam.Boss
         public Transform RespawnPoint => _respawnPoint;
 
         [Inject]
-        public void Construct(Music music)
+        public void Construct(Music music, EndCredits credits)
         {
             _music = music;
+            _credits = credits;
         }
 
         private void Awake()
