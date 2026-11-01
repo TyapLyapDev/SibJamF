@@ -15,7 +15,6 @@ namespace SibJam.EditorTools
         private const int PreviewWidth = 640;
         private const int PreviewHeight = 360;
         private const float TimelineHeight = 54f;
-        private const float DefaultSubtitleDuration = 3f;
 
         private static readonly Color SoundColor = new Color(0.35f, 0.7f, 1f);
         private static readonly Color TextColor = new Color(1f, 0.7f, 0.25f);
@@ -158,13 +157,14 @@ namespace SibJam.EditorTools
                 SerializedProperty cue = _cues.GetArrayElementAtIndex(i);
                 float start = cue.FindPropertyRelative("_time").floatValue;
                 float x = TimeToX(rect, start, length);
-                bool hasText = !string.IsNullOrEmpty(cue.FindPropertyRelative("_text").stringValue);
-                bool hasSound = cue.FindPropertyRelative("_clip").objectReferenceValue != null;
+                VoiceLine line = GetLine(cue);
+                bool hasText = line != null && !string.IsNullOrEmpty(line.Text);
+                bool hasSound = cue.FindPropertyRelative("_clip").objectReferenceValue != null || (line != null && line.Clip != null);
                 bool hasEvent = HasEvent(cue);
 
                 if (hasText)
                 {
-                    float end = TimeToX(rect, Mathf.Min(start + GetSubtitleDuration(cue), length), length);
+                    float end = TimeToX(rect, Mathf.Min(start + line.Duration, length), length);
                     EditorGUI.DrawRect(new Rect(x, rect.y + 16f, Mathf.Max(2f, end - x), 8f), new Color(TextColor.r, TextColor.g, TextColor.b, 0.6f));
                 }
 
@@ -249,7 +249,10 @@ namespace SibJam.EditorTools
                             SetTime(time.floatValue);
                         }
 
-                        AudioClip clip = cue.FindPropertyRelative("_clip").objectReferenceValue as AudioClip;
+                        VoiceLine cueLine = GetLine(cue);
+                        AudioClip clip = cueLine != null && cueLine.Clip != null
+                            ? cueLine.Clip
+                            : cue.FindPropertyRelative("_clip").objectReferenceValue as AudioClip;
 
                         using (new EditorGUI.DisabledScope(clip == null))
                         {
@@ -264,10 +267,8 @@ namespace SibJam.EditorTools
                     if (!cue.isExpanded)
                         continue;
 
-                    EditorGUILayout.PropertyField(cue.FindPropertyRelative("_speaker"), new GUIContent("Кто говорит"));
-                    EditorGUILayout.PropertyField(cue.FindPropertyRelative("_text"), new GUIContent("Субтитр"));
-                    EditorGUILayout.PropertyField(cue.FindPropertyRelative("_subtitleDuration"), new GUIContent("Держать субтитр, с", "0 — длина звука, без звука 3 с"));
-                    EditorGUILayout.PropertyField(cue.FindPropertyRelative("_clip"), new GUIContent("Звук"));
+                    EditorGUILayout.PropertyField(cue.FindPropertyRelative("_line"), new GUIContent("Реплика", "Озвучка и субтитр"));
+                    EditorGUILayout.PropertyField(cue.FindPropertyRelative("_clip"), new GUIContent("Звук", "Без субтитра: шумы, музыка"));
                     EditorGUILayout.PropertyField(cue.FindPropertyRelative("_source"), new GUIContent("Откуда звучит", "Пусто — голос героя"));
                     EditorGUILayout.PropertyField(cue.FindPropertyRelative("_event"), new GUIContent("Действие"));
                 }
@@ -305,9 +306,7 @@ namespace SibJam.EditorTools
             cue.FindPropertyRelative("_time").floatValue = time;
             cue.FindPropertyRelative("_clip").objectReferenceValue = null;
             cue.FindPropertyRelative("_source").objectReferenceValue = null;
-            cue.FindPropertyRelative("_speaker").stringValue = string.Empty;
-            cue.FindPropertyRelative("_text").stringValue = string.Empty;
-            cue.FindPropertyRelative("_subtitleDuration").floatValue = 0f;
+            cue.FindPropertyRelative("_line").objectReferenceValue = null;
             cue.FindPropertyRelative("_event").FindPropertyRelative("m_PersistentCalls.m_Calls").arraySize = 0;
             cue.isExpanded = true;
         }
@@ -330,12 +329,12 @@ namespace SibJam.EditorTools
 
         private static string Describe(SerializedProperty cue)
         {
-            string speaker = cue.FindPropertyRelative("_speaker").stringValue;
-            string text = cue.FindPropertyRelative("_text").stringValue;
+            VoiceLine line = GetLine(cue);
             var parts = new List<string>();
 
-            if (!string.IsNullOrEmpty(text))
-                parts.Add(string.IsNullOrEmpty(speaker) ? text : $"{speaker}: {text}");
+            if (line != null)
+                parts.Add(string.IsNullOrEmpty(line.Text) ? line.name
+                    : string.IsNullOrEmpty(line.Speaker) ? line.Text : $"{line.Speaker}: {line.Text}");
 
             if (cue.FindPropertyRelative("_clip").objectReferenceValue != null)
                 parts.Add("♪");
@@ -350,18 +349,10 @@ namespace SibJam.EditorTools
         private static bool HasEvent(SerializedProperty cue) =>
             cue.FindPropertyRelative("_event").FindPropertyRelative("m_PersistentCalls.m_Calls").arraySize > 0;
 
-        private static float GetSubtitleDuration(SerializedProperty cue)
-        {
-            float duration = cue.FindPropertyRelative("_subtitleDuration").floatValue;
+        private static VoiceLine GetLine(SerializedProperty cue) =>
+            cue.FindPropertyRelative("_line").objectReferenceValue as VoiceLine;
 
-            if (duration > 0f)
-                return duration;
-
-            AudioClip clip = cue.FindPropertyRelative("_clip").objectReferenceValue as AudioClip;
-            return clip != null ? clip.length : DefaultSubtitleDuration;
-        }
-
-        // Последний субтитр, который на этой секунде висит на экране (как SubtitleView: новый заменяет старый)
+        // Последний субтитр, который на этой секунде висит на экране (как Subtitles: новый заменяет старый)
         private string GetSubtitleAt(float time)
         {
             string result = null;
@@ -370,16 +361,15 @@ namespace SibJam.EditorTools
             for (int i = 0; i < _cues.arraySize; i++)
             {
                 SerializedProperty cue = _cues.GetArrayElementAtIndex(i);
-                string text = cue.FindPropertyRelative("_text").stringValue;
+                VoiceLine line = GetLine(cue);
                 float start = cue.FindPropertyRelative("_time").floatValue;
 
-                if (string.IsNullOrEmpty(text) || time < start || start < latestStart)
+                if (line == null || string.IsNullOrEmpty(line.Text) || time < start || start < latestStart)
                     continue;
 
                 latestStart = start;
-                string speaker = cue.FindPropertyRelative("_speaker").stringValue;
-                result = time <= start + GetSubtitleDuration(cue)
-                    ? (string.IsNullOrEmpty(speaker) ? text : $"<color=#FFBF59>{speaker}:</color> {text}")
+                result = time <= start + line.Duration
+                    ? (string.IsNullOrEmpty(line.Speaker) ? line.Text : $"<color=#FFBF59>{line.Speaker}:</color> {line.Text}")
                     : null;
             }
 

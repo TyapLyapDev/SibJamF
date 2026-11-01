@@ -1,105 +1,62 @@
 using System;
-using System.Collections;
 using DG.Tweening;
-using TMPro;
 using UnityEngine;
 
 namespace SibJam
 {
-    public class Subtitles : MonoBehaviour
+    // Сервис субтитров: показывает строку на сервисном канвасе (SubtitlesView). Новая строка заменяет старую
+    public class Subtitles : IDisposable
     {
-        [Header("View")]
-        [SerializeField] private TMP_Text _text;
-        [SerializeField] private CanvasGroup _canvasGroup;
-        [SerializeField, Min(0f)] private float _fadeDuration = 0.2f;
+        private const float AnimationCheckInterval = 0.1f;
 
-        [Header("Update")]
-        [Tooltip("Игнорировать Time.timeScale (например, если субтитры должны быть видны в паузе)")]
-        [SerializeField] private bool _useUnscaledTime = false;
+        private readonly SubtitlesView _view;
+        private Tween _hideTween;
 
-        private Tween _fadeTween;
-        private Coroutine _animationCoroutine;
-
-        public bool IsAnimating => _animationCoroutine != null;
-
-        private void Awake()
+        public Subtitles(SubtitlesView view)
         {
-            if (_text == null)
-                throw new InvalidOperationException(
-                    $"[Subtitles] TMP_Text не назначен на '{name}'. Назначьте ссылку в инспекторе.");
-
-            if (_canvasGroup == null)
-                throw new InvalidOperationException(
-                    $"[Subtitles] CanvasGroup не назначен на '{name}'. Назначьте ссылку в инспекторе.");
-
-            _canvasGroup.alpha = 0f;
-            _canvasGroup.blocksRaycasts = false;
-            _canvasGroup.interactable = false;
+            _view = view ?? throw new ArgumentNullException(nameof(view));
         }
 
-        private void OnValidate()
-        {
-            if (_text == null)
-                Debug.LogError($"[Subtitles] TMP_Text не назначен на '{name}'.", this);
+        public bool IsAnimating => _view.IsAnimating;
 
-            if (_canvasGroup == null)
-                Debug.LogError($"[Subtitles] CanvasGroup не назначен на '{name}'.", this);
-        }
+        public void Show(string text, SubtitleAnimation animation = null) =>
+            Show(null, text, 0f, animation);
 
-        private void OnDisable() => StopAnimation();
-
-        public void Show(SubtitleConfig config)
-        {
-            if (config == null)
-                throw new ArgumentNullException(nameof(config));
-
-            Show(config.Text, config.Animation);
-        }
-
-        public void Show(string text, SubtitleAnimation animation = null)
+        // duration > 0 — субтитр сам скроется через столько секунд после показа (но не раньше конца анимации)
+        public void Show(string speaker, string text, float duration, SubtitleAnimation animation = null)
         {
             if (string.IsNullOrEmpty(text))
                 return;
 
-            StopAnimation();
+            _hideTween?.Kill();
 
-            _text.maxVisibleCharacters = int.MaxValue;
+            string line = string.IsNullOrEmpty(speaker)
+                ? text
+                : $"<color=#{ColorUtility.ToHtmlStringRGB(_view.SpeakerColor)}>{speaker}:</color> {text}";
 
-            if (animation != null)
-                _animationCoroutine = StartCoroutine(PlayAnimation(animation, text));
-            else
-                _text.text = text;
+            _view.Show(line, animation);
 
-            FadeTo(1f);
+            if (duration > 0f)
+                ScheduleHide(duration);
         }
 
         public void Hide()
         {
-            StopAnimation();
-            FadeTo(0f);
+            _hideTween?.Kill();
+            _view.Hide();
         }
 
-        private IEnumerator PlayAnimation(SubtitleAnimation animation, string text)
-        {
-            yield return animation.Play(_text, text);
-            _animationCoroutine = null;
-        }
+        public void Dispose() => _hideTween?.Kill();
 
-        private void StopAnimation()
+        private void ScheduleHide(float delay)
         {
-            if (_animationCoroutine != null)
+            _hideTween = DOVirtual.DelayedCall(delay, () =>
             {
-                StopCoroutine(_animationCoroutine);
-                _animationCoroutine = null;
-            }
-        }
-
-        private void FadeTo(float targetAlpha)
-        {
-            _fadeTween?.Kill();
-            _fadeTween = _canvasGroup
-                .DOFade(targetAlpha, _fadeDuration)
-                .SetUpdate(_useUnscaledTime);
+                if (_view.IsAnimating)
+                    ScheduleHide(AnimationCheckInterval);
+                else
+                    _view.Hide();
+            }, _view.UseUnscaledTime);
         }
     }
 }
