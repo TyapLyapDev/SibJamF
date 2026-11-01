@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using _Project.Scripts.Enemies;
 using UnityEngine;
 
 namespace SibJam
@@ -59,7 +60,7 @@ namespace SibJam
             {
                 RaycastHit hit = _hitRaycasts[i];
 
-                if (_ownColliders.Contains(hit.collider))
+                if (_ownColliders.Contains(hit.collider) || IsEnemy(hit.collider))
                     continue;
 
                 normal = hit.normal;
@@ -70,7 +71,13 @@ namespace SibJam
             return false;
         }
 
-        public bool HasGround()
+        public bool HasGround() =>
+            HasSupport(includeEnemies: false);
+
+        public bool HasJumpSupport() =>
+            HasSupport(includeEnemies: true);
+
+        private bool HasSupport(bool includeEnemies)
         {
             int hitCount = Physics.OverlapSphereNonAlloc(
                 Center,
@@ -83,7 +90,7 @@ namespace SibJam
             {
                 Collider hit = _hitColliders[i];
 
-                if (_ownColliders.Contains(hit))
+                if (_ownColliders.Contains(hit) || (includeEnemies == false && IsEnemy(hit)))
                     continue;
 
                 return true;
@@ -91,5 +98,9 @@ namespace SibJam
 
             return false;
         }
+
+        // Враги не считаются землёй — по головам не стоим
+        private static bool IsEnemy(Collider collider) =>
+            collider.GetComponentInParent<EnemyMotor>() != null;
     }
 }

@@ -1,3 +1,4 @@
+using SibJam.Feedback;
 using UnityEngine;
 
 namespace SibJam
@@ -11,7 +12,8 @@ namespace SibJam
             if (_target == null)
                 return;
 
-            transform.SetPositionAndRotation(_target.position, _target.rotation);
+            float deltaTime = Time.unscaledDeltaTime;
+            transform.SetPositionAndRotation(_target.position + CameraShake.SampleOffset(deltaTime), _target.rotation * CameraShake.Sample(deltaTime));
         }
     }
 }

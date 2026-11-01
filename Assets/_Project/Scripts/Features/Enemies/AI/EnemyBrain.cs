@@ -75,6 +75,15 @@ namespace _Project.Scripts.Enemies
             SetState(EnemyState.Stagger);
         }
 
+        // Отбрасывание ударом: враг отлетает и не действует, пока не приземлится и не отойдёт от стаггера
+        public void Knockback(Vector3 velocity, float staggerDuration)
+        {
+            if (State == EnemyState.Dead) return;
+
+            Stagger(staggerDuration);
+            _motor.Knockback(velocity);
+        }
+
         private void Update()
         {
             if (_config == null || State == EnemyState.Dead) return;
@@ -161,6 +170,8 @@ namespace _Project.Scripts.Enemies
 
         private void TickStagger(float deltaTime)
         {
+            if (_motor.IsKnockedBack) return;
+
             _staggerTimer -= deltaTime;
             if (_staggerTimer <= 0f)
                 SetState(EnemyState.Chase);

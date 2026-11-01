@@ -30,7 +30,7 @@ namespace SibJam
         private void OnClick()
         {
             _checkpoint.RequestNewGame();
-            _sceneLoader.Load(SceneNames.Gameplay);
+            _sceneLoader.Load(SceneNames.Main);
         }
     }
 }

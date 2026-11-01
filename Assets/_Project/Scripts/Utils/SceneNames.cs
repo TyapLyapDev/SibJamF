@@ -6,5 +6,6 @@ namespace SibJam
         public const string Game = nameof(Game);
         public const string GameplayFlow = nameof(GameplayFlow);
         public const string Gameplay = nameof(Gameplay);
+        public const string Main = nameof(Main);
     }
 }

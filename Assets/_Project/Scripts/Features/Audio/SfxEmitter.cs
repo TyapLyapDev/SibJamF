@@ -85,6 +85,31 @@ namespace SibJam
                 source.Stop();
         }
 
+        // Разовый звук в точке, который переживёт удаление объекта (смерть врага, сломанная камера)
+        public static void PlayAt(SoundSet sound, Vector3 position, AudioMixerGroup output, float spatialBlend = 1f)
+        {
+            if (sound == null || sound.IsEmpty)
+                return;
+
+            AudioClip clip = sound.Pick();
+            var holder = new GameObject($"Sfx_{clip.name}");
+            holder.transform.position = position;
+            AudioSource source = holder.AddComponent<AudioSource>();
+            source.outputAudioMixerGroup = output;
+            source.spatialBlend = spatialBlend;
+            source.rolloffMode = AudioRolloffMode.Linear;
+            source.minDistance = 3f;
+            source.maxDistance = 45f;
+            source.dopplerLevel = 0f;
+            source.clip = clip;
+            source.volume = Random.Range(sound.Volume.x, sound.Volume.y);
+            source.pitch = Random.Range(sound.Pitch.x, sound.Pitch.y);
+            source.Play();
+            Destroy(holder, clip.length / Mathf.Max(0.1f, source.pitch) + 0.1f);
+        }
+
+        public AudioMixerGroup Output => _output;
+
         private AudioSource CreateSource()
         {
             AudioSource source = gameObject.AddComponent<AudioSource>();

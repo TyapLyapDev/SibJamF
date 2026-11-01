@@ -35,7 +35,7 @@ namespace SibJam
 
         private void Jump()
         {
-            if (_groundChecker.HasGround() == false)
+            if (_groundChecker.HasJumpSupport() == false)
                 return;
 
             if (_mass <= 0f)

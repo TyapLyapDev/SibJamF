@@ -8,6 +8,10 @@ namespace SibJam.Weapons
     {
         private static readonly int AttackId = Animator.StringToHash("Attack");
         private static readonly int BlockId = Animator.StringToHash("Block");
+        private static readonly int AttackStateId = Animator.StringToHash("Attack");
+
+        [Tooltip("Время кроссфейда в замах: из блока и из прошлого удара руки переходят сразу, не дожидаясь BlockOut")]
+        [SerializeField, Min(0f)] private float _attackBlend = 0.06f;
 
         [SerializeField] private Animator _animator;
         [SerializeField] private ArmsAnimationEvents _animationEvents;
@@ -52,10 +56,24 @@ namespace SibJam.Weapons
             _weaponModel.transform.localScale = config.ModelScale;
         }
 
-        public void PlayAttack() => _animator.SetTrigger(AttackId);
+        public void PlayAttack()
+        {
+            // Триггер не нужен: из Block-состояний перехода в Attack нет, поэтому кроссфейдим напрямую, а Block сбрасываем сразу
+            _animator.speed = 1f;
+            _animator.ResetTrigger(AttackId);
+            _animator.SetBool(BlockId, false);
+            _animator.CrossFadeInFixedTime(AttackStateId, _attackBlend, 0, 0f);
+        }
+
+        // Ускоряет текущий замах (например, чтобы клинок успел к отбитому снаряду); сбрасывается в момент удара
+        public void SetAttackSpeed(float speed) => _animator.speed = speed;
 
         public void SetBlocking(bool isBlocking) => _animator.SetBool(BlockId, isBlocking);
 
-        private void OnAttackHit() => AttackHit?.Invoke();
+        private void OnAttackHit()
+        {
+            _animator.speed = 1f;
+            AttackHit?.Invoke();
+        }
     }
 }

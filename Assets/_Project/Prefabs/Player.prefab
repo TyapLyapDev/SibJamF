@@ -110,8 +110,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 2
+  m_Radius: 0.35
+  m_Height: 1.6
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &6089561132170318215
@@ -160,6 +160,9 @@ GameObject:
   - component: {fileID: 309471003807619959}
   - component: {fileID: 5392770592696378694}
   - component: {fileID: 3795421255006730995}
+  - component: {fileID: 4213928865463803658}
+  - component: {fileID: 3529759971244188316}
+  - component: {fileID: 6466261622523618617}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -238,7 +241,6 @@ MonoBehaviour:
   _pitchTransform: {fileID: 2505534650498432798}
   _minimumPitch: -90
   _maximumPitch: 90
-  _sensitivity: 0.4
 --- !u!114 &309471003807619959
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -251,6 +253,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c8c779749e7bcd47807e0cbd3d64e91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovementLesson.Gravity
+  _gravity: 20
+  _fallMultiplier: 1.5
 --- !u!114 &5392770592696378694
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -263,7 +267,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73f6f21663b4afa4683503a450816773, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovementLesson.Jumper
-  _jumpImpulse: 300
+  _jumpImpulse: 560
   _mass: 75
 --- !u!114 &3795421255006730995
 MonoBehaviour:
@@ -281,3 +285,139 @@ MonoBehaviour:
   _sphereRadius: 0.47
   _isOnGizmos: 1
   _sphereColor: {r: 1, g: 0.9625999, b: 0, a: 1}
+--- !u!114 &4213928865463803658
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8531677155835455200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eee2c0b17f8cbd346bab3c7376d2561e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SibJam.Feedback.PlayerCombatFeedback
+  _weapon: {fileID: 0}
+  _health: {fileID: 0}
+  _swingKick: {x: 1.2, y: -0.8, z: 1.5}
+  _hitTrauma: 0.3
+  _hitStop: 0.06
+  _counterHitStop: 0.12
+  _killHitStop: 0.1
+  _hitKick: {x: -1.5, y: 1, z: -2}
+  _blockTrauma: 0.25
+  _blockKick: {x: -2, y: 0, z: 0}
+  _parryHitStop: 0.15
+  _parryTrauma: 0.35
+  _guardBreakTrauma: 0.6
+  _damageTrauma: 0.5
+  _damageKick: {x: -4, y: 2, z: 3}
+--- !u!114 &3529759971244188316
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8531677155835455200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61a2a86c46a889447ad3105194ec94b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SibJam.SfxEmitter
+  _output: {fileID: 444434307313811013, guid: a47c38d92e940e049b3a36b03a0cb583, type: 2}
+  _voices: 8
+  _spatialBlend: 0
+  _minDistance: 3
+  _maxDistance: 45
+--- !u!114 &6466261622523618617
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8531677155835455200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcbba788713bb614998abdc4b574c605, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SibJam.PlayerSfx
+  _sfx: {fileID: 3529759971244188316}
+  _weapon: {fileID: 0}
+  _health: {fileID: 0}
+  _body: {fileID: 0}
+  _stepSound:
+    Clips:
+    - {fileID: 8300000, guid: d543e119a7d1cf04598d223534c1664a, type: 3}
+    - {fileID: 8300000, guid: 5e1c843306735e347940a0775e050d0f, type: 3}
+    - {fileID: 8300000, guid: 2fd744d09cf497649b01b38a7885f58b, type: 3}
+    - {fileID: 8300000, guid: ac160996606c53b43b231a56a86432cb, type: 3}
+    - {fileID: 8300000, guid: 7267a967670e0754c97533827756c81d, type: 3}
+    - {fileID: 8300000, guid: 49e8bebc988135045a5827384ba21c0f, type: 3}
+    - {fileID: 8300000, guid: f31a347bbdd74c74aa75ca215d27701f, type: 3}
+    - {fileID: 8300000, guid: 645afae1fa77cdc41bab9d39c3f92675, type: 3}
+    Volume: {x: 0.35, y: 0.45}
+    Pitch: {x: 0.92, y: 1.08}
+  _stepBodySound:
+    Clips:
+    - {fileID: 8300000, guid: 368f6bb665b00c844a53ceec8fd098d5, type: 3}
+    - {fileID: 8300000, guid: 0b8408bb96183f74784ee285df36ea60, type: 3}
+    - {fileID: 8300000, guid: 1c2eccca75f76fe4492a3a509068affe, type: 3}
+    - {fileID: 8300000, guid: 005d742d4b3beb44ea4bfe95cff2be24, type: 3}
+    Volume: {x: 0.2, y: 0.3}
+    Pitch: {x: 0.95, y: 1.05}
+  _stepDistance: 2.1
+  _swingSound:
+    Clips:
+    - {fileID: 8300000, guid: 81ce79575e18f6644872db67c2490d44, type: 3}
+    - {fileID: 8300000, guid: 28a4fb78123d5de4dbc84dc98ced1920, type: 3}
+    - {fileID: 8300000, guid: 346411f0f2bd227468bc70b2f713d2cc, type: 3}
+    Volume: {x: 0.75, y: 0.9}
+    Pitch: {x: 0.92, y: 1.1}
+  _swingBodySound:
+    Clips:
+    - {fileID: 8300000, guid: 6dbc74d377f916b4a896836aa6002f95, type: 3}
+    - {fileID: 8300000, guid: 47573e5bd97731844a288d3798a85c30, type: 3}
+    - {fileID: 8300000, guid: d12dd3c174e0dfa4fa954bc90ccb725e, type: 3}
+    Volume: {x: 0.4, y: 0.5}
+    Pitch: {x: 0.95, y: 1.05}
+  _hitSound:
+    Clips:
+    - {fileID: 8300000, guid: 96670c4d9ade0064e919431696a66bd4, type: 3}
+    - {fileID: 8300000, guid: e733517ac830e64478506c3fe61409b8, type: 3}
+    - {fileID: 8300000, guid: 473ce7d2c2ea15848b99e513af359ba0, type: 3}
+    - {fileID: 8300000, guid: 69da7fbd309a4f348ac6d379fc46d4be, type: 3}
+    Volume: {x: 0.9, y: 1}
+    Pitch: {x: 0.9, y: 1.1}
+  _blockSound:
+    Clips:
+    - {fileID: 8300000, guid: 23d919b4a02e23341967d56734b5f5e2, type: 3}
+    - {fileID: 8300000, guid: 9b88f1bc717fc4549b4b08bbd2418b49, type: 3}
+    - {fileID: 8300000, guid: d833a55b293a62344973512472823824, type: 3}
+    Volume: {x: 0.8, y: 0.9}
+    Pitch: {x: 0.95, y: 1.1}
+  _parrySound:
+    Clips:
+    - {fileID: 8300000, guid: 1fcbb800fadce29478e53bf158d901d8, type: 3}
+    Volume: {x: 1, y: 1}
+    Pitch: {x: 0.95, y: 1.08}
+  _damageSound:
+    Clips:
+    - {fileID: 8300000, guid: 47c31e880b0dac440adfc3ef2e494245, type: 3}
+    - {fileID: 8300000, guid: fab6a2f9bd3554e49be0f1e4f1b67791, type: 3}
+    - {fileID: 8300000, guid: 06ad7800138c4cf4fa58314966a416ea, type: 3}
+    - {fileID: 8300000, guid: ecc873cabc44a0047978bdb2a8242683, type: 3}
+    - {fileID: 8300000, guid: 5d6a4eab9d525fc429d71d007acb06a7, type: 3}
+    - {fileID: 8300000, guid: 332888e61936f564dadebb676bb2b06f, type: 3}
+    Volume: {x: 0.85, y: 1}
+    Pitch: {x: 0.95, y: 1.05}
+  _deathSound:
+    Clips:
+    - {fileID: 8300000, guid: 7504dc91c24496549a890f5af27648fa, type: 3}
+    Volume: {x: 1, y: 1}
+    Pitch: {x: 1, y: 1}
+  _lowHealthLoop:
+    Clips:
+    - {fileID: 8300000, guid: 4491b79c028b97d479fc69da85dc4a42, type: 3}
+    Volume: {x: 0.6, y: 0.6}
+    Pitch: {x: 1, y: 1}
+  _lowHealthThreshold: 0.3

@@ -1,3 +1,4 @@
+using SibJam.Boss;
 using SibJam.Checkpoints;
 using SibJam.Cutscenes;
 using SibJam.Defeat;
@@ -22,6 +23,9 @@ namespace SibJam
         [SerializeField] private PlayerHealth _playerHealth;
         [SerializeField] private DefeatScreen _defeatScreen;
 
+        [Header("Бой с боссом (пусто — сцена без него)")]
+        [SerializeField] private BossFight _bossFight;
+
         protected override void Configure(IContainerBuilder builder)
         {
             builder.RegisterEntryPoint<GameEntryPoint>(Lifetime.Singleton);
@@ -45,6 +49,12 @@ namespace SibJam
 
             if (_defeatScreen != null)
                 builder.RegisterComponent(_defeatScreen);
+
+            if (_bossFight != null)
+            {
+                builder.RegisterComponent(_bossFight);
+                builder.RegisterEntryPoint<VictoryFlow>(Lifetime.Singleton);
+            }
         }
     }
 }

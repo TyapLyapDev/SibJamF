@@ -4,6 +4,7 @@ using SibJam.Credits;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using VContainer;
 
 namespace SibJam.Boss
 {
@@ -33,6 +34,7 @@ namespace SibJam.Boss
 
         private Coroutine _window;
         private int _broken;
+        private Music _music;
 
         public event Action Started;
         public event Action Won;
@@ -40,6 +42,12 @@ namespace SibJam.Boss
         public bool IsRunning { get; private set; }
         public bool IsWon { get; private set; }
         public Transform RespawnPoint => _respawnPoint;
+
+        [Inject]
+        public void Construct(Music music)
+        {
+            _music = music;
+        }
 
         private void Awake()
         {
@@ -88,6 +96,7 @@ namespace SibJam.Boss
             RefreshCounter();
             OnStaggerChanged(0f);
             _boss.Activate();
+            _music?.PlayBoss();
             Started?.Invoke();
         }
 
@@ -105,6 +114,7 @@ namespace SibJam.Boss
             _entranceBarrier.SetActive(false);
             _hud.alpha = 0f;
             SetHint(null);
+            _music?.PlayGame();
         }
 
         private void OnBossStaggered()

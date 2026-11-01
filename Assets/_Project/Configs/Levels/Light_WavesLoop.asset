@@ -14,7 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Waves.WavesLoopConfig
   WavesWithDelay:
   - Wave: {fileID: 11400000, guid: e9f023d8e3de72949937d98f32a8b164, type: 2}
-    DelayInSeconds: 4
+    DelayInSeconds: 4.5
+  - Wave: {fileID: 11400000, guid: 7c1e4a9b2d3f4e5a8b6c0d1e2f3a4b5c, type: 2}
+    DelayInSeconds: 4.5
   RepeatLastWave: 1
   StatsGrowthPerWave: 0.2
   ExtraEnemiesPerRepeat: 1

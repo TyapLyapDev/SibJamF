@@ -1,4 +1,5 @@
 using System;
+using SibJam;
 using SibJam.Combat;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -7,9 +8,14 @@ namespace _Project.Scripts.Enemies
 {
     public class Enemy : MonoBehaviour
     {
+        // Только смерть от урона, без выгрузки/рестарта — для наград за убийство
+        public static event Action<Enemy> Killed;
+
         public event Action<Enemy> Died;
+        public event Action<float> Damaged;
 
         public float Health { get; private set; }
+        public float MaxHealth { get; private set; }
         public bool IsDead { get; private set; }
 
         // Множитель силы от роста сложности волн: хп сейчас, урон — когда появится атака
@@ -18,14 +24,19 @@ namespace _Project.Scripts.Enemies
         public float CounterDamageMultiplier { get; private set; } = 1f;
 
         private EnemyConfig _config;
+        private WorldHealthBar _healthBar;
 
         public void Init(EnemyConfig config, IEnemyTarget target, float statsMultiplier = 1f)
         {
             _config = config;
             StatsMultiplier = statsMultiplier;
             CounterDamageMultiplier = config.CounterDamageMultiplier;
-            Health = config.MaxHealth * statsMultiplier;
+            MaxHealth = config.MaxHealth * statsMultiplier;
+            Health = MaxHealth;
             IsDead = false;
+
+            if (!TryGetComponent(out _healthBar))
+                _healthBar = gameObject.AddComponent<WorldHealthBar>();
 
             if (TryGetComponent(out EnemyBrain brain))
                 brain.Init(config, target);
@@ -36,6 +47,9 @@ namespace _Project.Scripts.Enemies
             if (IsDead || amount <= 0f) return;
 
             Health = Mathf.Max(0f, Health - amount);
+            Damaged?.Invoke(amount);
+            if (_healthBar != null && MaxHealth > 0f)
+                _healthBar.SetValue(Health / MaxHealth);
             if (Health <= 0f)
                 Die();
         }
@@ -45,6 +59,7 @@ namespace _Project.Scripts.Enemies
             if (IsDead) return;
             IsDead = true;
             TryDropLoot();
+            Killed?.Invoke(this);
             Died?.Invoke(this);
             Destroy(gameObject);
         }

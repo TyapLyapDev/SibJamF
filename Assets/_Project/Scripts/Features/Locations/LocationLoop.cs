@@ -15,6 +15,8 @@ namespace SibJam.Locations
         [SerializeField] private Transform _respawnPoint;
         [Tooltip("Аптечка в сейф-зоне: выключена в сцене, включается при завершении локации")]
         [SerializeField] private GameObject _completionMedkit;
+        [Tooltip("Без камер локация сразу пройдена. Выключить, если конец локации решает что-то другое (бой с боссом)")]
+        [SerializeField] private bool _completeWithoutCameras = true;
 
         public event Action<LocationLoop> Completed;
         public event Action<LocationLoopState> StateChanged;
@@ -46,6 +48,15 @@ namespace SibJam.Locations
             if (State != LocationLoopState.Idle) return;
 
             SetState(LocationLoopState.Running);
+
+            // Локация без камер — проходная, мобов нет
+            if (_cameraDestructionGoal.TotalCount == 0)
+            {
+                if (_completeWithoutCameras)
+                    ForceComplete();
+                return;
+            }
+
             _wavesLoop.LaunchWaves();
         }
 
@@ -59,6 +70,11 @@ namespace SibJam.Locations
         {
             if (State == LocationLoopState.Completed || !CanComplete) return;
 
+            ForceComplete();
+        }
+
+        private void ForceComplete()
+        {
             SetState(LocationLoopState.Completed);
             if (_completionMedkit != null)
                 _completionMedkit.SetActive(true);

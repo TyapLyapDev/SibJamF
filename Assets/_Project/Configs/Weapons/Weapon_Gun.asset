@@ -20,5 +20,5 @@ MonoBehaviour:
   <Damage>k__BackingField: 50
   <Range>k__BackingField: 2.5
   <Radius>k__BackingField: 0.5
-  <Cooldown>k__BackingField: 0.85
+  <Cooldown>k__BackingField: 0.5
   <ParryWindow>k__BackingField: 0.2

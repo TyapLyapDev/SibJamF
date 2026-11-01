@@ -11655,6 +11655,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Locations.LocationDoor
   _liftHeight: 4.5
+  _openDirection: {x: 0, y: 1, z: 0}
   _duration: 1.2
 --- !u!23 &85253173
 MeshRenderer:
@@ -12280,6 +12281,11 @@ MonoBehaviour:
   _settings: {fileID: 1674983842}
   _anticlicker: {fileID: 1534920813}
   _subtitles: {fileID: 1992592012}
+  _gameLoop: {fileID: 0}
+  _wakeUpCutscene: {fileID: 0}
+  _playerHealth: {fileID: 0}
+  _defeatScreen: {fileID: 0}
+  _bossFight: {fileID: 0}
 --- !u!4 &90248782
 Transform:
   m_ObjectHideFlags: 0
@@ -27831,7 +27837,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fd2523e72ea7d04a86debe49520c551, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.SecurityCameras.SecurityCamera
-  _hitsToBreak: 3
+  _hitsToBreak: 15
+  _counterHitsToBreak: 1
+  _sfxOutput: {fileID: 444434307313811013, guid: a47c38d92e940e049b3a36b03a0cb583, type: 2}
+  _hitSound:
+    Clips:
+    - {fileID: 8300000, guid: 23d919b4a02e23341967d56734b5f5e2, type: 3}
+    - {fileID: 8300000, guid: 9b88f1bc717fc4549b4b08bbd2418b49, type: 3}
+    - {fileID: 8300000, guid: d833a55b293a62344973512472823824, type: 3}
+    Volume: {x: 0.6, y: 0.75}
+    Pitch: {x: 1.1, y: 1.3}
+  _breakSound:
+    Clips:
+    - {fileID: 8300000, guid: ee079ade245ec86438441d88a06ea149, type: 3}
+    - {fileID: 8300000, guid: bba8c69719aa0ae47b38cd59dfbf5c8a, type: 3}
+    - {fileID: 8300000, guid: 3205705ea6690904ba17111ce1bfe14b, type: 3}
+    Volume: {x: 1, y: 1}
+    Pitch: {x: 0.95, y: 1.05}
 --- !u!65 &223921495
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -31048,6 +31070,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Locations.LocationDoor
   _liftHeight: 4.5
+  _openDirection: {x: 0, y: 1, z: 0}
   _duration: 1.2
 --- !u!23 &249681437
 MeshRenderer:
@@ -31344,7 +31367,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fd2523e72ea7d04a86debe49520c551, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.SecurityCameras.SecurityCamera
-  _hitsToBreak: 3
+  _hitsToBreak: 15
+  _counterHitsToBreak: 1
+  _sfxOutput: {fileID: 444434307313811013, guid: a47c38d92e940e049b3a36b03a0cb583, type: 2}
+  _hitSound:
+    Clips:
+    - {fileID: 8300000, guid: 23d919b4a02e23341967d56734b5f5e2, type: 3}
+    - {fileID: 8300000, guid: 9b88f1bc717fc4549b4b08bbd2418b49, type: 3}
+    - {fileID: 8300000, guid: d833a55b293a62344973512472823824, type: 3}
+    Volume: {x: 0.6, y: 0.75}
+    Pitch: {x: 1.1, y: 1.3}
+  _breakSound:
+    Clips:
+    - {fileID: 8300000, guid: ee079ade245ec86438441d88a06ea149, type: 3}
+    - {fileID: 8300000, guid: bba8c69719aa0ae47b38cd59dfbf5c8a, type: 3}
+    - {fileID: 8300000, guid: 3205705ea6690904ba17111ce1bfe14b, type: 3}
+    Volume: {x: 1, y: 1}
+    Pitch: {x: 0.95, y: 1.05}
 --- !u!1 &253969622
 GameObject:
   m_ObjectHideFlags: 0
@@ -41756,6 +41795,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Locations.LocationDoor
   _liftHeight: 4.5
+  _openDirection: {x: 0, y: 1, z: 0}
   _duration: 1.2
 --- !u!23 &322087664
 MeshRenderer:
@@ -42989,7 +43029,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fd2523e72ea7d04a86debe49520c551, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.SecurityCameras.SecurityCamera
-  _hitsToBreak: 3
+  _hitsToBreak: 15
+  _counterHitsToBreak: 1
+  _sfxOutput: {fileID: 444434307313811013, guid: a47c38d92e940e049b3a36b03a0cb583, type: 2}
+  _hitSound:
+    Clips:
+    - {fileID: 8300000, guid: 23d919b4a02e23341967d56734b5f5e2, type: 3}
+    - {fileID: 8300000, guid: 9b88f1bc717fc4549b4b08bbd2418b49, type: 3}
+    - {fileID: 8300000, guid: d833a55b293a62344973512472823824, type: 3}
+    Volume: {x: 0.6, y: 0.75}
+    Pitch: {x: 1.1, y: 1.3}
+  _breakSound:
+    Clips:
+    - {fileID: 8300000, guid: ee079ade245ec86438441d88a06ea149, type: 3}
+    - {fileID: 8300000, guid: bba8c69719aa0ae47b38cd59dfbf5c8a, type: 3}
+    - {fileID: 8300000, guid: 3205705ea6690904ba17111ce1bfe14b, type: 3}
+    Volume: {x: 1, y: 1}
+    Pitch: {x: 0.95, y: 1.05}
 --- !u!1 &330701244
 GameObject:
   m_ObjectHideFlags: 0
@@ -43062,7 +43118,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fd2523e72ea7d04a86debe49520c551, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.SecurityCameras.SecurityCamera
-  _hitsToBreak: 3
+  _hitsToBreak: 15
+  _counterHitsToBreak: 1
+  _sfxOutput: {fileID: 444434307313811013, guid: a47c38d92e940e049b3a36b03a0cb583, type: 2}
+  _hitSound:
+    Clips:
+    - {fileID: 8300000, guid: 23d919b4a02e23341967d56734b5f5e2, type: 3}
+    - {fileID: 8300000, guid: 9b88f1bc717fc4549b4b08bbd2418b49, type: 3}
+    - {fileID: 8300000, guid: d833a55b293a62344973512472823824, type: 3}
+    Volume: {x: 0.6, y: 0.75}
+    Pitch: {x: 1.1, y: 1.3}
+  _breakSound:
+    Clips:
+    - {fileID: 8300000, guid: ee079ade245ec86438441d88a06ea149, type: 3}
+    - {fileID: 8300000, guid: bba8c69719aa0ae47b38cd59dfbf5c8a, type: 3}
+    - {fileID: 8300000, guid: 3205705ea6690904ba17111ce1bfe14b, type: 3}
+    Volume: {x: 1, y: 1}
+    Pitch: {x: 0.95, y: 1.05}
 --- !u!1 &330764507
 GameObject:
   m_ObjectHideFlags: 0
@@ -52753,7 +52825,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fd2523e72ea7d04a86debe49520c551, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.SecurityCameras.SecurityCamera
-  _hitsToBreak: 3
+  _hitsToBreak: 15
+  _counterHitsToBreak: 1
+  _sfxOutput: {fileID: 444434307313811013, guid: a47c38d92e940e049b3a36b03a0cb583, type: 2}
+  _hitSound:
+    Clips:
+    - {fileID: 8300000, guid: 23d919b4a02e23341967d56734b5f5e2, type: 3}
+    - {fileID: 8300000, guid: 9b88f1bc717fc4549b4b08bbd2418b49, type: 3}
+    - {fileID: 8300000, guid: d833a55b293a62344973512472823824, type: 3}
+    Volume: {x: 0.6, y: 0.75}
+    Pitch: {x: 1.1, y: 1.3}
+  _breakSound:
+    Clips:
+    - {fileID: 8300000, guid: ee079ade245ec86438441d88a06ea149, type: 3}
+    - {fileID: 8300000, guid: bba8c69719aa0ae47b38cd59dfbf5c8a, type: 3}
+    - {fileID: 8300000, guid: 3205705ea6690904ba17111ce1bfe14b, type: 3}
+    Volume: {x: 1, y: 1}
+    Pitch: {x: 0.95, y: 1.05}
 --- !u!65 &399689562
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -53842,7 +53930,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fd2523e72ea7d04a86debe49520c551, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.SecurityCameras.SecurityCamera
-  _hitsToBreak: 3
+  _hitsToBreak: 15
+  _counterHitsToBreak: 1
+  _sfxOutput: {fileID: 444434307313811013, guid: a47c38d92e940e049b3a36b03a0cb583, type: 2}
+  _hitSound:
+    Clips:
+    - {fileID: 8300000, guid: 23d919b4a02e23341967d56734b5f5e2, type: 3}
+    - {fileID: 8300000, guid: 9b88f1bc717fc4549b4b08bbd2418b49, type: 3}
+    - {fileID: 8300000, guid: d833a55b293a62344973512472823824, type: 3}
+    Volume: {x: 0.6, y: 0.75}
+    Pitch: {x: 1.1, y: 1.3}
+  _breakSound:
+    Clips:
+    - {fileID: 8300000, guid: ee079ade245ec86438441d88a06ea149, type: 3}
+    - {fileID: 8300000, guid: bba8c69719aa0ae47b38cd59dfbf5c8a, type: 3}
+    - {fileID: 8300000, guid: 3205705ea6690904ba17111ce1bfe14b, type: 3}
+    Volume: {x: 1, y: 1}
+    Pitch: {x: 0.95, y: 1.05}
 --- !u!1 &406130625
 GameObject:
   m_ObjectHideFlags: 0
@@ -56013,6 +56117,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Locations.LocationDoor
   _liftHeight: 4.5
+  _openDirection: {x: 0, y: 1, z: 0}
   _duration: 1.2
 --- !u!23 &419363171
 MeshRenderer:
@@ -56548,7 +56653,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fd2523e72ea7d04a86debe49520c551, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.SecurityCameras.SecurityCamera
-  _hitsToBreak: 3
+  _hitsToBreak: 15
+  _counterHitsToBreak: 1
+  _sfxOutput: {fileID: 444434307313811013, guid: a47c38d92e940e049b3a36b03a0cb583, type: 2}
+  _hitSound:
+    Clips:
+    - {fileID: 8300000, guid: 23d919b4a02e23341967d56734b5f5e2, type: 3}
+    - {fileID: 8300000, guid: 9b88f1bc717fc4549b4b08bbd2418b49, type: 3}
+    - {fileID: 8300000, guid: d833a55b293a62344973512472823824, type: 3}
+    Volume: {x: 0.6, y: 0.75}
+    Pitch: {x: 1.1, y: 1.3}
+  _breakSound:
+    Clips:
+    - {fileID: 8300000, guid: ee079ade245ec86438441d88a06ea149, type: 3}
+    - {fileID: 8300000, guid: bba8c69719aa0ae47b38cd59dfbf5c8a, type: 3}
+    - {fileID: 8300000, guid: 3205705ea6690904ba17111ce1bfe14b, type: 3}
+    Volume: {x: 1, y: 1}
+    Pitch: {x: 0.95, y: 1.05}
 --- !u!1 &424806309
 GameObject:
   m_ObjectHideFlags: 0
@@ -67737,7 +67858,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fd2523e72ea7d04a86debe49520c551, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.SecurityCameras.SecurityCamera
-  _hitsToBreak: 3
+  _hitsToBreak: 15
+  _counterHitsToBreak: 1
+  _sfxOutput: {fileID: 444434307313811013, guid: a47c38d92e940e049b3a36b03a0cb583, type: 2}
+  _hitSound:
+    Clips:
+    - {fileID: 8300000, guid: 23d919b4a02e23341967d56734b5f5e2, type: 3}
+    - {fileID: 8300000, guid: 9b88f1bc717fc4549b4b08bbd2418b49, type: 3}
+    - {fileID: 8300000, guid: d833a55b293a62344973512472823824, type: 3}
+    Volume: {x: 0.6, y: 0.75}
+    Pitch: {x: 1.1, y: 1.3}
+  _breakSound:
+    Clips:
+    - {fileID: 8300000, guid: ee079ade245ec86438441d88a06ea149, type: 3}
+    - {fileID: 8300000, guid: bba8c69719aa0ae47b38cd59dfbf5c8a, type: 3}
+    - {fileID: 8300000, guid: 3205705ea6690904ba17111ce1bfe14b, type: 3}
+    Volume: {x: 1, y: 1}
+    Pitch: {x: 0.95, y: 1.05}
 --- !u!65 &515512014
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -70781,7 +70918,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fd2523e72ea7d04a86debe49520c551, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.SecurityCameras.SecurityCamera
-  _hitsToBreak: 3
+  _hitsToBreak: 15
+  _counterHitsToBreak: 1
+  _sfxOutput: {fileID: 444434307313811013, guid: a47c38d92e940e049b3a36b03a0cb583, type: 2}
+  _hitSound:
+    Clips:
+    - {fileID: 8300000, guid: 23d919b4a02e23341967d56734b5f5e2, type: 3}
+    - {fileID: 8300000, guid: 9b88f1bc717fc4549b4b08bbd2418b49, type: 3}
+    - {fileID: 8300000, guid: d833a55b293a62344973512472823824, type: 3}
+    Volume: {x: 0.6, y: 0.75}
+    Pitch: {x: 1.1, y: 1.3}
+  _breakSound:
+    Clips:
+    - {fileID: 8300000, guid: ee079ade245ec86438441d88a06ea149, type: 3}
+    - {fileID: 8300000, guid: bba8c69719aa0ae47b38cd59dfbf5c8a, type: 3}
+    - {fileID: 8300000, guid: 3205705ea6690904ba17111ce1bfe14b, type: 3}
+    Volume: {x: 1, y: 1}
+    Pitch: {x: 0.95, y: 1.05}
 --- !u!1 &539599494
 GameObject:
   m_ObjectHideFlags: 0
@@ -70902,7 +71055,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fd2523e72ea7d04a86debe49520c551, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.SecurityCameras.SecurityCamera
-  _hitsToBreak: 3
+  _hitsToBreak: 15
+  _counterHitsToBreak: 1
+  _sfxOutput: {fileID: 444434307313811013, guid: a47c38d92e940e049b3a36b03a0cb583, type: 2}
+  _hitSound:
+    Clips:
+    - {fileID: 8300000, guid: 23d919b4a02e23341967d56734b5f5e2, type: 3}
+    - {fileID: 8300000, guid: 9b88f1bc717fc4549b4b08bbd2418b49, type: 3}
+    - {fileID: 8300000, guid: d833a55b293a62344973512472823824, type: 3}
+    Volume: {x: 0.6, y: 0.75}
+    Pitch: {x: 1.1, y: 1.3}
+  _breakSound:
+    Clips:
+    - {fileID: 8300000, guid: ee079ade245ec86438441d88a06ea149, type: 3}
+    - {fileID: 8300000, guid: bba8c69719aa0ae47b38cd59dfbf5c8a, type: 3}
+    - {fileID: 8300000, guid: 3205705ea6690904ba17111ce1bfe14b, type: 3}
+    Volume: {x: 1, y: 1}
+    Pitch: {x: 0.95, y: 1.05}
 --- !u!65 &539898367
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -88479,7 +88648,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fd2523e72ea7d04a86debe49520c551, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.SecurityCameras.SecurityCamera
-  _hitsToBreak: 3
+  _hitsToBreak: 15
+  _counterHitsToBreak: 1
+  _sfxOutput: {fileID: 444434307313811013, guid: a47c38d92e940e049b3a36b03a0cb583, type: 2}
+  _hitSound:
+    Clips:
+    - {fileID: 8300000, guid: 23d919b4a02e23341967d56734b5f5e2, type: 3}
+    - {fileID: 8300000, guid: 9b88f1bc717fc4549b4b08bbd2418b49, type: 3}
+    - {fileID: 8300000, guid: d833a55b293a62344973512472823824, type: 3}
+    Volume: {x: 0.6, y: 0.75}
+    Pitch: {x: 1.1, y: 1.3}
+  _breakSound:
+    Clips:
+    - {fileID: 8300000, guid: ee079ade245ec86438441d88a06ea149, type: 3}
+    - {fileID: 8300000, guid: bba8c69719aa0ae47b38cd59dfbf5c8a, type: 3}
+    - {fileID: 8300000, guid: 3205705ea6690904ba17111ce1bfe14b, type: 3}
+    Volume: {x: 1, y: 1}
+    Pitch: {x: 0.95, y: 1.05}
 --- !u!1 &676688013
 GameObject:
   m_ObjectHideFlags: 0
@@ -95658,6 +95843,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Locations.LocationDoor
   _liftHeight: 4.5
+  _openDirection: {x: 0, y: 1, z: 0}
   _duration: 1.2
 --- !u!23 &734779808
 MeshRenderer:
@@ -97387,7 +97573,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fd2523e72ea7d04a86debe49520c551, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.SecurityCameras.SecurityCamera
-  _hitsToBreak: 3
+  _hitsToBreak: 15
+  _counterHitsToBreak: 1
+  _sfxOutput: {fileID: 444434307313811013, guid: a47c38d92e940e049b3a36b03a0cb583, type: 2}
+  _hitSound:
+    Clips:
+    - {fileID: 8300000, guid: 23d919b4a02e23341967d56734b5f5e2, type: 3}
+    - {fileID: 8300000, guid: 9b88f1bc717fc4549b4b08bbd2418b49, type: 3}
+    - {fileID: 8300000, guid: d833a55b293a62344973512472823824, type: 3}
+    Volume: {x: 0.6, y: 0.75}
+    Pitch: {x: 1.1, y: 1.3}
+  _breakSound:
+    Clips:
+    - {fileID: 8300000, guid: ee079ade245ec86438441d88a06ea149, type: 3}
+    - {fileID: 8300000, guid: bba8c69719aa0ae47b38cd59dfbf5c8a, type: 3}
+    - {fileID: 8300000, guid: 3205705ea6690904ba17111ce1bfe14b, type: 3}
+    Volume: {x: 1, y: 1}
+    Pitch: {x: 0.95, y: 1.05}
 --- !u!1 &747946927
 GameObject:
   m_ObjectHideFlags: 0
@@ -108957,6 +109159,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Debugging.DebugCheats
   _gameLoop: {fileID: 94783980}
+  _playerHealth: {fileID: 0}
+  _debugDamage: 50
 --- !u!4 &838277081
 Transform:
   m_ObjectHideFlags: 0
@@ -111582,6 +111786,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Locations.LocationDoor
   _liftHeight: 4.5
+  _openDirection: {x: 0, y: 1, z: 0}
   _duration: 1.2
 --- !u!23 &850459665
 MeshRenderer:
@@ -112798,6 +113003,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Locations.LocationDoor
   _liftHeight: 4.5
+  _openDirection: {x: 0, y: 1, z: 0}
   _duration: 1.2
 --- !u!23 &859277428
 MeshRenderer:
@@ -118106,6 +118312,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Locations.LocationDoor
   _liftHeight: 4.5
+  _openDirection: {x: 0, y: 1, z: 0}
   _duration: 1.2
 --- !u!23 &892361830
 MeshRenderer:
@@ -140037,6 +140244,18 @@ MonoBehaviour:
   _hitMask:
     serializedVersion: 2
     m_Bits: 4294967295
+  _guardHits: 2
+  _guardRecoverDelay: 2
+  _guardBreakDuration: 1.2
+  _counterWindow: 0.8
+  _swingParryWindow: 0.12
+  _knockbackSpeed: 7
+  _knockbackLift: 2
+  _knockbackStagger: 0.25
+  _jumpDamageMultiplier: 2
+  _jumpKnockbackSpeed: 14
+  _jumpKnockbackLift: 8
+  _jumpKnockbackStagger: 0.6
 --- !u!1 &1045621580
 GameObject:
   m_ObjectHideFlags: 0
@@ -140289,7 +140508,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fd2523e72ea7d04a86debe49520c551, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.SecurityCameras.SecurityCamera
-  _hitsToBreak: 3
+  _hitsToBreak: 15
+  _counterHitsToBreak: 1
+  _sfxOutput: {fileID: 444434307313811013, guid: a47c38d92e940e049b3a36b03a0cb583, type: 2}
+  _hitSound:
+    Clips:
+    - {fileID: 8300000, guid: 23d919b4a02e23341967d56734b5f5e2, type: 3}
+    - {fileID: 8300000, guid: 9b88f1bc717fc4549b4b08bbd2418b49, type: 3}
+    - {fileID: 8300000, guid: d833a55b293a62344973512472823824, type: 3}
+    Volume: {x: 0.6, y: 0.75}
+    Pitch: {x: 1.1, y: 1.3}
+  _breakSound:
+    Clips:
+    - {fileID: 8300000, guid: ee079ade245ec86438441d88a06ea149, type: 3}
+    - {fileID: 8300000, guid: bba8c69719aa0ae47b38cd59dfbf5c8a, type: 3}
+    - {fileID: 8300000, guid: 3205705ea6690904ba17111ce1bfe14b, type: 3}
+    Volume: {x: 1, y: 1}
+    Pitch: {x: 0.95, y: 1.05}
 --- !u!1 &1047172577
 GameObject:
   m_ObjectHideFlags: 0
@@ -157739,7 +157974,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Locations.LocationLoop
   _wavesLoop: {fileID: 1578462333}
   _cameraDestructionGoal: {fileID: 495810918}
-  _arrivalPoint: {fileID: 2078034405}
+  _respawnPoint: {fileID: 2078034405}
+  _completionMedkit: {fileID: 0}
+  _completeWithoutCameras: 1
 --- !u!4 &1164358495
 Transform:
   m_ObjectHideFlags: 0
@@ -161670,7 +161907,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fd2523e72ea7d04a86debe49520c551, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.SecurityCameras.SecurityCamera
-  _hitsToBreak: 3
+  _hitsToBreak: 15
+  _counterHitsToBreak: 1
+  _sfxOutput: {fileID: 444434307313811013, guid: a47c38d92e940e049b3a36b03a0cb583, type: 2}
+  _hitSound:
+    Clips:
+    - {fileID: 8300000, guid: 23d919b4a02e23341967d56734b5f5e2, type: 3}
+    - {fileID: 8300000, guid: 9b88f1bc717fc4549b4b08bbd2418b49, type: 3}
+    - {fileID: 8300000, guid: d833a55b293a62344973512472823824, type: 3}
+    Volume: {x: 0.6, y: 0.75}
+    Pitch: {x: 1.1, y: 1.3}
+  _breakSound:
+    Clips:
+    - {fileID: 8300000, guid: ee079ade245ec86438441d88a06ea149, type: 3}
+    - {fileID: 8300000, guid: bba8c69719aa0ae47b38cd59dfbf5c8a, type: 3}
+    - {fileID: 8300000, guid: 3205705ea6690904ba17111ce1bfe14b, type: 3}
+    Volume: {x: 1, y: 1}
+    Pitch: {x: 0.95, y: 1.05}
 --- !u!1 &1190409474
 GameObject:
   m_ObjectHideFlags: 0
@@ -165703,6 +165956,7 @@ MonoBehaviour:
   - {fileID: 89369855}
   - {fileID: 326456436}
   - {fileID: 276508744}
+  _target: {fileID: 0}
 --- !u!4 &1222306240
 Transform:
   m_ObjectHideFlags: 0
@@ -167769,7 +168023,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Locations.LocationLoop
   _wavesLoop: {fileID: 1316184629}
   _cameraDestructionGoal: {fileID: 1340914208}
-  _arrivalPoint: {fileID: 1077419939}
+  _respawnPoint: {fileID: 1077419939}
+  _completionMedkit: {fileID: 0}
+  _completeWithoutCameras: 1
 --- !u!4 &1230463631
 Transform:
   m_ObjectHideFlags: 0
@@ -178071,6 +178327,7 @@ MonoBehaviour:
   - {fileID: 691393230}
   - {fileID: 675424006}
   - {fileID: 488456014}
+  _target: {fileID: 0}
 --- !u!4 &1316184631
 Transform:
   m_ObjectHideFlags: 0
@@ -182474,7 +182731,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Locations.LocationLoop
   _wavesLoop: {fileID: 1222306238}
   _cameraDestructionGoal: {fileID: 1540150500}
-  _arrivalPoint: {fileID: 408311588}
+  _respawnPoint: {fileID: 408311588}
+  _completionMedkit: {fileID: 0}
+  _completeWithoutCameras: 1
 --- !u!4 &1349949446
 Transform:
   m_ObjectHideFlags: 0
@@ -183799,7 +184058,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Locations.LocationLoop
   _wavesLoop: {fileID: 1934748693}
   _cameraDestructionGoal: {fileID: 1149531885}
-  _arrivalPoint: {fileID: 2096780231}
+  _respawnPoint: {fileID: 2096780231}
+  _completionMedkit: {fileID: 0}
+  _completeWithoutCameras: 1
 --- !u!4 &1359686651
 Transform:
   m_ObjectHideFlags: 0
@@ -191821,6 +192082,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Locations.LocationDoor
   _liftHeight: 4.5
+  _openDirection: {x: 0, y: 1, z: 0}
   _duration: 1.2
 --- !u!23 &1414126159
 MeshRenderer:
@@ -196860,6 +197122,7 @@ MonoBehaviour:
   - {fileID: 1836791336}
   - {fileID: 762674450}
   - {fileID: 880052586}
+  _target: {fileID: 0}
 --- !u!4 &1448331422
 Transform:
   m_ObjectHideFlags: 0
@@ -198232,6 +198495,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Locations.LocationDoor
   _liftHeight: 4.5
+  _openDirection: {x: 0, y: 1, z: 0}
   _duration: 1.2
 --- !u!23 &1460236305
 MeshRenderer:
@@ -202709,14 +202973,21 @@ MonoBehaviour:
     \u0441\u043E\u0432\u0435\u0440\u0448\u0435\u043D\u043D\u044B\u0445 \u043E\u0445\u0440\u0430\u043D\u043D\u0438\u043A\u043E\u0432.
     \u0421 \u043A\u0430\u0436\u0434\u043E\u0439 \u0432\u043E\u043B\u043D\u043E\u0439
     \u0432\u0430\u043C \u0431\u0443\u0434\u0435\u0442 \u0441\u043B\u043E\u0436\u043D\u0435\u0435.\n\nWASD
-    \u2014 \u043F\u0435\u0440\u0435\u043C\u0435\u0449\u0435\u043D\u0438\u0435\n\u041B\u041A\u041C
-    \u2014 \u0430\u0442\u0430\u043A\u043E\u0432\u0430\u0442\u044C\n\n1. \u0420\u0430\u0437\u0431\u0435\u0439
-    \u0432\u0441\u0435 \u043A\u0430\u043C\u0435\u0440\u044B \u2014 \u0432\u043E\u043B\u043D\u044B
-    \u043F\u0440\u0435\u043A\u0440\u0430\u0442\u044F\u0442\u0441\u044F\n2. \u0414\u043E\u0431\u0435\u0439
-    \u043E\u0441\u0442\u0430\u0432\u0448\u0438\u0445\u0441\u044F \u2014 \u043E\u0442\u043A\u0440\u043E\u0435\u0442\u0441\u044F
-    \u0432\u044B\u0445\u043E\u0434\n3. \u041A\u043E\u0440\u0438\u0434\u043E\u0440
-    \u2014 \u0431\u0435\u0437\u043E\u043F\u0430\u0441\u043D\u0430\u044F \u0437\u043E\u043D\u0430,
-    \u043E\u0442\u0434\u044B\u0448\u0438\u0441\u044C"
+    \u2014 \u043F\u0435\u0440\u0435\u043C\u0435\u0449\u0435\u043D\u0438\u0435, Shift
+    \u2014 \u0431\u0435\u0433, \u041F\u0440\u043E\u0431\u0435\u043B \u2014 \u043F\u0440\u044B\u0436\u043E\u043A\n\u041B\u041A\u041C
+    \u2014 \u0430\u0442\u0430\u043A\u043E\u0432\u0430\u0442\u044C\n\u041F\u041A\u041C
+    \u2014 \u0431\u043B\u043E\u043A. \u041D\u0430\u0436\u043C\u0438 \u0432 \u043C\u043E\u043C\u0435\u043D\u0442
+    \u0443\u0434\u0430\u0440\u0430 \u2014 \u043F\u0430\u0440\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435\n\u041F\u043E\u0441\u043B\u0435
+    \u0431\u043B\u043E\u043A\u0430 \u0438\u043B\u0438 \u043F\u0430\u0440\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u044F
+    \u041B\u041A\u041C \u2014 \u0443\u0441\u0438\u043B\u0435\u043D\u043D\u0430\u044F
+    \u043A\u043E\u043D\u0442\u0440\u0430\u0442\u0430\u043A\u0430\n\u0412\u0440\u0430\u0433\u0438
+    \u0440\u043E\u043D\u044F\u044E\u0442 \u0430\u043F\u0442\u0435\u0447\u043A\u0438\n\n1.
+    \u0420\u0430\u0437\u0431\u0435\u0439 \u0432\u0441\u0435 \u043A\u0430\u043C\u0435\u0440\u044B
+    \u2014 \u0432\u043E\u043B\u043D\u044B \u043F\u0440\u0435\u043A\u0440\u0430\u0442\u044F\u0442\u0441\u044F\n2.
+    \u0414\u043E\u0431\u0435\u0439 \u043E\u0441\u0442\u0430\u0432\u0448\u0438\u0445\u0441\u044F
+    \u2014 \u043E\u0442\u043A\u0440\u043E\u0435\u0442\u0441\u044F \u0432\u044B\u0445\u043E\u0434\n3.
+    \u041A\u043E\u0440\u0438\u0434\u043E\u0440 \u2014 \u0431\u0435\u0437\u043E\u043F\u0430\u0441\u043D\u0430\u044F
+    \u0437\u043E\u043D\u0430, \u043E\u0442\u0434\u044B\u0448\u0438\u0441\u044C"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: eeacebdcdf6afa44780cbe7c70e127fe, type: 2}
   m_sharedMaterial: {fileID: 3156355094665551501, guid: eeacebdcdf6afa44780cbe7c70e127fe, type: 2}
@@ -209323,7 +209594,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fd2523e72ea7d04a86debe49520c551, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.SecurityCameras.SecurityCamera
-  _hitsToBreak: 3
+  _hitsToBreak: 15
+  _counterHitsToBreak: 1
+  _sfxOutput: {fileID: 444434307313811013, guid: a47c38d92e940e049b3a36b03a0cb583, type: 2}
+  _hitSound:
+    Clips:
+    - {fileID: 8300000, guid: 23d919b4a02e23341967d56734b5f5e2, type: 3}
+    - {fileID: 8300000, guid: 9b88f1bc717fc4549b4b08bbd2418b49, type: 3}
+    - {fileID: 8300000, guid: d833a55b293a62344973512472823824, type: 3}
+    Volume: {x: 0.6, y: 0.75}
+    Pitch: {x: 1.1, y: 1.3}
+  _breakSound:
+    Clips:
+    - {fileID: 8300000, guid: ee079ade245ec86438441d88a06ea149, type: 3}
+    - {fileID: 8300000, guid: bba8c69719aa0ae47b38cd59dfbf5c8a, type: 3}
+    - {fileID: 8300000, guid: 3205705ea6690904ba17111ce1bfe14b, type: 3}
+    Volume: {x: 1, y: 1}
+    Pitch: {x: 0.95, y: 1.05}
 --- !u!65 &1543804773
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -214350,6 +214637,7 @@ MonoBehaviour:
   - {fileID: 1229603936}
   - {fileID: 840642705}
   - {fileID: 2011146693}
+  _target: {fileID: 0}
 --- !u!4 &1578462335
 Transform:
   m_ObjectHideFlags: 0
@@ -214442,7 +214730,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fd2523e72ea7d04a86debe49520c551, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.SecurityCameras.SecurityCamera
-  _hitsToBreak: 3
+  _hitsToBreak: 15
+  _counterHitsToBreak: 1
+  _sfxOutput: {fileID: 444434307313811013, guid: a47c38d92e940e049b3a36b03a0cb583, type: 2}
+  _hitSound:
+    Clips:
+    - {fileID: 8300000, guid: 23d919b4a02e23341967d56734b5f5e2, type: 3}
+    - {fileID: 8300000, guid: 9b88f1bc717fc4549b4b08bbd2418b49, type: 3}
+    - {fileID: 8300000, guid: d833a55b293a62344973512472823824, type: 3}
+    Volume: {x: 0.6, y: 0.75}
+    Pitch: {x: 1.1, y: 1.3}
+  _breakSound:
+    Clips:
+    - {fileID: 8300000, guid: ee079ade245ec86438441d88a06ea149, type: 3}
+    - {fileID: 8300000, guid: bba8c69719aa0ae47b38cd59dfbf5c8a, type: 3}
+    - {fileID: 8300000, guid: 3205705ea6690904ba17111ce1bfe14b, type: 3}
+    Volume: {x: 1, y: 1}
+    Pitch: {x: 0.95, y: 1.05}
 --- !u!1 &1578683819
 GameObject:
   m_ObjectHideFlags: 0
@@ -218629,6 +218933,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Locations.LocationDoor
   _liftHeight: 4.5
+  _openDirection: {x: 0, y: 1, z: 0}
   _duration: 1.2
 --- !u!23 &1609395841
 MeshRenderer:
@@ -223634,7 +223939,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Locations.LocationLoop
   _wavesLoop: {fileID: 1448331420}
   _cameraDestructionGoal: {fileID: 374413}
-  _arrivalPoint: {fileID: 673405434}
+  _respawnPoint: {fileID: 673405434}
+  _completionMedkit: {fileID: 0}
+  _completeWithoutCameras: 1
 --- !u!4 &1647117946
 Transform:
   m_ObjectHideFlags: 0
@@ -249441,7 +249748,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fd2523e72ea7d04a86debe49520c551, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.SecurityCameras.SecurityCamera
-  _hitsToBreak: 3
+  _hitsToBreak: 15
+  _counterHitsToBreak: 1
+  _sfxOutput: {fileID: 444434307313811013, guid: a47c38d92e940e049b3a36b03a0cb583, type: 2}
+  _hitSound:
+    Clips:
+    - {fileID: 8300000, guid: 23d919b4a02e23341967d56734b5f5e2, type: 3}
+    - {fileID: 8300000, guid: 9b88f1bc717fc4549b4b08bbd2418b49, type: 3}
+    - {fileID: 8300000, guid: d833a55b293a62344973512472823824, type: 3}
+    Volume: {x: 0.6, y: 0.75}
+    Pitch: {x: 1.1, y: 1.3}
+  _breakSound:
+    Clips:
+    - {fileID: 8300000, guid: ee079ade245ec86438441d88a06ea149, type: 3}
+    - {fileID: 8300000, guid: bba8c69719aa0ae47b38cd59dfbf5c8a, type: 3}
+    - {fileID: 8300000, guid: 3205705ea6690904ba17111ce1bfe14b, type: 3}
+    Volume: {x: 1, y: 1}
+    Pitch: {x: 0.95, y: 1.05}
 --- !u!1 &1852299113
 GameObject:
   m_ObjectHideFlags: 0
@@ -260153,6 +260476,7 @@ MonoBehaviour:
   - {fileID: 250970551}
   - {fileID: 921948700}
   - {fileID: 615696240}
+  _target: {fileID: 0}
 --- !u!4 &1934748695
 Transform:
   m_ObjectHideFlags: 0
@@ -260476,6 +260800,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Locations.LocationDoor
   _liftHeight: 4.5
+  _openDirection: {x: 0, y: 1, z: 0}
   _duration: 1.2
 --- !u!23 &1938153749
 MeshRenderer:
@@ -266217,7 +266542,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Locations.LocationLoop
   _wavesLoop: {fileID: 2129831386}
   _cameraDestructionGoal: {fileID: 1130168943}
-  _arrivalPoint: {fileID: 1462213641}
+  _respawnPoint: {fileID: 1462213641}
+  _completionMedkit: {fileID: 0}
+  _completeWithoutCameras: 1
 --- !u!4 &1982983912
 Transform:
   m_ObjectHideFlags: 0
@@ -276517,8 +276844,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Waves.UI.WavesView
   _currentLocation: {fileID: 2048610337}
+  _panel: {fileID: 0}
+  _enemiesGroup: {fileID: 0}
   _enemiesText: {fileID: 189917567}
+  _delayGroup: {fileID: 0}
   _delayText: {fileID: 979729028}
+  _delayFill: {fileID: 0}
 --- !u!114 &2074495197
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -276618,7 +276949,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.SecurityCameras.UI.SecurityCamerasView
   _currentLocation: {fileID: 2048610337}
+  _panel: {fileID: 0}
   _camerasText: {fileID: 1933697914}
+  _iconsParent: {fileID: 0}
+  _iconPrefab: {fileID: 0}
+  _aliveSprite: {fileID: 0}
+  _brokenSprite: {fileID: 0}
+  _aliveColor: {r: 1, g: 1, b: 1, a: 1}
+  _brokenColor: {r: 1, g: 0.3, b: 0.25, a: 0.6}
 --- !u!1 &2074558839
 GameObject:
   m_ObjectHideFlags: 0
@@ -280027,7 +280365,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fd2523e72ea7d04a86debe49520c551, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.SecurityCameras.SecurityCamera
-  _hitsToBreak: 3
+  _hitsToBreak: 15
+  _counterHitsToBreak: 1
+  _sfxOutput: {fileID: 444434307313811013, guid: a47c38d92e940e049b3a36b03a0cb583, type: 2}
+  _hitSound:
+    Clips:
+    - {fileID: 8300000, guid: 23d919b4a02e23341967d56734b5f5e2, type: 3}
+    - {fileID: 8300000, guid: 9b88f1bc717fc4549b4b08bbd2418b49, type: 3}
+    - {fileID: 8300000, guid: d833a55b293a62344973512472823824, type: 3}
+    Volume: {x: 0.6, y: 0.75}
+    Pitch: {x: 1.1, y: 1.3}
+  _breakSound:
+    Clips:
+    - {fileID: 8300000, guid: ee079ade245ec86438441d88a06ea149, type: 3}
+    - {fileID: 8300000, guid: bba8c69719aa0ae47b38cd59dfbf5c8a, type: 3}
+    - {fileID: 8300000, guid: 3205705ea6690904ba17111ce1bfe14b, type: 3}
+    Volume: {x: 1, y: 1}
+    Pitch: {x: 0.95, y: 1.05}
 --- !u!65 &2094804931
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -285063,6 +285417,7 @@ MonoBehaviour:
   - {fileID: 254869359}
   - {fileID: 415212540}
   - {fileID: 1169116744}
+  _target: {fileID: 0}
 --- !u!4 &2129831388
 Transform:
   m_ObjectHideFlags: 0

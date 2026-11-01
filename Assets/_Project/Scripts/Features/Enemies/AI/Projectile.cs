@@ -1,19 +1,23 @@
+using System.Collections.Generic;
 using SibJam.Combat;
 using UnityEngine;
 
 namespace _Project.Scripts.Enemies
 {
     // Снаряд стрелка: летит по прямой, проверка попадания свипом сферы (без Rigidbody, не пролетает сквозь стены).
-    // Отпарированный снаряд разворачивается обратно в стрелка и бьёт уже его
+    // Отбивается мечом по нажатию удара (см. MeleeWeapon): разворачивается обратно в стрелка и бьёт уже его.
+    // В блок снаряд просто упирается и снимает прочность блока
     public class Projectile : MonoBehaviour
     {
+        private static readonly List<Projectile> _active = new();
+
+        public static IReadOnlyList<Projectile> Active => _active;
+
         [SerializeField, Min(0.01f)] private float _radius = 0.15f;
         [SerializeField, Min(0.1f)] private float _lifetime = 5f;
         [SerializeField] private LayerMask _hitMask = ~0;
         [Tooltip("Во сколько раз быстрее летит отбитый снаряд")]
         [SerializeField, Min(1f)] private float _reflectSpeedMultiplier = 1.5f;
-        [Tooltip("За сколько метров до игрока снаряд уже можно отбить: окно парирования короткое, без запаса в него не попасть")]
-        [SerializeField, Min(0f)] private float _parryReach = 3f;
 
         private readonly RaycastHit[] _hits = new RaycastHit[8];
 
@@ -23,6 +27,14 @@ namespace _Project.Scripts.Enemies
         private GameObject _source;
         private float _timer;
         private bool _isReflected;
+
+        public bool IsReflected => _isReflected;
+        public Vector3 Direction => _direction;
+        public float Speed => _speed;
+
+        private void OnEnable() => _active.Add(this);
+
+        private void OnDisable() => _active.Remove(this);
 
         public void Launch(Vector3 direction, float speed, float damage, GameObject source)
         {
@@ -47,9 +59,6 @@ namespace _Project.Scripts.Enemies
             }
 
             var step = _speed * deltaTime;
-
-            if (!_isReflected && TryParryAhead())
-                return;
 
             if (TryFindHit(step, out var hit))
             {
@@ -80,24 +89,6 @@ namespace _Project.Scripts.Enemies
             return best < float.MaxValue;
         }
 
-        private bool TryParryAhead()
-        {
-            var count = Physics.SphereCastNonAlloc(transform.position, _radius, _direction, _hits, _parryReach, _hitMask, QueryTriggerInteraction.Ignore);
-
-            for (var i = 0; i < count; i++)
-            {
-                var target = _hits[i].collider.GetComponentInParent<PlayerTarget>();
-
-                if (target != null && target.TryParry(new HitInfo(_damage, _source, _direction, parryable: true)))
-                {
-                    Reflect();
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
         private bool IsOwn(Collider collider)
         {
             if (_isReflected)
@@ -120,19 +111,19 @@ namespace _Project.Scripts.Enemies
                 return;
             }
 
-            var damageable = hit.collider.GetComponentInParent<IDamageable>();
-            if (damageable != null && damageable.TakeHit(new HitInfo(_damage, _source, _direction, parryable: true)) == HitResult.Parried)
-            {
-                Reflect();
-                return;
-            }
+            // Окном парирования снаряд не отбить — только ударом; блок его просто держит
+            hit.collider.GetComponentInParent<IDamageable>()?.TakeHit(new HitInfo(_damage, _source, _direction, parryable: false));
 
             Destroy(gameObject);
         }
 
-        private void Reflect()
+        public void Reflect(float damageMultiplier)
         {
+            if (_isReflected)
+                return;
+
             _isReflected = true;
+            _damage *= damageMultiplier;
             _speed *= _reflectSpeedMultiplier;
             _timer = _lifetime;
 

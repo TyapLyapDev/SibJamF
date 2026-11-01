@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Waves.WaveConfig
   Enemies:
   - Enemy: {fileID: 11400000, guid: 36dd05ce6f4eb5e4aae4a6ad65c01a07, type: 2}
-    Count: 2
+    Count: 7
   - Enemy: {fileID: 11400000, guid: f27f88a250fce6140bf008ea91457a6c, type: 2}
-    Count: 1
+    Count: 3
