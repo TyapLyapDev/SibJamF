@@ -1,6 +1,7 @@
 using System;
 using SibJam.Combat;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace _Project.Scripts.Enemies
 {
@@ -14,9 +15,15 @@ namespace _Project.Scripts.Enemies
         // Множитель силы от роста сложности волн: хп сейчас, урон — когда появится атака
         public float StatsMultiplier { get; private set; } = 1f;
 
+        public float CounterDamageMultiplier { get; private set; } = 1f;
+
+        private EnemyConfig _config;
+
         public void Init(EnemyConfig config, IEnemyTarget target, float statsMultiplier = 1f)
         {
+            _config = config;
             StatsMultiplier = statsMultiplier;
+            CounterDamageMultiplier = config.CounterDamageMultiplier;
             Health = config.MaxHealth * statsMultiplier;
             IsDead = false;
 
@@ -37,8 +44,17 @@ namespace _Project.Scripts.Enemies
         {
             if (IsDead) return;
             IsDead = true;
+            TryDropLoot();
             Died?.Invoke(this);
             Destroy(gameObject);
+        }
+
+        // Только при смерти от урона: уничтожение при выгрузке/рестарте ничего не роняет
+        private void TryDropLoot()
+        {
+            if (_config == null || _config.DropPrefab == null || Random.value >= _config.DropChance) return;
+
+            Instantiate(_config.DropPrefab, transform.position + Vector3.up * 0.5f, Quaternion.identity);
         }
 
         private void OnDestroy()

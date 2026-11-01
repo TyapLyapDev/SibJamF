@@ -13,6 +13,8 @@ namespace SibJam.Locations
         [Tooltip("Где появляется игрок при старте с чекпоинта этой локации")]
         [FormerlySerializedAs("_arrivalPoint")]
         [SerializeField] private Transform _respawnPoint;
+        [Tooltip("Аптечка в сейф-зоне: выключена в сцене, включается при завершении локации")]
+        [SerializeField] private GameObject _completionMedkit;
 
         public event Action<LocationLoop> Completed;
         public event Action<LocationLoopState> StateChanged;
@@ -58,6 +60,8 @@ namespace SibJam.Locations
             if (State == LocationLoopState.Completed || !CanComplete) return;
 
             SetState(LocationLoopState.Completed);
+            if (_completionMedkit != null)
+                _completionMedkit.SetActive(true);
             Completed?.Invoke(this);
         }
 

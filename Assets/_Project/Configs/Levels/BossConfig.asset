@@ -18,3 +18,6 @@ MonoBehaviour:
   <Damage>k__BackingField: 30
   <AttackRange>k__BackingField: 1.5
   <AttackCooldown>k__BackingField: 1
+  <CounterDamageMultiplier>k__BackingField: 2
+  <DropPrefab>k__BackingField: {fileID: 6499341217289342058, guid: 1341b5ef7784f8a478304d6528b72c31, type: 3}
+  <DropChance>k__BackingField: 0.08
