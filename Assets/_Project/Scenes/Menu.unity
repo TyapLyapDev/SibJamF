@@ -119,6 +119,11 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &25578413 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6685892190812761553, guid: 1781bfd065655bd418732659af47ca84, type: 3}
+  m_PrefabInstance: {fileID: 5697464732566421380}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &69633676
 GameObject:
   m_ObjectHideFlags: 0
@@ -153,6 +158,7 @@ MonoBehaviour:
   autoRun: 1
   autoInjectGameObjects:
   - {fileID: 827961655}
+  - {fileID: 25578413}
   _gameExitDialog: {fileID: 366209092}
   _menuButtons: {fileID: 1893631619}
   _settings: {fileID: 1523479014}
@@ -291,11 +297,22 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 194606790}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 279367397}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2ecdd650b4d859d4e9f78ae2c246e6d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.HoverSound
+--- !u!114 &279367410 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 789956213167986175, guid: 84cb7276ccf26e245951be6719730cf5, type: 3}
+  m_PrefabInstance: {fileID: 194606790}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 279367397}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcd8adcba272d2242a34dd240fe7b147, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SibJam.HoverNotifier
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -720,11 +737,22 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 976029578014247591}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 996553388}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2ecdd650b4d859d4e9f78ae2c246e6d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.HoverSound
+--- !u!114 &996553402 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 789956213167986175, guid: 84cb7276ccf26e245951be6719730cf5, type: 3}
+  m_PrefabInstance: {fileID: 976029578014247591}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 996553388}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcd8adcba272d2242a34dd240fe7b147, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SibJam.HoverNotifier
 --- !u!1 &1028502490 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8995265104969042687, guid: 84cb7276ccf26e245951be6719730cf5, type: 3}
@@ -1118,11 +1146,22 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 1989172434}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1028502490}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2ecdd650b4d859d4e9f78ae2c246e6d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.HoverSound
+--- !u!114 &1989172448 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 789956213167986175, guid: 84cb7276ccf26e245951be6719730cf5, type: 3}
+  m_PrefabInstance: {fileID: 1989172434}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1028502490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcd8adcba272d2242a34dd240fe7b147, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SibJam.HoverNotifier
 --- !u!1001 &976029578014247591
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1502,6 +1541,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1792977450003432351, guid: 1781bfd065655bd418732659af47ca84, type: 3}
+      propertyPath: _sources.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1792977450003432351, guid: 1781bfd065655bd418732659af47ca84, type: 3}
+      propertyPath: '_sources.Array.data[0]'
+      value: 
+      objectReference: {fileID: 996553402}
+    - target: {fileID: 1792977450003432351, guid: 1781bfd065655bd418732659af47ca84, type: 3}
+      propertyPath: '_sources.Array.data[1]'
+      value: 
+      objectReference: {fileID: 279367410}
+    - target: {fileID: 1792977450003432351, guid: 1781bfd065655bd418732659af47ca84, type: 3}
+      propertyPath: '_sources.Array.data[2]'
+      value: 
+      objectReference: {fileID: 1989172448}
     - target: {fileID: 2620522343410643717, guid: 1781bfd065655bd418732659af47ca84, type: 3}
       propertyPath: _window
       value: 

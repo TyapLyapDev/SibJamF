@@ -31,6 +31,7 @@ Transform:
   m_Children:
   - {fileID: 8484526959856317176}
   - {fileID: 3332479759208605944}
+  - {fileID: 5523991572216832977}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6963856219136680693
@@ -72,7 +73,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6963856219136680693}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bcb0af57e6718a4469f84d3f71cdf511, type: 3}
   m_Name: 
@@ -83,6 +84,89 @@ MonoBehaviour:
   - {fileID: 0}
   _requiredCount: 25
   _resetTime: 3
+--- !u!1 &8530169797641282995
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5523991572216832977}
+  - component: {fileID: 1792977450003432351}
+  m_Layer: 0
+  m_Name: SequentialHoverSound
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &5523991572216832977
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8530169797641282995}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7748939341229265516}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1792977450003432351
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8530169797641282995}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 609ad8d7bd4d99a4682bf8a4574e88e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SibJam.SequentialHoverSound
+  _sources: []
+  _clips:
+  - {fileID: 8300000, guid: 9f26c8d6b60111e4b95ef92dd02f01af, type: 3}
+  - {fileID: 8300000, guid: 06234ae0d66a1ca46bd56fb2e83f36c3, type: 3}
+  - {fileID: 8300000, guid: 9b8bc652fb8eec341a2b8be3ef687392, type: 3}
+  - {fileID: 8300000, guid: 0a2c3fa121a69eb43b88d6607d530eb1, type: 3}
+  - {fileID: 8300000, guid: d4866d2d93bcca349889c4bbe44cb0a2, type: 3}
+  - {fileID: 8300000, guid: 0a9308e09dd70ea4dbe37c82df447724, type: 3}
+  - {fileID: 8300000, guid: 36a180a7dbe5ad345bec671558ad82c6, type: 3}
+  - {fileID: 8300000, guid: 9b29db5318084d244977adace5b3320a, type: 3}
+  - {fileID: 8300000, guid: baff5c65a7fff864483959a7a49c8556, type: 3}
+  - {fileID: 8300000, guid: 29d36dc39d7b24e44accf6824224ecae, type: 3}
+  - {fileID: 8300000, guid: 764672b2957038948918b25f76ffe6f0, type: 3}
+  - {fileID: 8300000, guid: 06b15b80a23d8b342b4185d84ead8b1f, type: 3}
+  - {fileID: 8300000, guid: 2059689f2ebb92d47b3e6495a8604d9a, type: 3}
+  - {fileID: 8300000, guid: 53e3054785d2d1c43ae2cbba36abfd61, type: 3}
+  - {fileID: 8300000, guid: e13a00d9034a0284ebc19f5bda86933e, type: 3}
+  - {fileID: 8300000, guid: 45ec99e3f9c7d064585675e2351b7c0b, type: 3}
+  - {fileID: 8300000, guid: fc1379d3861a5e646bb12a4dbb976fa5, type: 3}
+  - {fileID: 8300000, guid: 48d0de0401e660649b5571ac6b30759d, type: 3}
+  - {fileID: 8300000, guid: df8e0aa4381ed064195f9e7c9f5a0fec, type: 3}
+  - {fileID: 8300000, guid: 3106c001d0ce0444a880ab733b8be452, type: 3}
+  - {fileID: 8300000, guid: 2fcfd634c6cbe4143a76e0f9d04efe8c, type: 3}
+  - {fileID: 8300000, guid: 4cc32a1fbeb049f42b6456d573eb1889, type: 3}
+  - {fileID: 8300000, guid: 3c8eb636f08bf40459933fddba0ac629, type: 3}
+  - {fileID: 8300000, guid: f797875a0c88744429ab0f64e4b0c67a, type: 3}
+  - {fileID: 8300000, guid: 62c7517cf5cd74d4db812d0749c51d65, type: 3}
+  - {fileID: 8300000, guid: 7b0abc76c323ddc4da4c46c3d4e743cb, type: 3}
+  - {fileID: 8300000, guid: 6ec390e12647535439bb61ee41d0bfe6, type: 3}
+  - {fileID: 8300000, guid: a4caeefff7d96ac4c974ecdc6bf18de7, type: 3}
+  - {fileID: 8300000, guid: 2cff9f17a9ba86e46b048b19b8b5a197, type: 3}
+  - {fileID: 8300000, guid: e3d20a5d502255745a14a6a32b518a33, type: 3}
+  - {fileID: 8300000, guid: 3e6211991450c7844bcf087b882c2a5b, type: 3}
+  - {fileID: 8300000, guid: 24b67b3753c0aa84cb09a131bdbcee9b, type: 3}
+  - {fileID: 8300000, guid: 4401f23a3bc17d94b8c32f5f523e28be, type: 3}
+  - {fileID: 8300000, guid: 7e8e78e1806ed4d4495080a23d6d572a, type: 3}
+  - {fileID: 8300000, guid: 172a44f44c3a1c44c9267fe94522843f, type: 3}
+  - {fileID: 8300000, guid: 3d935f9adb666b041b28ec0793ffbeb2, type: 3}
+  _resetTime: 2
 --- !u!1 &8922322609215285907
 GameObject:
   m_ObjectHideFlags: 0
@@ -127,6 +211,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97fd8373994db1e4c975034bb970e261, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.HoverSpamEasterEgg
-  _detector: {fileID: 7865501281197131302}
+  _detector: {fileID: 1792977450003432351}
   _window: {fileID: 0}
   _visibleDuration: 4

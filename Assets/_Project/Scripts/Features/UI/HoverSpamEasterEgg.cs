@@ -7,7 +7,7 @@ namespace SibJam
     public class HoverSpamEasterEgg : MonoBehaviour
     {
         [Header("Source")]
-        [SerializeField] private HoverSoundSpamDetector _detector;
+        [SerializeField] private SequentialHoverSound _detector;
 
         [Header("View")]
         [SerializeField] private PopUp _window;
