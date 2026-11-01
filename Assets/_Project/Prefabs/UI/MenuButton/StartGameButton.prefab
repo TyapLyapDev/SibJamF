@@ -92,7 +92,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 28.55
+  m_fontSize: 36
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -154,6 +154,7 @@ GameObject:
   - component: {fileID: 2721499327378475638}
   - component: {fileID: 2959683011839180820}
   - component: {fileID: 5622951439270842046}
+  - component: {fileID: 789956213167986175}
   m_Layer: 5
   m_Name: StartGameButton
   m_TagString: Untagged
@@ -313,7 +314,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8995265104969042687}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2ecdd650b4d859d4e9f78ae2c246e6d6, type: 3}
   m_Name: 
@@ -340,3 +341,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.ClickSound
   _clips:
   - {fileID: 8300000, guid: 2b23d25a93c71a34482e23f9991b0614, type: 3}
+--- !u!114 &789956213167986175
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8995265104969042687}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcd8adcba272d2242a34dd240fe7b147, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SibJam.HoverNotifier

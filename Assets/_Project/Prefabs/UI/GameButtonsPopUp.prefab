@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 4832890326266938352}
   - component: {fileID: 7098831487767821362}
   - component: {fileID: 5935534757254419471}
+  - component: {fileID: 6970550990844731058}
   m_Layer: 5
   m_Name: MenuOpenerButton
   m_TagString: Untagged
@@ -190,7 +191,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1193011906642595526}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2ecdd650b4d859d4e9f78ae2c246e6d6, type: 3}
   m_Name: 
@@ -217,6 +218,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.ClickSound
   _clips:
   - {fileID: 8300000, guid: 2b23d25a93c71a34482e23f9991b0614, type: 3}
+--- !u!114 &6970550990844731058
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1193011906642595526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcd8adcba272d2242a34dd240fe7b147, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SibJam.HoverNotifier
 --- !u!1 &1243229850185144788
 GameObject:
   m_ObjectHideFlags: 0
@@ -235,6 +248,7 @@ GameObject:
   - component: {fileID: 2960726240364131583}
   - component: {fileID: 6824018899549670839}
   - component: {fileID: 5840780810020097659}
+  - component: {fileID: 4662307683938371403}
   m_Layer: 5
   m_Name: ContinueButton
   m_TagString: Untagged
@@ -407,7 +421,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1243229850185144788}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2ecdd650b4d859d4e9f78ae2c246e6d6, type: 3}
   m_Name: 
@@ -434,6 +448,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.ClickSound
   _clips:
   - {fileID: 8300000, guid: 2b23d25a93c71a34482e23f9991b0614, type: 3}
+--- !u!114 &4662307683938371403
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1243229850185144788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcd8adcba272d2242a34dd240fe7b147, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SibJam.HoverNotifier
 --- !u!1 &1648196016369480084
 GameObject:
   m_ObjectHideFlags: 0
@@ -861,6 +887,7 @@ GameObject:
   - component: {fileID: 2418473784606300116}
   - component: {fileID: 6173914893634474986}
   - component: {fileID: 1121619991628281313}
+  - component: {fileID: 7511315292837165634}
   m_Layer: 5
   m_Name: GameCloserButton
   m_TagString: Untagged
@@ -1033,7 +1060,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7007121483249118394}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2ecdd650b4d859d4e9f78ae2c246e6d6, type: 3}
   m_Name: 
@@ -1060,6 +1087,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.ClickSound
   _clips:
   - {fileID: 8300000, guid: 2b23d25a93c71a34482e23f9991b0614, type: 3}
+--- !u!114 &7511315292837165634
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7007121483249118394}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcd8adcba272d2242a34dd240fe7b147, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SibJam.HoverNotifier
 --- !u!1 &7196020304725608792
 GameObject:
   m_ObjectHideFlags: 0
@@ -1352,6 +1391,7 @@ GameObject:
   - component: {fileID: 8550782192467351185}
   - component: {fileID: 2396214724489345910}
   - component: {fileID: 4276240903440281516}
+  - component: {fileID: 7483779746075042329}
   m_Layer: 5
   m_Name: SettingsButton
   m_TagString: Untagged
@@ -1524,7 +1564,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7709310701787522408}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2ecdd650b4d859d4e9f78ae2c246e6d6, type: 3}
   m_Name: 
@@ -1551,6 +1591,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.ClickSound
   _clips:
   - {fileID: 8300000, guid: 2b23d25a93c71a34482e23f9991b0614, type: 3}
+--- !u!114 &7483779746075042329
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7709310701787522408}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcd8adcba272d2242a34dd240fe7b147, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SibJam.HoverNotifier
 --- !u!1 &7982831071480619127
 GameObject:
   m_ObjectHideFlags: 0
