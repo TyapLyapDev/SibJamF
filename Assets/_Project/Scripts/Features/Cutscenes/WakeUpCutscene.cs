@@ -6,6 +6,7 @@ using UnityEngine.Animations;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.Playables;
+using VContainer;
 
 namespace SibJam.Cutscenes
 {
@@ -27,7 +28,6 @@ namespace SibJam.Cutscenes
 
         [Header("Звук и реплики")]
         [SerializeField] private AudioSource _voiceSource;
-        [SerializeField] private Subtitles _subtitles;
         [SerializeField] private CutsceneCue[] _cues;
 
         [Header("Экран")]
@@ -55,6 +55,7 @@ namespace SibJam.Cutscenes
         private PlayableGraph _graph;
         private AnimationClipPlayable _clipPlayable;
         private bool[] _firedCues;
+        private VoiceLinePlayer _voiceLines;
         private GameObject _player;
         private Camera _camera;
         private CameraFollow _cameraFollow;
@@ -65,6 +66,12 @@ namespace SibJam.Cutscenes
         private float _handOverTime = -1f;
 
         public bool IsPlaying { get; private set; }
+
+        [Inject]
+        public void Construct(VoiceLinePlayer voiceLines)
+        {
+            _voiceLines = voiceLines;
+        }
 
         private void Start()
         {
@@ -196,8 +203,8 @@ namespace SibJam.Cutscenes
                 source.PlayOneShot(cue.Clip);
             }
 
-            if (!string.IsNullOrEmpty(cue.Text))
-                _subtitles.Show(cue.Speaker, cue.Text, cue.SubtitleDuration);
+            if (cue.Line != null)
+                _voiceLines.Play(cue.Line, cue.Source);
 
             cue.Event?.Invoke();
         }
@@ -258,7 +265,7 @@ namespace SibJam.Cutscenes
             FollowEye();
 
             StopVoices();
-            _subtitles.Hide();
+            _voiceLines.Stop();
             _eyelids.alpha = 0f;
             _skipHint.alpha = 0f;
             _shake = 0f;

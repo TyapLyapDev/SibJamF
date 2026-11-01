@@ -4,6 +4,7 @@ using SibJam.Cutscenes;
 using SibJam.Defeat;
 using SibJam.Player;
 using UnityEngine;
+using UnityEngine.Serialization;
 using VContainer;
 using VContainer.Unity;
 
@@ -15,7 +16,10 @@ namespace SibJam
         [SerializeField] private PopUp _gameButtons;
         [SerializeField] private Settings _settings;
         [SerializeField] private Anticlicker _anticlicker;
-        [SerializeField] private Subtitles _subtitles;
+        [Tooltip("Плашка на сервисном канвасе субтитров")]
+        [SerializeField, FormerlySerializedAs("_subtitles")] private SubtitlesView _subtitlesView;
+        [Tooltip("Голос героя на сервисном объекте реплик")]
+        [SerializeField, FormerlySerializedAs("_voiceLinePlayer")] private VoiceSource _voiceSource;
 
         [Header("Чекпоинты и поражение (пусто — сцена без них)")]
         [SerializeField] private GameLoop _gameLoop;
@@ -35,7 +39,10 @@ namespace SibJam
             builder.RegisterComponent(_gameButtons);
             builder.RegisterComponent(_settings);
             builder.RegisterComponent(_anticlicker);
-            builder.RegisterComponent(_subtitles);
+            builder.RegisterComponent(_subtitlesView);
+            builder.Register<Subtitles>(Lifetime.Singleton);
+            builder.RegisterComponent(_voiceSource);
+            builder.Register<VoiceLinePlayer>(Lifetime.Singleton);
 
             if (_playerHealth != null)
                 builder.RegisterComponent(_playerHealth).As<IPlayerHealthInfo>().AsSelf();
