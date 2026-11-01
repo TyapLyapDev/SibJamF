@@ -50,6 +50,8 @@ namespace _Project.Scripts.Enemies
             _damage = config.Damage * statsMultiplier;
         }
 
+        public bool CanReach(IEnemyTarget target) => true;
+
         public bool CanStart(IEnemyTarget target)
         {
             return _config != null && !IsRunning && _cooldownTimer <= 0f && EnemyAttackTokens.TryTake(this);

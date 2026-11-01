@@ -89527,6 +89527,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Combat.PlayerTarget
   _aimPoint: {fileID: 1748087334}
   _health: {fileID: 1748087345}
+  _weapon: {fileID: 1748087335}
+  _parryAngle: 75
+  _blockDamageMultiplier: 1
 --- !u!114 &1748087344
 MonoBehaviour:
   m_ObjectHideFlags: 0

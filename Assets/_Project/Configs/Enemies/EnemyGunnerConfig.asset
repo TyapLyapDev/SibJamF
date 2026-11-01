@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Enemies.EnemyConfig
   <Prefab>k__BackingField: {fileID: 7755692387420044502, guid: efbc508030eb8774fbfd14dd99131097, type: 3}
   <MaxHealth>k__BackingField: 100
-  <MoveSpeed>k__BackingField: 5
+  <MoveSpeed>k__BackingField: 3.5
   <Damage>k__BackingField: 10
-  <AttackRange>k__BackingField: 1.5
-  <AttackCooldown>k__BackingField: 1
+  <AttackRange>k__BackingField: 14
+  <AttackCooldown>k__BackingField: 1.5

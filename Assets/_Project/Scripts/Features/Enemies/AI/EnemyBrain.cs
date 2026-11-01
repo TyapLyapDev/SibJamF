@@ -20,6 +20,9 @@ namespace _Project.Scripts.Enemies
         [SerializeField, Min(0f)] private float _aggroRange = 40f;
         [Tooltip("Сколько враг стоит оглушённым после того, как его удар отпарировали")]
         [SerializeField, Min(0f)] private float _parryStaggerDuration = 1.2f;
+        [Tooltip("Стрелок: если игрок ближе — отходит назад. 0 — не отступать")]
+        [SerializeField, Min(0f)] private float _retreatDistance;
+        [SerializeField, Min(0.5f)] private float _retreatStep = 3f;
 
         private Enemy _enemy;
         private EnemyMotor _motor;
@@ -101,7 +104,20 @@ namespace _Project.Scripts.Enemies
                 return;
             }
 
-            if (DistanceToTarget() <= _config.AttackRange)
+            var distance = DistanceToTarget();
+
+            if (distance < _retreatDistance)
+            {
+                _motor.FaceTowards(_target.Position, deltaTime);
+                TickRepath(deltaTime, RetreatPoint());
+
+                if (_attack != null && _attack.CanStart(_target))
+                    SetState(EnemyState.Attack);
+
+                return;
+            }
+
+            if (distance <= _config.AttackRange && (_attack == null || _attack.CanReach(_target)))
             {
                 _motor.Stop();
                 _motor.FaceTowards(_target.Position, deltaTime);
@@ -112,12 +128,23 @@ namespace _Project.Scripts.Enemies
                 return;
             }
 
+            TickRepath(deltaTime, _target.Position);
+        }
+
+        private void TickRepath(float deltaTime, Vector3 destination)
+        {
             _repathTimer -= deltaTime;
-            if (_repathTimer <= 0f)
-            {
-                _repathTimer = _repathInterval;
-                _motor.MoveTo(_target.Position);
-            }
+            if (_repathTimer > 0f) return;
+
+            _repathTimer = _repathInterval;
+            _motor.MoveTo(destination);
+        }
+
+        private Vector3 RetreatPoint()
+        {
+            var away = transform.position - _target.Position;
+            away.y = 0f;
+            return transform.position + away.normalized * _retreatStep;
         }
 
         private void TickAttack(float deltaTime)
