@@ -46,10 +46,17 @@ namespace SibJam.Boss
         public bool IsBroken { get; private set; }
         public float Health01 => (float)_health / _maxHealth;
 
+        // Створки и ядро необязательны: без них генератор открывается только лампой и звуком
+        private bool HasShutters => _shutterLeft != null && _shutterRight != null;
+
         private void Awake()
         {
-            _leftClosed = _shutterLeft.localPosition;
-            _rightClosed = _shutterRight.localPosition;
+            if (HasShutters)
+            {
+                _leftClosed = _shutterLeft.localPosition;
+                _rightClosed = _shutterRight.localPosition;
+            }
+
             ResetGenerator();
         }
 
@@ -60,9 +67,16 @@ namespace SibJam.Boss
             IsOpen = false;
             IsBroken = false;
             _health = _maxHealth;
-            _shutterLeft.localPosition = _leftClosed;
-            _shutterRight.localPosition = _rightClosed;
-            _core.SetActive(true);
+
+            if (HasShutters)
+            {
+                _shutterLeft.localPosition = _leftClosed;
+                _shutterRight.localPosition = _rightClosed;
+            }
+
+            if (_core != null)
+                _core.SetActive(true);
+
             _lamp.enabled = true;
             _lamp.color = _closedColor;
 
@@ -130,7 +144,10 @@ namespace SibJam.Boss
             IsBroken = true;
             IsOpen = false;
             _health = 0;
-            _core.SetActive(false);
+
+            if (_core != null)
+                _core.SetActive(false);
+
             _lamp.enabled = false;
             _sfx.StopLoop();
             _sfx.Play(_breakSound);
@@ -143,6 +160,9 @@ namespace SibJam.Boss
 
         private void MoveShutters(bool open)
         {
+            if (!HasShutters)
+                return;
+
             if (_moving != null)
                 StopCoroutine(_moving);
 

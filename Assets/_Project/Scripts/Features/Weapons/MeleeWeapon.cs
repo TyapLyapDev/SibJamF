@@ -14,7 +14,9 @@ namespace SibJam.Weapons
         Parried
     }
 
-    // Меч: по ЛКМ — рубящий удар сферой перед прицелом, урон врагам и удары по камерам; по ПКМ — блок, в начале блока окно парирования.
+    // Меч: по ЛКМ — рубящий удар сферой перед прицелом, урон врагам и удары по камерам.
+    // По клику ПКМ — парирование: руки поднимают блок, держат и опускают; в начале окно парирования, дальше просто блок.
+    // Пока парирование не доиграло, новый клик не срабатывает; зажатие ничего не продлевает.
     // С руками (_arms) удар наносится в кадр анимации, без них — сразу, а модель машет кодом
     public class MeleeWeapon : MonoBehaviour
     {
@@ -30,8 +32,16 @@ namespace SibJam.Weapons
         [SerializeField, Min(0f)] private float _cooldown = 0.45f;
         [SerializeField] private LayerMask _hitMask = ~0;
 
+        [Header("Парирование")]
+        [Tooltip("Сколько секунд блок поднят после клика (подъём 0.25 с + удержание)")]
+        [SerializeField, Min(0.05f)] private float _parryRaisedTime = 0.4f;
+        [Tooltip("Сколько секунд руки опускаются, прежде чем можно кликнуть снова")]
+        [SerializeField, Min(0f)] private float _parryRecoveryTime = 0.25f;
+
         private IPlayerInputReader _inputReader;
+        private Coroutine _parry;
         private bool _wasAttackPressed;
+        private bool _wasBlockPressed;
         private float _nextAttackTime;
         private float _blockStartTime;
         private Quaternion _modelRestRotation;
@@ -75,6 +85,11 @@ namespace SibJam.Weapons
         private void OnDisable()
         {
             SetModelVisible(false);
+
+            if (_parry != null)
+                StopCoroutine(_parry);
+
+            _parry = null;
             SetBlocking(false);
 
             if (_arms != null)
@@ -85,14 +100,28 @@ namespace SibJam.Weapons
         {
             bool canAct = CursorLocker.IsLocked;
 
-            SetBlocking(canAct && _inputReader.IsBlockPressed);
+            bool isBlockPressed = _inputReader.IsBlockPressed;
+
+            if (isBlockPressed && !_wasBlockPressed && canAct && _parry == null)
+                _parry = StartCoroutine(Parry());
+
+            _wasBlockPressed = isBlockPressed;
 
             bool isAttackPressed = _inputReader.IsAttackPressed;
 
-            if (isAttackPressed && !_wasAttackPressed && canAct && !IsBlocking && Time.time >= _nextAttackTime)
+            if (isAttackPressed && !_wasAttackPressed && canAct && _parry == null && Time.time >= _nextAttackTime)
                 Attack();
 
             _wasAttackPressed = isAttackPressed;
+        }
+
+        private IEnumerator Parry()
+        {
+            SetBlocking(true);
+            yield return new WaitForSeconds(_parryRaisedTime);
+            SetBlocking(false);
+            yield return new WaitForSeconds(_parryRecoveryTime);
+            _parry = null;
         }
 
         public void Equip(WeaponConfig config)
