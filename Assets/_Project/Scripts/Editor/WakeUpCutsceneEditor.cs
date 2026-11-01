@@ -492,7 +492,7 @@ namespace SibJam.EditorTools
             AnimationMode.EndSampling();
 
             EnsurePreviewCamera();
-            _previewCamera.transform.SetPositionAndRotation(eye.position, eye.rotation);
+            _previewCamera.transform.SetPositionAndRotation(eye.position + eye.rotation * serializedObject.FindProperty("_eyeOffset").vector3Value, eye.rotation);
 
             var hiddenBones = new List<Transform>();
 
@@ -501,6 +501,16 @@ namespace SibJam.EditorTools
                 if (_hiddenBones.GetArrayElementAtIndex(i).objectReferenceValue is Transform bone)
                     hiddenBones.Add(bone);
             }
+
+            // В игре катсцена выключает игрока, в превью просто не рисуем его
+            var playerRenderers = new List<Renderer>();
+            GameObject player = GameObject.FindWithTag(serializedObject.FindProperty("_playerTag").stringValue);
+
+            if (player != null)
+                playerRenderers.AddRange(player.GetComponentsInChildren<Renderer>());
+
+            foreach (Renderer playerRenderer in playerRenderers)
+                playerRenderer.forceRenderingOff = true;
 
             // Скин в редакторе сам не обновляется до перерисовки — запекаем меши в позе и рендерим их
             var skinned = rig.GetComponentsInChildren<SkinnedMeshRenderer>();
@@ -521,6 +531,8 @@ namespace SibJam.EditorTools
                     renderer.BakeMesh(mesh, true);
                     var bakedObject = new GameObject("CutscenePreviewBake") { hideFlags = HideFlags.HideAndDontSave };
                     bakedObject.transform.SetPositionAndRotation(renderer.transform.position, renderer.transform.rotation);
+                    // Запечённый меш в единицах объекта: у рига из Blender масштаб может быть 100, его надо вернуть
+                    bakedObject.transform.localScale = renderer.transform.lossyScale;
                     bakedObject.AddComponent<MeshFilter>().sharedMesh = mesh;
                     var bakedRenderer = bakedObject.AddComponent<MeshRenderer>();
                     bakedRenderer.sharedMaterials = renderer.sharedMaterials;
@@ -541,6 +553,9 @@ namespace SibJam.EditorTools
 
                 foreach (SkinnedMeshRenderer renderer in skinned)
                     renderer.forceRenderingOff = false;
+
+                foreach (Renderer playerRenderer in playerRenderers)
+                    playerRenderer.forceRenderingOff = false;
 
                 for (int i = 0; i < hiddenBones.Count; i++)
                     hiddenBones[i].localScale = scales[i];

@@ -8,10 +8,18 @@ namespace SibJam.Cutscenes
     // Либо стартует сам, либо ждёт StartBanging (например, из события катсцены)
     public class WallBangingRobot : MonoBehaviour
     {
+        private const float WindUpDuration = 0.35f;
+        private const float LungeDuration = 0.08f;
+
         [SerializeField] private bool _bangOnStart = true;
         [SerializeField] private Transform _body;
         [SerializeField] private AudioSource _audioSource;
+        [Tooltip("Удар головой о стену, берётся случайный")]
         [SerializeField] private AudioClip[] _hitClips;
+        [Tooltip("Сколько секунд в начале клипов удара до самого удара: звук запускается заранее, чтобы совпасть с касанием")]
+        [SerializeField, Min(0f)] private float _hitClipLead = 0.18f;
+        [Tooltip("Скрип и лязг корпуса на замахе, берётся случайный")]
+        [SerializeField] private AudioClip[] _bodyClips;
         [Tooltip("Глаз мигает при ударе")]
         [SerializeField] private Light _eyeLight;
 
@@ -65,8 +73,11 @@ namespace SibJam.Cutscenes
                 if (!first)
                     yield return new WaitForSeconds(Random.Range(_pauseRange.x, _pauseRange.y));
 
-                yield return MoveTo(-_windUpDistance, -_hitTilt * 0.3f, 0.35f);
-                yield return MoveTo(_hitDistance, _hitTilt, 0.08f);
+                PlayRandom(_bodyClips);
+                StartCoroutine(PlayHitSound(WindUpDuration + LungeDuration - _hitClipLead));
+
+                yield return MoveTo(-_windUpDistance, -_hitTilt * 0.3f, WindUpDuration);
+                yield return MoveTo(_hitDistance, _hitTilt, LungeDuration);
                 Hit();
                 yield return MoveTo(0f, 0f, 0.45f);
             }
@@ -89,14 +100,25 @@ namespace SibJam.Cutscenes
             _body.SetLocalPositionAndRotation(targetPosition, targetRotation);
         }
 
+        private IEnumerator PlayHitSound(float delay)
+        {
+            if (delay > 0f)
+                yield return new WaitForSeconds(delay);
+
+            PlayRandom(_hitClips);
+        }
+
+        private void PlayRandom(AudioClip[] clips)
+        {
+            if (_audioSource == null || clips == null || clips.Length == 0)
+                return;
+
+            _audioSource.pitch = 1f + Random.Range(-_pitchJitter, _pitchJitter);
+            _audioSource.PlayOneShot(clips[Random.Range(0, clips.Length)]);
+        }
+
         private void Hit()
         {
-            if (_audioSource != null && _hitClips.Length > 0)
-            {
-                _audioSource.pitch = 1f + Random.Range(-_pitchJitter, _pitchJitter);
-                _audioSource.PlayOneShot(_hitClips[Random.Range(0, _hitClips.Length)]);
-            }
-
             if (_eyeLight != null)
                 StartCoroutine(BlinkEye());
 

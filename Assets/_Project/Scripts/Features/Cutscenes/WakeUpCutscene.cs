@@ -19,6 +19,8 @@ namespace SibJam.Cutscenes
         [SerializeField] private AnimationClip _clip;
         [Tooltip("Камера из FBX на голове: катсцена смотрит её глазами")]
         [SerializeField] private Transform _eye;
+        [Tooltip("Сдвиг камеры от кости-камеры в её осях, в метрах: Y — выше, Z — вперёд. Чтобы броня не лезла в кадр")]
+        [SerializeField] private Vector3 _eyeOffset;
         [Tooltip("Кости, которые не должны лезть в кадр (голова): сжимаются в ноль")]
         [SerializeField] private Transform[] _hiddenBones;
         [SerializeField, Min(0.01f)] private float _nearClipPlane = 0.03f;
@@ -213,7 +215,7 @@ namespace SibJam.Cutscenes
             foreach (Transform bone in _hiddenBones)
                 bone.localScale = Vector3.one;
 
-            Vector3 position = _eye.position;
+            Vector3 position = _eye.position + _eye.rotation * _eyeOffset;
             Quaternion rotation = _eye.rotation;
 
             foreach (Transform bone in _hiddenBones)
@@ -239,6 +241,12 @@ namespace SibJam.Cutscenes
                 if (!_firedCues[i])
                     _cues[i].Event?.Invoke();
             }
+
+            // При пропуске герой ещё лежит — отдаём игроку позу из последнего кадра анимации
+            _shake = 0f;
+            _clipPlayable.SetTime(_clip.length);
+            _graph.Evaluate();
+            FollowEye();
 
             StopVoices();
             _subtitles.Hide();
