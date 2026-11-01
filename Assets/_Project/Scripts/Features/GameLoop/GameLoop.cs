@@ -9,6 +9,7 @@ namespace SibJam
         [SerializeField] private LocationLoop[] _locations;
 
         public event Action<LocationLoop> LocationChanged;
+        public event Action<LocationLoop> LocationLaunched;
         public event Action Completed;
 
         public int CurrentLocationIndex { get; private set; }
@@ -34,6 +35,15 @@ namespace SibJam
             if (location != CurrentLocationLoop) return;
 
             location.Launch();
+            LocationLaunched?.Invoke(location);
+        }
+
+        // Старт с чекпоинта: пропускаем пройденные локации, сама локация запускается отдельно через LaunchLocation
+        public LocationLoop StartFrom(int locationIndex)
+        {
+            CurrentLocationIndex = Mathf.Clamp(locationIndex, 0, _locations.Length - 1);
+            LocationChanged?.Invoke(CurrentLocationLoop);
+            return CurrentLocationLoop;
         }
 
         private void OnLocationCompleted(LocationLoop location)

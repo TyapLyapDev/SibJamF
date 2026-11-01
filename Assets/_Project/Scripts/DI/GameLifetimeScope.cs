@@ -1,3 +1,7 @@
+using SibJam.Checkpoints;
+using SibJam.Cutscenes;
+using SibJam.Defeat;
+using SibJam.Player;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -12,6 +16,12 @@ namespace SibJam
         [SerializeField] private Anticlicker _anticlicker;
         [SerializeField] private Subtitles _subtitles;
 
+        [Header("Чекпоинты и поражение (пусто — сцена без них)")]
+        [SerializeField] private GameLoop _gameLoop;
+        [SerializeField] private WakeUpCutscene _wakeUpCutscene;
+        [SerializeField] private PlayerHealth _playerHealth;
+        [SerializeField] private DefeatScreen _defeatScreen;
+
         protected override void Configure(IContainerBuilder builder)
         {
             builder.RegisterEntryPoint<GameEntryPoint>(Lifetime.Singleton);
@@ -22,6 +32,19 @@ namespace SibJam
             builder.RegisterComponent(_settings);
             builder.RegisterComponent(_anticlicker);
             builder.RegisterComponent(_subtitles);
+
+            if (_playerHealth != null)
+                builder.RegisterComponent(_playerHealth).As<IPlayerHealthInfo>().AsSelf();
+
+            if (_gameLoop != null && _wakeUpCutscene != null && _playerHealth != null)
+            {
+                builder.RegisterComponent(_gameLoop);
+                builder.RegisterComponent(_wakeUpCutscene);
+                builder.RegisterEntryPoint<CheckpointFlow>(Lifetime.Singleton);
+            }
+
+            if (_defeatScreen != null)
+                builder.RegisterComponent(_defeatScreen);
         }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using SibJam.Combat;
 using UnityEngine;
 
 namespace _Project.Scripts.Enemies
@@ -13,11 +14,14 @@ namespace _Project.Scripts.Enemies
         // Множитель силы от роста сложности волн: хп сейчас, урон — когда появится атака
         public float StatsMultiplier { get; private set; } = 1f;
 
-        public void Init(EnemyConfig config, float statsMultiplier = 1f)
+        public void Init(EnemyConfig config, IEnemyTarget target, float statsMultiplier = 1f)
         {
             StatsMultiplier = statsMultiplier;
             Health = config.MaxHealth * statsMultiplier;
             IsDead = false;
+
+            if (TryGetComponent(out EnemyBrain brain))
+                brain.Init(config, target);
         }
 
         public void TakeDamage(float amount)

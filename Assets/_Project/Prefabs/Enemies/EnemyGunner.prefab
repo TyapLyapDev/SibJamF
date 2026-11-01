@@ -12,6 +12,10 @@ GameObject:
   - component: {fileID: 2834593201955234878}
   - component: {fileID: 7755692387420044502}
   - component: {fileID: 2262574226920617475}
+  - component: {fileID: 8957328027447899415}
+  - component: {fileID: 7215804100150089781}
+  - component: {fileID: 1447841712916979141}
+  - component: {fileID: 6155990205766815678}
   m_Layer: 0
   m_Name: EnemyGunner
   m_TagString: Untagged
@@ -84,6 +88,71 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Enemies.RandomAnimationStart
   _animator: {fileID: 2875233673958880203}
   _speedSpread: 0.1
+--- !u!195 &8957328027447899415
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4230113764485243959}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.45
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 720
+  m_StoppingDistance: 0.2
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
+--- !u!114 &7215804100150089781
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4230113764485243959}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a78e5f05a7b0e684f87c89dbfbe5b07a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Enemies.EnemyMotor
+  _turnSpeed: 540
+--- !u!114 &1447841712916979141
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4230113764485243959}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 353a3ff43cc3e7041928628c8fb7d022, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Enemies.EnemyBrain
+  _repathInterval: 0.2
+  _aggroRange: 40
+  _parryStaggerDuration: 1.2
+--- !u!114 &6155990205766815678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4230113764485243959}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 788fd7bd3a39dbd4ba62e6624d8df946, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Enemies.EnemyAnimator
+  _animator: {fileID: 2875233673958880203}
+  _motor: {fileID: 7215804100150089781}
+  _movingThreshold: 0.1
 --- !u!1001 &4853207770322562023
 PrefabInstance:
   m_ObjectHideFlags: 0

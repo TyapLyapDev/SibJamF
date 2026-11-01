@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Project/Scenes/GameplayFlow.unity
     guid: fe122c4230711404ba3074197236a968
+  - enabled: 1
+    path: Assets/_Project/Scenes/Gameplay.unity
+    guid: 31cd53cd7decc5c4ab3b6514a9dd767b
   m_configObjects: {}

@@ -1,4 +1,5 @@
 using _Project.Scripts.EnemySpawner;
+using SibJam.Combat;
 using UnityEngine;
 
 namespace SibJam.Waves
@@ -6,6 +7,7 @@ namespace SibJam.Waves
     public class WaveSpawner : MonoBehaviour
     {
         [SerializeField] private Transform[] _spawnPoints;
+        [SerializeField] private PlayerTarget _target;
 
         private readonly EnemySpawner _enemySpawner = new();
         private int _lastSpawnPointIndex = -1;
@@ -22,7 +24,7 @@ namespace SibJam.Waves
                 for (var i = 0; i < entry.Count + difficulty.ExtraEnemiesPerEntry; i++)
                 {
                     var spawnPoint = GetSpawnPoint();
-                    var enemy = _enemySpawner.Spawn(entry.Enemy, spawnPoint.position, spawnPoint.rotation, difficulty.StatsMultiplier);
+                    var enemy = _enemySpawner.Spawn(entry.Enemy, spawnPoint.position, spawnPoint.rotation, _target, difficulty.StatsMultiplier);
                     if (enemy != null)
                         wave.BindEnemy(enemy);
                 }

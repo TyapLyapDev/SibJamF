@@ -9,5 +9,6 @@ namespace SibJam
         public float MusicVolume = 0.5f;
         public float SfxVolume = 0.75f;
         public float MouseSensitivity = 0.2f;
+        public int CheckpointLocation = -1;
     }
 }

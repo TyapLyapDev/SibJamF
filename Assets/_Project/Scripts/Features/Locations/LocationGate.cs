@@ -29,6 +29,7 @@ namespace SibJam.Locations
                 _requiredPickup.PickedUp += OnPickedUp;
 
             _roomEntryZone.Entered += OnRoomEntered;
+            _gameLoop.LocationChanged += OnLocationChanged;
         }
 
         private void OnDisable()
@@ -40,6 +41,7 @@ namespace SibJam.Locations
                 _requiredPickup.PickedUp -= OnPickedUp;
 
             _roomEntryZone.Entered -= OnRoomEntered;
+            _gameLoop.LocationChanged -= OnLocationChanged;
         }
 
         private void Start()
@@ -51,6 +53,13 @@ namespace SibJam.Locations
         private void OnFromLocationCompleted(LocationLoop location) => OpenDoor();
 
         private void OnPickedUp() => OpenDoor();
+
+        // Старт с чекпоинта: предыдущая локация не проходилась в этой сессии, но дверь в текущую должна быть открыта
+        private void OnLocationChanged(LocationLoop location)
+        {
+            if (location == _toLocation && !_isEntered)
+                OpenDoor();
+        }
 
         private void OpenDoor()
         {

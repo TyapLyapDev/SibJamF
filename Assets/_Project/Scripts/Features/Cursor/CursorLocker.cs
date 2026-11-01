@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 namespace SibJam
@@ -18,8 +19,12 @@ namespace SibJam
         {
             if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
                 _cursorShower.Show();
-            else if (!IsLocked && Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
+            else if (!IsLocked && Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame && !IsPointerOverUi())
                 _cursorShower.Hide();
         }
+
+        // Клик по кнопке (меню паузы, экран поражения) не должен прятать курсор, иначе кнопка не нажмётся
+        private static bool IsPointerOverUi() =>
+            EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
     }
 }

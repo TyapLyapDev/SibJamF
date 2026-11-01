@@ -15,6 +15,7 @@ namespace SibJam
 
         private bool _isShow;
         private bool _wasEscapePressed;
+        private bool _isLocked;
 
         public GameButtonsShower(
             IInputReader inputReader,
@@ -38,7 +39,7 @@ namespace SibJam
         {
             bool isEscapePressed = _inputReader.IsEscapePressed;
 
-            if (isEscapePressed == true && _wasEscapePressed == false)
+            if (isEscapePressed == true && _wasEscapePressed == false && _isLocked == false)
             {
                 _isShow = !_isShow;
 
@@ -56,6 +57,9 @@ namespace SibJam
 
             _wasEscapePressed = isEscapePressed;
         }
+
+        // Экран поражения: меню паузы по Esc больше не открывается до смены сцены
+        public void Lock() => _isLocked = true;
 
         public void Show()
         {

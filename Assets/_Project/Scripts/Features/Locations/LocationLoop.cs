@@ -2,6 +2,7 @@ using System;
 using SibJam.SecurityCameras;
 using SibJam.Waves;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace SibJam.Locations
 {
@@ -9,15 +10,18 @@ namespace SibJam.Locations
     {
         [SerializeField] private WavesLoop _wavesLoop;
         [SerializeField] private CameraDestructionGoal _cameraDestructionGoal;
-        [SerializeField] private Transform _arrivalPoint;
+        [Tooltip("Где появляется игрок при старте с чекпоинта этой локации")]
+        [FormerlySerializedAs("_arrivalPoint")]
+        [SerializeField] private Transform _respawnPoint;
 
         public event Action<LocationLoop> Completed;
+        public event Action<LocationLoopState> StateChanged;
 
         public IWavesLoopInfo Waves => _wavesLoop.Info;
 
         public ICameraDestructionGoalInfo Cameras => _cameraDestructionGoal;
 
-        public Transform ArrivalPoint => _arrivalPoint;
+        public Transform RespawnPoint => _respawnPoint;
 
         public LocationLoopState State { get; private set; } = LocationLoopState.Idle;
 
@@ -39,7 +43,7 @@ namespace SibJam.Locations
         {
             if (State != LocationLoopState.Idle) return;
 
-            State = LocationLoopState.Running;
+            SetState(LocationLoopState.Running);
             _wavesLoop.LaunchWaves();
         }
 
@@ -53,8 +57,14 @@ namespace SibJam.Locations
         {
             if (State == LocationLoopState.Completed || !CanComplete) return;
 
-            State = LocationLoopState.Completed;
+            SetState(LocationLoopState.Completed);
             Completed?.Invoke(this);
+        }
+
+        private void SetState(LocationLoopState state)
+        {
+            State = state;
+            StateChanged?.Invoke(state);
         }
     }
 }

@@ -1,3 +1,4 @@
+using SibJam.Checkpoints;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.InputSystem;
@@ -21,6 +22,7 @@ namespace SibJam
             builder.Register<ISceneLoader, SceneLoader>(Lifetime.Singleton);
             builder.Register<IPauseSwitcher, PauseSwitcher>(Lifetime.Singleton);
             builder.Register<ISaver, Saver>(Lifetime.Singleton);
+            builder.Register<ICheckpoint, Checkpoint>(Lifetime.Singleton);
             builder.RegisterComponent(_music);
             builder.RegisterComponent(_mixer);
             builder.RegisterComponent(_uiSfxService);

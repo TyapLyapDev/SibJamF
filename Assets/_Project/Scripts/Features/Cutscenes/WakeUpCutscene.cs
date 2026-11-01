@@ -69,9 +69,15 @@ namespace SibJam.Cutscenes
         private void Start()
         {
             if (_playOnStart)
+            {
                 Play();
-            else
-                _rig.gameObject.SetActive(false);
+                return;
+            }
+
+            // Без катсцены (старт с чекпоинта) веки в сцене сохранены закрытыми — открываем, иначе чёрный экран
+            _rig.gameObject.SetActive(false);
+            _eyelids.alpha = 0f;
+            _skipHint.alpha = 0f;
         }
 
         private void OnDestroy()
@@ -108,6 +114,9 @@ namespace SibJam.Cutscenes
             if (_handOverTime >= 0f)
                 BlendToPlayer();
         }
+
+        // Старт с чекпоинта: катсцена не нужна, игрока ставит CheckpointFlow. Вызывать до Start
+        public void CancelAutoPlay() => _playOnStart = false;
 
         public void Play()
         {

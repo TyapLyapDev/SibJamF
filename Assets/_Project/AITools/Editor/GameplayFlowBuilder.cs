@@ -85,8 +85,6 @@ namespace SibJam.Editor
             }
 
             var gameLoop = Object.FindAnyObjectByType<GameLoop>();
-            foreach (var teleporter in Object.FindObjectsByType<PlayerTeleporter>(FindObjectsInactive.Include))
-                Object.DestroyImmediate(teleporter);
 
             var player = Object.FindAnyObjectByType<CharacterController>();
             var weapon = CreateMeleeWeapon(player);
@@ -250,7 +248,7 @@ namespace SibJam.Editor
             var location = room.gameObject.AddComponent<LocationLoop>();
             SetObject(location, "_wavesLoop", wavesLoop);
             SetObject(location, "_cameraDestructionGoal", goal);
-            SetObject(location, "_arrivalPoint", CreatePoint("ArrivalPoint", room, new Vector3(0f, 0.05f, -Half + 3f), Quaternion.identity));
+            SetObject(location, "_respawnPoint", CreatePoint("RespawnPoint", room, new Vector3(0f, 0.05f, -Half + 3f), Quaternion.identity));
 
             return (location, entryDoor, exitDoor);
         }

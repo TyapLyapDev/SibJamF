@@ -1,16 +1,17 @@
 using _Project.Scripts.Enemies;
+using SibJam.Combat;
 using UnityEngine;
 
 namespace _Project.Scripts.EnemySpawner
 {
     public class EnemySpawner
     {
-        public Enemy Spawn(EnemyConfig enemyConfig, Vector3 spawnPosition)
+        public Enemy Spawn(EnemyConfig enemyConfig, Vector3 spawnPosition, IEnemyTarget target)
         {
-            return Spawn(enemyConfig, spawnPosition, Quaternion.identity);
+            return Spawn(enemyConfig, spawnPosition, Quaternion.identity, target);
         }
 
-        public Enemy Spawn(EnemyConfig enemyConfig, Vector3 spawnPosition, Quaternion rotation, float statsMultiplier = 1f)
+        public Enemy Spawn(EnemyConfig enemyConfig, Vector3 spawnPosition, Quaternion rotation, IEnemyTarget target, float statsMultiplier = 1f)
         {
             if (enemyConfig == null || enemyConfig.Prefab == null)
             {
@@ -19,7 +20,7 @@ namespace _Project.Scripts.EnemySpawner
             }
 
             var enemy = Object.Instantiate(enemyConfig.Prefab, spawnPosition, rotation);
-            enemy.Init(enemyConfig, statsMultiplier);
+            enemy.Init(enemyConfig, target, statsMultiplier);
             return enemy;
         }
     }

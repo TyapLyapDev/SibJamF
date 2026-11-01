@@ -1,21 +1,28 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace SibJam.Waves.UI
 {
     public class WavesView : MonoBehaviour
     {
         [SerializeField] private CurrentLocationInfo _currentLocation;
+        [SerializeField] private HudPanel _panel;
+        [SerializeField] private GameObject _enemiesGroup;
         [SerializeField] private TMP_Text _enemiesText;
+        [SerializeField] private GameObject _delayGroup;
         [SerializeField] private TMP_Text _delayText;
+        [SerializeField] private Image _delayFill;
 
         private IWavesLoopInfo _waves;
+        private float _delayDuration;
 
         private void Start() => Bind();
 
         private void OnEnable()
         {
             _currentLocation.LocationChanged += Bind;
+            _currentLocation.ActiveChanged += RefreshVisibility;
 
             if (_waves != null)
                 Bind();
@@ -24,6 +31,7 @@ namespace SibJam.Waves.UI
         private void OnDisable()
         {
             _currentLocation.LocationChanged -= Bind;
+            _currentLocation.ActiveChanged -= RefreshVisibility;
             Unbind();
         }
 
@@ -35,11 +43,13 @@ namespace SibJam.Waves.UI
             {
                 case WavesLoopState.Wave:
                 case WavesLoopState.WaitingForEnemiesKilled:
-                    _enemiesText.text = $"Врагов осталось: {_waves.AliveEnemiesCount}";
+                    _enemiesText.text = $"× {_waves.AliveEnemiesCount}";
                     break;
 
                 case WavesLoopState.Delay:
-                    _delayText.text = $"Следующая волна через: {Mathf.CeilToInt(_waves.DelayTimeLeft)}";
+                    _delayText.text = $"Следующая волна через {Mathf.CeilToInt(_waves.DelayTimeLeft)}";
+                    if (_delayFill != null && _delayDuration > 0f)
+                        _delayFill.fillAmount = _waves.DelayTimeLeft / _delayDuration;
                     break;
             }
         }
@@ -63,8 +73,19 @@ namespace SibJam.Waves.UI
 
         private void OnStateChanged(WavesLoopState state)
         {
-            _enemiesText.gameObject.SetActive(state is WavesLoopState.Wave or WavesLoopState.WaitingForEnemiesKilled);
-            _delayText.gameObject.SetActive(state == WavesLoopState.Delay);
+            _enemiesGroup.SetActive(state is WavesLoopState.Wave or WavesLoopState.WaitingForEnemiesKilled);
+            _delayGroup.SetActive(state == WavesLoopState.Delay);
+
+            if (state == WavesLoopState.Delay)
+                _delayDuration = Mathf.Max(_waves.DelayTimeLeft, 0.01f);
+
+            RefreshVisibility();
+        }
+
+        private void RefreshVisibility()
+        {
+            var hasContent = _waves != null && _waves.State is WavesLoopState.Wave or WavesLoopState.WaitingForEnemiesKilled or WavesLoopState.Delay;
+            _panel.SetVisible(hasContent && _currentLocation.IsActive);
         }
     }
 }
