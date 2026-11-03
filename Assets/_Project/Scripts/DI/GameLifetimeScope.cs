@@ -55,6 +55,20 @@ namespace SibJam
             builder.RegisterComponent(_skipHintView);
             builder.Register<SkipHint>(Lifetime.Singleton);
 
+            // Остальные катсцены сцены (реплики теликов по триггерам и т.п.) тоже получают сервисы реплик и субтитров
+            builder.RegisterBuildCallback(container =>
+            {
+                foreach (Cutscene cutscene in FindObjectsByType<Cutscene>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                {
+                    if (cutscene != _wakeUpCutscene)
+                        container.Inject(cutscene);
+                }
+
+                // Телики говорят через тот же сервис реплик
+                foreach (TV.TVReactions tv in FindObjectsByType<TV.TVReactions>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                    container.Inject(tv);
+            });
+
             if (_creditsView != null)
             {
                 builder.RegisterComponent(_creditsView);

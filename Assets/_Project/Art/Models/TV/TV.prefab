@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 8347645608106389450}
   - component: {fileID: 7814906192320625322}
+  - component: {fileID: 6681874703669329743}
+  - component: {fileID: 8981800595166601863}
   m_Layer: 0
   m_Name: TV
   m_TagString: Untagged
@@ -57,9 +59,127 @@ MonoBehaviour:
   - {fileID: 2800000, guid: ee276f3d1b3e6944d804981acc646cce, type: 3}
   - {fileID: 2800000, guid: a19b0eef0aed301429b1b20a0904f9ea, type: 3}
   - {fileID: 2800000, guid: e52d284a778099247acc2a897bb62d17, type: 3}
-  _startFace: 6
+  _idleFace: 6
+  _voice: {fileID: 6681874703669329743}
   _tint: {r: 1.6, g: 1.6, b: 1.6, a: 1}
   _flicker: 0.06
+  _glitchTime: 0.18
+--- !u!82 &6681874703669329743
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4474217173237073677}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 444434307313811013, guid: a47c38d92e940e049b3a36b03a0cb583, type: 2}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 2
+  MaxDistance: 25
+  Pan2D: 0
+  rolloffMode: 1
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &8981800595166601863
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4474217173237073677}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 750abe94ee08a68458c4f3f5ae8bbd59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SibJam.TV.TVSpeakers
+  _screen: {fileID: 7814906192320625322}
+  _speakers:
+  - {fileID: 7692288523373062285}
+  _amount: 0.18
+  _fullLoudness: 0.12
+  _fallbackRate: 9
+  _response: 25
 --- !u!1001 &7086404645431727875
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -132,6 +252,11 @@ PrefabInstance:
 --- !u!4 &7340108762727821544 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 7d6aae51249537b4f826f4698c385dfd, type: 3}
+  m_PrefabInstance: {fileID: 7086404645431727875}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7692288523373062285 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 619113912949145486, guid: 7d6aae51249537b4f826f4698c385dfd, type: 3}
   m_PrefabInstance: {fileID: 7086404645431727875}
   m_PrefabAsset: {fileID: 0}
 --- !u!23 &8473068442134530951 stripped
