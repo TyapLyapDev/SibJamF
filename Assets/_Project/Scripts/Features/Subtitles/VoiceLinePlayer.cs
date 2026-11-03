@@ -16,24 +16,35 @@ namespace SibJam
             _subtitles = subtitles ?? throw new ArgumentNullException(nameof(subtitles));
         }
 
-        // source — откуда звучит реплика (например, 3D-источник у врага). Пусто — голос героя
-        public void Play(VoiceLine line, AudioSource source = null)
+        // source — откуда звучит реплика (например, 3D-источник у врага). Пусто — голос героя.
+        // offset — с какой секунды реплики начать (начало обрезано)
+        public void Play(VoiceLine line, AudioSource source = null, float offset = 0f)
         {
             if (line == null)
                 throw new ArgumentNullException(nameof(line));
 
             StopVoice();
 
-            if (line.Clip != null)
+            if (line.Clip != null && offset < line.Clip.length)
             {
                 _currentSource = source != null ? source : _voice.AudioSource;
-                _currentSource.PlayOneShot(line.Clip);
+
+                if (offset > 0f)
+                {
+                    _currentSource.clip = line.Clip;
+                    _currentSource.time = offset;
+                    _currentSource.Play();
+                }
+                else
+                {
+                    _currentSource.PlayOneShot(line.Clip);
+                }
             }
 
             if (string.IsNullOrEmpty(line.Text))
                 _subtitles.Hide();
             else
-                _subtitles.Show(line.Speaker, line.Text, line.Duration, line.Animation);
+                _subtitles.Show(line.Speaker, line.Text, Mathf.Max(0f, line.Duration - offset), line.Animation);
         }
 
         public void Stop()

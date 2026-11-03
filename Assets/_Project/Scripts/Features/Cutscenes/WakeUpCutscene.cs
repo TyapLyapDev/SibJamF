@@ -3,17 +3,14 @@ using SibJam.Locations;
 using SibJam.Weapons;
 using UnityEngine;
 using UnityEngine.Animations;
-using UnityEngine.Events;
-using UnityEngine.InputSystem;
 using UnityEngine.Playables;
-using VContainer;
 
 namespace SibJam.Cutscenes
 {
-    // Вступительная катсцена от первого лица: тело из анимации пробуждения, камера едет за костью-камерой на голове,
-    // по таймлайну звучат звуки и реплики. В конце управление отдаётся игроку там, где встал герой
+    // Вступительная катсцена от первого лица: тело из анимации пробуждения, камера едет за костью-камерой на голове.
+    // Время катсцены — время анимации. В конце управление отдаётся игроку там, где встал герой
     [DefaultExecutionOrder(100)]
-    public class WakeUpCutscene : MonoBehaviour
+    public class WakeUpCutscene : Cutscene
     {
         [Header("Анимация")]
         [SerializeField] private Animator _rig;
@@ -26,17 +23,12 @@ namespace SibJam.Cutscenes
         [SerializeField] private Transform[] _hiddenBones;
         [SerializeField, Min(0.01f)] private float _nearClipPlane = 0.03f;
 
-        [Header("Звук и реплики")]
-        [SerializeField] private AudioSource _voiceSource;
-        [SerializeField] private CutsceneCue[] _cues;
-
         [Header("Экран")]
         [Tooltip("Чёрный экран поверх всего: 1 — глаза закрыты")]
         [SerializeField] private CanvasGroup _eyelids;
         [SerializeField] private AnimationCurve _eyelidsCurve = new AnimationCurve(
             new Keyframe(0f, 1f), new Keyframe(1.2f, 1f), new Keyframe(1.7f, 0.35f), new Keyframe(2f, 0.9f),
             new Keyframe(2.6f, 0.15f), new Keyframe(2.9f, 0.55f), new Keyframe(3.6f, 0f));
-        [SerializeField] private CanvasGroup _skipHint;
 
         [Header("Финал")]
         [SerializeField] private string _playerTag = "Player";
@@ -44,70 +36,34 @@ namespace SibJam.Cutscenes
         [SerializeField] private bool _equipWeaponOnFinish = true;
         [SerializeField] private LocationDoor _exitDoor;
         [SerializeField, Min(0f)] private float _handOverDuration = 0.4f;
-        [SerializeField] private UnityEvent _finished;
 
-        [SerializeField] private bool _playOnStart = true;
-        [SerializeField] private bool _canSkip = true;
-        [Tooltip("Только в редакторе: начать просмотр с этой секунды. В билде катсцена всегда идёт с начала")]
-        [SerializeField, Min(0f)] private float _editorStartTime;
+        [Header("Камера")]
         [SerializeField, Min(0f)] private float _shakeDecay = 6f;
 
         private PlayableGraph _graph;
         private AnimationClipPlayable _clipPlayable;
-        private bool[] _firedCues;
-        private VoiceLinePlayer _voiceLines;
         private GameObject _player;
         private Camera _camera;
         private CameraFollow _cameraFollow;
         private float _defaultNearClipPlane;
         private float _shake;
-        private bool _skipRequested;
         private Pose _endPose;
         private float _handOverTime = -1f;
 
-        public bool IsPlaying { get; private set; }
+        // Не короче анимации, но и не обрывает элементы, поставленные после её конца (время анимации идёт дальше)
+        public override float Length => Mathf.Max(_clip != null ? _clip.length : 0f, base.Length);
 
-        [Inject]
-        public void Construct(VoiceLinePlayer voiceLines)
+        // Тряска камеры: для ударов робота и прочих толчков, работает только пока идёт катсцена
+        public void Shake(float amplitude)
         {
-            _voiceLines = voiceLines;
-        }
-
-        private void Start()
-        {
-            if (_playOnStart)
-            {
-                Play();
-                return;
-            }
-
-            // Без катсцены (старт с чекпоинта) веки в сцене сохранены закрытыми — открываем, иначе чёрный экран
-            _rig.gameObject.SetActive(false);
-            _eyelids.alpha = 0f;
-            _skipHint.alpha = 0f;
+            if (IsPlaying)
+                _shake = Mathf.Max(_shake, amplitude);
         }
 
         private void OnDestroy()
         {
             if (_graph.IsValid())
                 _graph.Destroy();
-        }
-
-        private void Update()
-        {
-            if (!IsPlaying)
-                return;
-
-            float time = (float)_clipPlayable.GetTime();
-
-            FireCues(time);
-            _eyelids.alpha = _eyelidsCurve.Evaluate(time);
-
-            if (_canSkip)
-                HandleSkip();
-
-            if (time >= _clip.length || _skipRequested)
-                Finish();
         }
 
         private void LateUpdate()
@@ -122,10 +78,11 @@ namespace SibJam.Cutscenes
                 BlendToPlayer();
         }
 
-        // Старт с чекпоинта: катсцена не нужна, игрока ставит CheckpointFlow. Вызывать до Start
-        public void CancelAutoPlay() => _playOnStart = false;
+        protected override float ReadTime(float previous) => (float)_clipPlayable.GetTime();
 
-        public void Play()
+        protected override void Seek(float time) => _clipPlayable.SetTime(time);
+
+        protected override void OnPlay()
         {
             _player = GameObject.FindWithTag(_playerTag);
 
@@ -150,80 +107,16 @@ namespace SibJam.Cutscenes
             _rig.cullingMode = AnimatorCullingMode.AlwaysAnimate;
             _clipPlayable = AnimationPlayableUtilities.PlayClip(_rig, _clip, out _graph);
 
-            _firedCues = new bool[_cues.Length];
-
-            if (Application.isEditor && _editorStartTime > 0f)
-                SkipTo(Mathf.Min(_editorStartTime, _clip.length));
-
             _eyelids.alpha = 1f;
-            _skipHint.alpha = 0f;
-            _skipRequested = false;
-            IsPlaying = true;
         }
 
-        // Тряска камеры: для ударов робота и прочих толчков, работает только пока идёт катсцена
-        public void Shake(float amplitude)
+        protected override void OnTick(float time) => _eyelids.alpha = _eyelidsCurve.Evaluate(time);
+
+        // Без катсцены (старт с чекпоинта) веки в сцене сохранены закрытыми — открываем, иначе чёрный экран
+        protected override void OnAutoPlayCancelled()
         {
-            if (IsPlaying)
-                _shake = Mathf.Max(_shake, amplitude);
-        }
-
-        // Для просмотра с середины: перематываем анимацию, а у пройденных событий выполняем только действия (без звука и субтитров)
-        private void SkipTo(float time)
-        {
-            _clipPlayable.SetTime(time);
-
-            for (int i = 0; i < _cues.Length; i++)
-            {
-                if (_cues[i].Time >= time)
-                    continue;
-
-                _firedCues[i] = true;
-                _cues[i].Event?.Invoke();
-            }
-        }
-
-        private void FireCues(float time)
-        {
-            for (int i = 0; i < _cues.Length; i++)
-            {
-                if (_firedCues[i] || time < _cues[i].Time)
-                    continue;
-
-                _firedCues[i] = true;
-                FireCue(_cues[i]);
-            }
-        }
-
-        private void FireCue(CutsceneCue cue)
-        {
-            if (cue.Clip != null)
-            {
-                AudioSource source = cue.Source != null ? cue.Source : _voiceSource;
-                source.PlayOneShot(cue.Clip);
-            }
-
-            if (cue.Line != null)
-                _voiceLines.Play(cue.Line, cue.Source);
-
-            cue.Event?.Invoke();
-        }
-
-        // Первое нажатие показывает подсказку, второе (пока подсказка видна) пропускает
-        private void HandleSkip()
-        {
-            Keyboard keyboard = Keyboard.current;
-
-            if (keyboard == null || !keyboard.spaceKey.wasPressedThisFrame)
-            {
-                _skipHint.alpha = Mathf.MoveTowards(_skipHint.alpha, 0f, Time.deltaTime * 0.5f);
-                return;
-            }
-
-            if (_skipHint.alpha > 0f)
-                _skipRequested = true;
-            else
-                _skipHint.alpha = 1f;
+            _rig.gameObject.SetActive(false);
+            _eyelids.alpha = 0f;
         }
 
         private void FollowEye()
@@ -247,27 +140,15 @@ namespace SibJam.Cutscenes
             _endPose = new Pose(position, rotation);
         }
 
-        private void Finish()
+        protected override void OnFinish()
         {
-            IsPlaying = false;
-
-            // Пропущенные события всё равно выполняем: в них может быть то, без чего игра не продолжится (двери и т.п.)
-            for (int i = 0; i < _cues.Length; i++)
-            {
-                if (!_firedCues[i])
-                    _cues[i].Event?.Invoke();
-            }
-
             // При пропуске герой ещё лежит — отдаём игроку позу из последнего кадра анимации
             _shake = 0f;
             _clipPlayable.SetTime(_clip.length);
             _graph.Evaluate();
             FollowEye();
 
-            StopVoices();
-            _voiceLines.Stop();
             _eyelids.alpha = 0f;
-            _skipHint.alpha = 0f;
             _shake = 0f;
 
             _graph.Destroy();
@@ -277,19 +158,6 @@ namespace SibJam.Cutscenes
 
             if (_exitDoor != null && !_exitDoor.IsOpen)
                 _exitDoor.Open();
-
-            _finished?.Invoke();
-        }
-
-        private void StopVoices()
-        {
-            _voiceSource.Stop();
-
-            foreach (CutsceneCue cue in _cues)
-            {
-                if (cue.Source != null)
-                    cue.Source.Stop();
-            }
         }
 
         private void HandOverToPlayer()
