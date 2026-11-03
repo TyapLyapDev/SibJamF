@@ -13,27 +13,39 @@ MonoBehaviour:
   m_Name: WakeUp
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Cutscenes.CutsceneClip
   _actions:
+  - rid: 2001018870876079001
+  - rid: 2001018870876079002
   - rid: 2001018870876078215
-  - rid: 2001018870876078157
+  - rid: 2001018870876079003
+  - rid: 2001018870876079004
   _length: 0
   references:
     version: 2
     RefIds:
-    - rid: 2001018870876078157
-      type: {class: EventAction, ns: SibJam.Cutscenes, asm: Assembly-CSharp}
+    - rid: 2001018870876079001
+      type: {class: SoundAction, ns: SibJam.Cutscenes, asm: Assembly-CSharp}
       data:
-        _time: 3.05
-        _call:
-          _target:
-            exposedName: 01ba0cf22e5c4f3abeaceb6ad36bcdce
-            defaultValue: {fileID: 0}
-          _targetName: BrokenRobot
-          _component: SibJam.Cutscenes.WallBangingRobot, Assembly-CSharp
-          _method: StartBanging
+        _time: 0
+        _clip: {fileID: 8300000, guid: ae1d24cf21b65884b892fc850e2422fa, type: 3}
+        _source:
+          exposedName: 
+          defaultValue: {fileID: 0}
+        _duration: 0
+        _offset: 0
+    - rid: 2001018870876079002
+      type: {class: VoiceLineAction, ns: SibJam.Cutscenes, asm: Assembly-CSharp}
+      data:
+        _time: 4
+        _line: {fileID: 11400000, guid: 4a3f9f9b817352a43a6168d12529428b, type: 2}
+        _source:
+          exposedName: 
+          defaultValue: {fileID: 0}
+        _duration: 0
+        _offset: 0
     - rid: 2001018870876078215
       type: {class: EventAction, ns: SibJam.Cutscenes, asm: Assembly-CSharp}
       data:
-        _time: 2.45
+        _time: 17.6
         _call:
           _target:
             exposedName: e0864b8ede427474db72dc2df8bc4aa6
@@ -41,3 +53,23 @@ MonoBehaviour:
           _targetName: BrokenRobot
           _component: SibJam.Cutscenes.WallBangingRobot, Assembly-CSharp
           _method: StartBanging
+    - rid: 2001018870876079003
+      type: {class: VoiceLineAction, ns: SibJam.Cutscenes, asm: Assembly-CSharp}
+      data:
+        _time: 18.2
+        _line: {fileID: 11400000, guid: 167249a4170e7754785c7097974e3426, type: 2}
+        _source:
+          exposedName: 
+          defaultValue: {fileID: 0}
+        _duration: 0
+        _offset: 0
+    - rid: 2001018870876079004
+      type: {class: VoiceLineAction, ns: SibJam.Cutscenes, asm: Assembly-CSharp}
+      data:
+        _time: 20.5319
+        _line: {fileID: 11400000, guid: 8fdbf5321e8a6dd42ae6d1ef629f9476, type: 2}
+        _source:
+          exposedName: 
+          defaultValue: {fileID: 0}
+        _duration: 0
+        _offset: 0
