@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace SibJam
 {
-    // Сервис реплик: играет озвучку и показывает субтитр. Новая реплика обрывает предыдущую
+    // Сервис реплик: играет озвучку и показывает субтитр. Новая реплика со звуком обрывает предыдущую
     public class VoiceLinePlayer
     {
         private readonly VoiceSource _voice;
@@ -23,10 +23,10 @@ namespace SibJam
             if (line == null)
                 throw new ArgumentNullException(nameof(line));
 
-            StopVoice();
-
+            // Реплика без звука — только субтитр поверх идущего голоса: часто это продолжение той же записи
             if (line.Clip != null && offset < line.Clip.length)
             {
+                StopVoice();
                 _currentSource = source != null ? source : _voice.AudioSource;
 
                 if (offset > 0f)

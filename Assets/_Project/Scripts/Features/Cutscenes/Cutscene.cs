@@ -8,7 +8,9 @@ namespace SibJam.Cutscenes
     // Катсцена в сцене, по аналогии с Animator и AnimationClip: играет клип-файл (CutsceneClip).
     // Здесь только ход времени, начало, конец и пропуск. Что делать в момент времени — решает клип (CutscenePlayback),
     // привязки к сцене — CutsceneBindings, подсказку и нажатия пропуска — сервис SkipHint.
-    // Наследник добавляет то, что происходит на экране (камера, анимация, финал), через хуки On*
+    // Наследник может добавить своё через хуки On*, но анимация, камера и затемнение — элементы клипа.
+    // После CameraFollow: камера катсцены ставится поверх камеры игрока
+    [DefaultExecutionOrder(100)]
     public class Cutscene : MonoBehaviour, IExposedPropertyTable
     {
         [Header("Клип")]
@@ -48,9 +50,15 @@ namespace SibJam.Cutscenes
         protected virtual void Start()
         {
             if (_playOnStart)
+            {
                 Play();
-            else
-                OnAutoPlayCancelled();
+                return;
+            }
+
+            if (_cutsceneClip != null)
+                CutscenePlayback.Cancel(_cutsceneClip, CreateContext());
+
+            OnAutoPlayCancelled();
         }
 
         protected virtual void Update()
@@ -69,6 +77,12 @@ namespace SibJam.Cutscenes
                 Finish();
         }
 
+        protected virtual void LateUpdate()
+        {
+            if (IsPlaying)
+                _playback?.LateTick();
+        }
+
         // Старт с чекпоинта: катсцена не нужна. Вызывать до Start
         public void CancelAutoPlay() => _playOnStart = false;
 
@@ -83,7 +97,7 @@ namespace SibJam.Cutscenes
 
             OnPlay();
             _playback = _cutsceneClip != null
-                ? new CutscenePlayback(_cutsceneClip, new CutsceneContext(_voiceLines, _subtitles, _baseAudioSource, this))
+                ? new CutscenePlayback(_cutsceneClip, CreateContext())
                 : null;
             IsPlaying = true;
 
@@ -95,6 +109,8 @@ namespace SibJam.Cutscenes
             if (IsPlaying)
                 _skipRequested = true;
         }
+
+        private CutsceneContext CreateContext() => new CutsceneContext(_voiceLines, _subtitles, _baseAudioSource, this);
 
         // Время на этом кадре. По умолчанию — свои часы; наследник может брать его, например, из анимации
         protected virtual float ReadTime(float previous) => previous + Time.deltaTime;

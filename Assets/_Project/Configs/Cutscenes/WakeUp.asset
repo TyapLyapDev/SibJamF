@@ -14,10 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.Cutscenes.CutsceneClip
   _actions:
   - rid: 2001018870876079001
+  - rid: 2001018870876078332
+  - rid: 2001018870876078333
+  - rid: 2001018870876078334
+  - rid: 2001018870876078364
+  - rid: 2001018870876078385
   - rid: 2001018870876079002
+  - rid: 2001018870876078355
   - rid: 2001018870876078215
   - rid: 2001018870876079003
   - rid: 2001018870876079004
+  - rid: 2001018870876078356
+  - rid: 2001018870876078365
+  - rid: 2001018870876078375
+  - rid: 2001018870876078386
+  - rid: 2001018870876078391
+  - rid: 2001018870876078376
   _length: 0
   references:
     version: 2
@@ -33,6 +45,265 @@ MonoBehaviour:
           _targetName: BrokenRobot
           _component: SibJam.Cutscenes.WallBangingRobot, Assembly-CSharp
           _method: StartBanging
+          _parameterType: 
+          _boolArgument: 0
+          _intArgument: 0
+          _floatArgument: 0
+          _stringArgument: 
+          _objectArgument: {fileID: 0}
+    - rid: 2001018870876078332
+      type: {class: AnimationAction, ns: SibJam.Cutscenes, asm: Assembly-CSharp}
+      data:
+        _time: 0
+        _clip: {fileID: 7400000, guid: ea494e1987d27af4ca8330338a50d773, type: 2}
+        _rig:
+          exposedName: 3c3635a0917bfb84d9c71bca7db79e1f
+          defaultValue: {fileID: 0}
+        _hideOnFinish: 1
+        _duration: 0
+        _offset: 0
+    - rid: 2001018870876078333
+      type: {class: CameraAnchorAction, ns: SibJam.Cutscenes, asm: Assembly-CSharp}
+      data:
+        _time: 0
+        _anchor:
+          exposedName: 40ba2053e7151554183324c4bd5c00f2
+          defaultValue: {fileID: 0}
+        _shift: {x: 0, y: 0.06, z: 0.03}
+        _duration: 24.791666
+    - rid: 2001018870876078334
+      type: {class: CurveAction, ns: SibJam.Cutscenes, asm: Assembly-CSharp}
+      data:
+        _time: 0
+        _property:
+          _target:
+            exposedName: ce4ff926a8dcbe84ca31a61092371941
+            defaultValue: {fileID: 0}
+          _targetName: Eyelids
+          _component: UnityEngine.CanvasGroup, UnityEngine.UIModule
+          _property: alpha
+        _curve:
+          serializedVersion: 2
+          m_Curve:
+          - serializedVersion: 3
+            time: 0
+            value: 1
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 1.2
+            value: 1
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 1.7
+            value: 0.35
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 2
+            value: 0.9
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 2.6
+            value: 0.15
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 2.9
+            value: 0.55
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 3.6
+            value: 0
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          m_PreInfinity: 2
+          m_PostInfinity: 2
+          m_RotationOrder: 4
+    - rid: 2001018870876078355
+      type: {class: EventAction, ns: SibJam.Cutscenes, asm: Assembly-CSharp}
+      data:
+        _time: 16.34
+        _call:
+          _target:
+            exposedName: e0864b8ede427474db72dc2df8bc4aa6
+            defaultValue: {fileID: 0}
+          _targetName: BrokenRobot
+          _component: SibJam.Cutscenes.WallBangingRobot, Assembly-CSharp
+          _method: EnableCameraShake
+          _parameterType: 
+          _boolArgument: 0
+          _intArgument: 0
+          _floatArgument: 0
+          _stringArgument: 
+          _objectArgument: {fileID: 0}
+    - rid: 2001018870876078356
+      type: {class: EventAction, ns: SibJam.Cutscenes, asm: Assembly-CSharp}
+      data:
+        _time: 24.791666
+        _call:
+          _target:
+            exposedName: e0864b8ede427474db72dc2df8bc4aa6
+            defaultValue: {fileID: 0}
+          _targetName: BrokenRobot
+          _component: SibJam.Cutscenes.WallBangingRobot, Assembly-CSharp
+          _method: DisableCameraShake
+          _parameterType: 
+          _boolArgument: 0
+          _intArgument: 0
+          _floatArgument: 0
+          _stringArgument: 
+          _objectArgument: {fileID: 0}
+    - rid: 2001018870876078364
+      type: {class: EventAction, ns: SibJam.Cutscenes, asm: Assembly-CSharp}
+      data:
+        _time: 0
+        _call:
+          _target:
+            exposedName: aaa6077e0c847d94da302b89b762efb4
+            defaultValue: {fileID: 0}
+          _targetName: WakeUpRig
+          _component: SibJam.Cutscenes.HeadHider, Assembly-CSharp
+          _method: HideHead
+          _parameterType: 
+          _boolArgument: 0
+          _intArgument: 0
+          _floatArgument: 0
+          _stringArgument: 
+          _objectArgument: {fileID: 0}
+    - rid: 2001018870876078365
+      type: {class: EventAction, ns: SibJam.Cutscenes, asm: Assembly-CSharp}
+      data:
+        _time: 24.791666
+        _call:
+          _target:
+            exposedName: aaa6077e0c847d94da302b89b762efb4
+            defaultValue: {fileID: 0}
+          _targetName: WakeUpRig
+          _component: SibJam.Cutscenes.HeadHider, Assembly-CSharp
+          _method: ShowHead
+          _parameterType: 
+          _boolArgument: 0
+          _intArgument: 0
+          _floatArgument: 0
+          _stringArgument: 
+          _objectArgument: {fileID: 0}
+    - rid: 2001018870876078375
+      type: {class: EventAction, ns: SibJam.Cutscenes, asm: Assembly-CSharp}
+      data:
+        _time: 24.791666
+        _call:
+          _target:
+            exposedName: 58e2e9b7bc6831948b6de377e7cf4301
+            defaultValue: {fileID: 0}
+          _targetName: Player
+          _component: SibJam.Weapons.WeaponEquipper, Assembly-CSharp
+          _method: Equip
+          _parameterType: 
+          _boolArgument: 0
+          _intArgument: 0
+          _floatArgument: 0
+          _stringArgument: 
+          _objectArgument: {fileID: 0}
+    - rid: 2001018870876078376
+      type: {class: EventAction, ns: SibJam.Cutscenes, asm: Assembly-CSharp}
+      data:
+        _time: 26.439999
+        _call:
+          _target:
+            exposedName: 7763b64f4884d124cbe26774e77363e4
+            defaultValue: {fileID: 0}
+          _targetName: SM_Gates
+          _component: SibJam.Locations.DoorOpener, Assembly-CSharp
+          _method: Open
+          _parameterType: 
+          _boolArgument: 0
+          _intArgument: 0
+          _floatArgument: 0
+          _stringArgument: 
+          _objectArgument: {fileID: 0}
+    - rid: 2001018870876078385
+      type: {class: EventAction, ns: SibJam.Cutscenes, asm: Assembly-CSharp}
+      data:
+        _time: 0
+        _call:
+          _target:
+            exposedName: 8e5eb0c3566eebc4e96d3fa52c421f22
+            defaultValue: {fileID: 0}
+          _targetName: Player
+          _component: SibJam.Cutscenes.PlayerCutsceneHandOver, Assembly-CSharp
+          _method: Hide
+          _parameterType: 
+          _boolArgument: 0
+          _intArgument: 0
+          _floatArgument: 0
+          _stringArgument: 
+          _objectArgument: {fileID: 0}
+    - rid: 2001018870876078386
+      type: {class: EventAction, ns: SibJam.Cutscenes, asm: Assembly-CSharp}
+      data:
+        _time: 24.791666
+        _call:
+          _target:
+            exposedName: 8e5eb0c3566eebc4e96d3fa52c421f22
+            defaultValue: {fileID: 0}
+          _targetName: Player
+          _component: SibJam.Cutscenes.PlayerCutsceneHandOver, Assembly-CSharp
+          _method: HandOver
+          _parameterType: 
+          _boolArgument: 0
+          _intArgument: 0
+          _floatArgument: 0
+          _stringArgument: 
+          _objectArgument: {fileID: 0}
+    - rid: 2001018870876078391
+      type: {class: EventAction, ns: SibJam.Cutscenes, asm: Assembly-CSharp}
+      data:
+        _time: 24.84
+        _call:
+          _target:
+            exposedName: 69bf4d00e651d754fa363931ad2194a3
+            defaultValue: {fileID: 0}
+          _targetName: WakeUpRig
+          _component: UnityEngine.GameObject, UnityEngine.CoreModule
+          _method: set_active
+          _parameterType: System.Boolean, mscorlib
+          _boolArgument: 0
+          _intArgument: 0
+          _floatArgument: 0
+          _stringArgument: 
+          _objectArgument: {fileID: 0}
     - rid: 2001018870876079001
       type: {class: SoundAction, ns: SibJam.Cutscenes, asm: Assembly-CSharp}
       data:

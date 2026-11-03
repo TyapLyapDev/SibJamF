@@ -33,6 +33,16 @@ namespace SibJam.Cutscenes
 
         public abstract void Play(CutsceneContext context);
 
+        // Каждый кадр, пока элемент идёт, и последний раз в его конце: localTime от 0 до Duration. Из Update
+        public virtual void Evaluate(CutsceneContext context, float localTime) { }
+
+        // То же из LateUpdate, когда анимация на кадре уже применена: для камеры, которая едет за костью
+        public virtual void LateEvaluate(CutsceneContext context, float localTime) { }
+
+        // Автозапуск катсцены отменён (старт с чекпоинта): убрать с экрана то, что сохранено в сцене для её начала.
+        // Вызовы и звуки тут не нужны — игра продолжается не с конца катсцены
+        public virtual void Cancel(CutsceneContext context) { }
+
         // Элемент пропустили (перемотка или пропуск катсцены): выполнить то, без чего игра не продолжится
         public virtual void PlaySkipped(CutsceneContext context) { }
 

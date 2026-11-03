@@ -1,6 +1,6 @@
 using System.Collections;
+using SibJam.Feedback;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace SibJam.Cutscenes
 {
@@ -30,11 +30,18 @@ namespace SibJam.Cutscenes
         [SerializeField, Min(0f)] private float _hitTilt = 12f;
         [SerializeField, Range(0f, 0.5f)] private float _pitchJitter = 0.1f;
 
-        [SerializeField] private UnityEvent _hit;
+        [Header("Тряска камеры")]
+        [Tooltip("Удары трясут камеру. Включается и выключается и с таймлайна катсцены")]
+        [SerializeField] private bool _cameraShakeEnabled;
+        [Tooltip("Травма CameraShaker от удара рядом с роботом, от 0 до 1")]
+        [SerializeField, Range(0f, 1f)] private float _cameraTrauma = 0.35f;
+        [Tooltip("Дальше этого от камеры не трясёт, метры. 0 — одинаково на любом расстоянии")]
+        [SerializeField, Min(0f)] private float _cameraShakeRadius;
 
         private Vector3 _restPosition;
         private Quaternion _restRotation;
         private float _eyeIntensity;
+        private CameraShaker _shaker;
 
         private void Awake()
         {
@@ -55,6 +62,17 @@ namespace SibJam.Cutscenes
         private void OnDisable() => IsBanging = false;
 
         public bool IsBanging { get; private set; }
+
+        public bool CameraShakeEnabled
+        {
+            get => _cameraShakeEnabled;
+            set => _cameraShakeEnabled = value;
+        }
+
+        // Для «Действия» на таймлайне: оно вызывает только методы без параметров
+        public void EnableCameraShake() => CameraShakeEnabled = true;
+
+        public void DisableCameraShake() => CameraShakeEnabled = false;
 
         public void StartBanging()
         {
@@ -122,7 +140,26 @@ namespace SibJam.Cutscenes
             if (_eyeLight != null)
                 StartCoroutine(BlinkEye());
 
-            _hit?.Invoke();
+            ShakeCamera();
+        }
+
+        private void ShakeCamera()
+        {
+            if (!_cameraShakeEnabled)
+                return;
+
+            Camera camera = Camera.main;
+
+            // Робот в DI не попадает — тряску берём с главной камеры
+            if (_shaker == null && (camera == null || !camera.TryGetComponent(out _shaker)))
+                return;
+
+            float falloff = _cameraShakeRadius > 0f
+                ? 1f - Mathf.Clamp01(Vector3.Distance(transform.position, _shaker.transform.position) / _cameraShakeRadius)
+                : 1f;
+
+            if (falloff > 0f)
+                _shaker.AddTrauma(_cameraTrauma * falloff);
         }
 
         private IEnumerator BlinkEye()

@@ -14,12 +14,12 @@ namespace SibJam.Checkpoints
     {
         private readonly ICheckpoint _checkpoint;
         private readonly GameLoop _gameLoop;
-        private readonly WakeUpCutscene _cutscene;
+        private readonly Cutscene _cutscene;
         private readonly PlayerHealth _player;
 
         private bool _isRestoring;
 
-        public CheckpointFlow(ICheckpoint checkpoint, GameLoop gameLoop, WakeUpCutscene cutscene, PlayerHealth player)
+        public CheckpointFlow(ICheckpoint checkpoint, GameLoop gameLoop, Cutscene cutscene, PlayerHealth player)
         {
             _checkpoint = checkpoint ?? throw new ArgumentNullException(nameof(checkpoint));
             _gameLoop = gameLoop != null ? gameLoop : throw new ArgumentNullException(nameof(gameLoop));

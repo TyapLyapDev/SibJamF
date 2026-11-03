@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using SibJam.Cutscenes;
@@ -8,7 +9,8 @@ using Object = UnityEngine.Object;
 
 namespace SibJam.EditorTools
 {
-    // Вызов в одну строку, как функция у Animation Event: объект сцены и список методов его компонентов
+    // Вызов в одну строку, как функция у UnityEvent: объект сцены, метод GameObject или любого его компонента
+    // и значение параметра, если он есть
     [CustomPropertyDrawer(typeof(CutsceneCall))]
     public class CutsceneCallDrawer : PropertyDrawer
     {
@@ -23,12 +25,17 @@ namespace SibJam.EditorTools
             SerializedProperty targetName = property.FindPropertyRelative("_targetName");
             SerializedProperty component = property.FindPropertyRelative("_component");
             SerializedProperty method = property.FindPropertyRelative("_method");
+            SerializedProperty parameterType = property.FindPropertyRelative("_parameterType");
+            Type parameter = string.IsNullOrEmpty(parameterType.stringValue) ? null : Type.GetType(parameterType.stringValue);
 
             int indent = EditorGUI.indentLevel;
             EditorGUI.indentLevel = 0;
 
-            Rect targetRect = new Rect(position.x, position.y, position.width * 0.5f - 2f, position.height);
-            Rect methodRect = new Rect(targetRect.xMax + 4f, position.y, position.xMax - targetRect.xMax - 4f, position.height);
+            // С параметром строка делится на три: объект, метод, значение
+            float argumentWidth = parameter != null ? position.width * 0.25f : 0f;
+            Rect targetRect = new Rect(position.x, position.y, (position.width - argumentWidth) * 0.5f - 2f, position.height);
+            Rect methodRect = new Rect(targetRect.xMax + 4f, position.y, position.xMax - argumentWidth - targetRect.xMax - 4f, position.height);
+            Rect argumentRect = new Rect(methodRect.xMax + 4f, position.y, argumentWidth - 4f, position.height);
 
             // Штатное поле ExposedReference: объект запоминает катсцена-контекст
             EditorGUI.PropertyField(targetRect, target, GUIContent.none);
@@ -39,13 +46,16 @@ namespace SibJam.EditorTools
 
             string current = string.IsNullOrEmpty(method.stringValue)
                 ? "Метод…"
-                : $"{ShortName(component.stringValue)}.{method.stringValue}";
+                : $"{ShortName(component.stringValue)}.{CutsceneCall.DisplayName(method.stringValue)}";
 
             using (new EditorGUI.DisabledScope(gameObject == null))
             {
-                if (EditorGUI.DropdownButton(methodRect, new GUIContent(current, "Метод компонента без параметров"), FocusType.Keyboard))
-                    ShowMethods(property, gameObject, component.stringValue, method.stringValue);
+                if (EditorGUI.DropdownButton(methodRect, new GUIContent(current, "Метод GameObject или компонента"), FocusType.Keyboard))
+                    ShowMethods(property, gameObject, component.stringValue, method.stringValue, parameterType.stringValue);
             }
+
+            if (parameter != null)
+                DrawArgument(argumentRect, property, parameter);
 
             EditorGUI.indentLevel = indent;
         }
@@ -66,47 +76,89 @@ namespace SibJam.EditorTools
             return fallback as GameObject;
         }
 
-        // Меню «Компонент/Метод», как выбор функции у UnityEvent
-        private static void ShowMethods(SerializedProperty property, GameObject gameObject, string currentComponent, string currentMethod)
+        private static void DrawArgument(Rect rect, SerializedProperty property, Type parameter)
+        {
+            if (parameter == typeof(bool))
+            {
+                SerializedProperty value = property.FindPropertyRelative("_boolArgument");
+                value.boolValue = EditorGUI.Toggle(rect, value.boolValue);
+            }
+            else if (parameter == typeof(int))
+                EditorGUI.PropertyField(rect, property.FindPropertyRelative("_intArgument"), GUIContent.none);
+            else if (parameter == typeof(float))
+                EditorGUI.PropertyField(rect, property.FindPropertyRelative("_floatArgument"), GUIContent.none);
+            else if (parameter == typeof(string))
+                EditorGUI.PropertyField(rect, property.FindPropertyRelative("_stringArgument"), GUIContent.none);
+            else
+            {
+                SerializedProperty value = property.FindPropertyRelative("_objectArgument");
+                value.objectReferenceValue = EditorGUI.ObjectField(rect, value.objectReferenceValue, parameter, false);
+            }
+        }
+
+        // Меню «Компонент/Метод», как выбор функции у UnityEvent: сам GameObject и все его компоненты
+        private static void ShowMethods(SerializedProperty property, GameObject gameObject, string currentComponent, string currentMethod,
+            string currentParameter)
         {
             var menu = new GenericMenu();
             SerializedObject serializedObject = property.serializedObject;
             string path = property.propertyPath;
 
-            menu.AddItem(new GUIContent("Нет"), string.IsNullOrEmpty(currentMethod), () => Set(serializedObject, path, null, null));
+            menu.AddItem(new GUIContent("Нет"), string.IsNullOrEmpty(currentMethod), () => Set(serializedObject, path, null, null, null));
             menu.AddSeparator(string.Empty);
 
-            foreach (Component behaviour in gameObject.GetComponents<Component>().Where(item => item != null))
+            var receivers = new List<Type> { typeof(GameObject) };
+            receivers.AddRange(gameObject.GetComponents<Component>().Where(item => item != null).Select(item => item.GetType()).Distinct());
+
+            foreach (Type type in receivers)
             {
-                Type type = behaviour.GetType();
                 string typeName = $"{type.FullName}, {type.Assembly.GetName().Name}";
 
                 foreach (MethodInfo info in CallableMethods(type))
                 {
                     string methodName = info.Name;
-                    bool on = typeName == currentComponent && methodName == currentMethod;
-                    menu.AddItem(new GUIContent($"{type.Name}/{methodName}"), on, () => Set(serializedObject, path, typeName, methodName));
+                    Type parameter = info.GetParameters().Select(item => item.ParameterType).FirstOrDefault();
+                    string parameterName = parameter != null ? $"{parameter.FullName}, {parameter.Assembly.GetName().Name}" : null;
+                    bool on = typeName == currentComponent && methodName == currentMethod
+                        && (parameterName ?? string.Empty) == (currentParameter ?? string.Empty);
+                    string label = parameter != null
+                        ? $"{type.Name}/{CutsceneCall.DisplayName(methodName)} ({parameter.Name})"
+                        : $"{type.Name}/{methodName} ()";
+                    menu.AddItem(new GUIContent(label), on, () => Set(serializedObject, path, typeName, methodName, parameterName));
                 }
             }
 
             menu.ShowAsContext();
         }
 
-        // Свои публичные методы без параметров, без служебных методов Unity
-        private static MethodInfo[] CallableMethods(Type type) => type
+        // Как у UnityEvent: публичные void-методы и сеттеры свойств без параметров или с одним простым параметром.
+        // Служебное object/Object/Component/MonoBehaviour не показываем
+        private static IEnumerable<MethodInfo> CallableMethods(Type type) => type
             .GetMethods(BindingFlags.Instance | BindingFlags.Public)
-            .Where(info => !info.IsSpecialName && !info.IsGenericMethod && info.GetParameters().Length == 0)
-            .Where(info => info.DeclaringType != null && info.DeclaringType.Namespace?.StartsWith("UnityEngine") != true
-                && info.DeclaringType != typeof(object))
-            .OrderBy(info => info.Name)
-            .ToArray();
+            .Where(info => info.ReturnType == typeof(void) && !info.IsGenericMethod && !info.IsDefined(typeof(ObsoleteAttribute)))
+            .Where(info => !info.IsSpecialName || info.Name.StartsWith("set_"))
+            .Where(info => !HiddenDeclaringTypes.Contains(info.DeclaringType))
+            .Where(info =>
+            {
+                ParameterInfo[] parameters = info.GetParameters();
+                return parameters.Length == 0 || parameters.Length == 1 && IsSupported(parameters[0].ParameterType);
+            })
+            .OrderBy(info => info.IsSpecialName ? 0 : 1)
+            .ThenBy(info => info.Name);
 
-        private static void Set(SerializedObject serializedObject, string path, string component, string method)
+        private static readonly Type[] HiddenDeclaringTypes = { typeof(object), typeof(Object), typeof(Component), typeof(MonoBehaviour) };
+
+        private static bool IsSupported(Type type) =>
+            type == typeof(bool) || type == typeof(int) || type == typeof(float) || type == typeof(string)
+            || typeof(Object).IsAssignableFrom(type);
+
+        private static void Set(SerializedObject serializedObject, string path, string component, string method, string parameter)
         {
             serializedObject.Update();
             SerializedProperty property = serializedObject.FindProperty(path);
             property.FindPropertyRelative("_component").stringValue = component;
             property.FindPropertyRelative("_method").stringValue = method;
+            property.FindPropertyRelative("_parameterType").stringValue = parameter;
             serializedObject.ApplyModifiedProperties();
         }
 

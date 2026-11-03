@@ -8,7 +8,7 @@ using UnityEngine;
 namespace SibJam.EditorTools
 {
     // Превью кадра катсцены в окне редактора на выбранной секунде. Своё для каждого типа катсцены:
-    // наследник с атрибутом [CutscenePreviewFor(typeof(МояКатсцена))]. Без него окно показывает только субтитры
+    // наследник с атрибутом [CutscenePreviewFor(typeof(МояКатсцена))]. Без него — ClipCutscenePreview по элементам клипа
     public abstract class CutscenePreview : IDisposable
     {
         protected Cutscene Target { get; private set; }
@@ -33,10 +33,9 @@ namespace SibJam.EditorTools
                 .Where(type => typeof(CutscenePreview).IsAssignableFrom(type) && !type.IsAbstract)
                 .FirstOrDefault(type => type.GetCustomAttribute<CutscenePreviewForAttribute>().Type == target.GetType());
 
-            if (previewType == null)
-                return null;
-
-            var preview = (CutscenePreview)Activator.CreateInstance(previewType);
+            var preview = previewType != null
+                ? (CutscenePreview)Activator.CreateInstance(previewType)
+                : new ClipCutscenePreview();
             preview.Target = target;
             preview.OnCreated();
             return preview;

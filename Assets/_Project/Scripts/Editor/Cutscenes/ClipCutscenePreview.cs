@@ -6,33 +6,19 @@ using UnityEngine.Rendering.Universal;
 
 namespace SibJam.EditorTools
 {
-    // Превью кадра пробуждения в окне катсцен: тело в позе из анимации, вид глазами героя
-    [CutscenePreviewFor(typeof(WakeUpCutscene))]
-    public class WakeUpCutscenePreview : CutscenePreview
+    // Превью кадра по элементам клипа: анимации ставят позы, «Крепление камеры» даёт вид, «Кривая» на CanvasGroup.alpha — чёрный экран поверх.
+    // HeadHider на риге прячет голову и задаёт near clip, как в игре
+    // Работает для любой катсцены, у которой нет своего превью
+    public class ClipCutscenePreview : CutscenePreview
     {
         private const int PreviewWidth = 640;
         private const int PreviewHeight = 360;
-
-        private SerializedObject _serializedObject;
-        private SerializedProperty _rig;
-        private SerializedProperty _clip;
-        private SerializedProperty _eye;
-        private SerializedProperty _hiddenBones;
+        private const string PlayerTag = "Player";
 
         private RenderTexture _previewTexture;
         private Camera _previewCamera;
         private float _time;
-
-        private AnimationClip Clip => _clip.objectReferenceValue as AnimationClip;
-
-        protected override void OnCreated()
-        {
-            _serializedObject = new SerializedObject(Target);
-            _rig = _serializedObject.FindProperty("_rig");
-            _clip = _serializedObject.FindProperty("_clip");
-            _eye = _serializedObject.FindProperty("_eye");
-            _hiddenBones = _serializedObject.FindProperty("_hiddenBones");
-        }
+        private float _fade;
 
         public override void Dispose()
         {
@@ -47,25 +33,40 @@ namespace SibJam.EditorTools
 
         public override Rect Draw(float width, float time)
         {
-            _serializedObject.Update();
-
-            if (Clip == null || _rig.objectReferenceValue == null || _eye.objectReferenceValue == null)
+            if (Target.Clip == null || Latest<CameraAnchorAction>(time) == null)
             {
-                EditorGUILayout.HelpBox("Для превью кадра нужны Rig, Clip и Eye на компоненте катсцены.", MessageType.Warning);
+                EditorGUILayout.HelpBox("Для кадра нужен элемент «Крепление камеры» на этой секунде или раньше.", MessageType.Info);
                 return Rect.zero;
             }
 
-            if (_previewTexture == null)
+            if (_previewTexture == null || !Mathf.Approximately(_time, time))
                 OnTimeChanged(time);
 
             Rect rect = GUILayoutUtility.GetRect(width, width * PreviewHeight / PreviewWidth, GUILayout.ExpandWidth(true));
             GUI.DrawTexture(rect, _previewTexture, ScaleMode.ScaleToFit);
+
+            if (_fade > 0f && Event.current.type == EventType.Repaint)
+                EditorGUI.DrawRect(rect, new Color(0f, 0f, 0f, _fade));
+
             return rect;
         }
 
         public override void OnTimeChanged(float time)
         {
             _time = time;
+            _fade = 0f;
+            float latestStart = float.MinValue;
+
+            // Сцену в превью не меняем: затемнение экрана рисуем поверх кадра
+            foreach (CutsceneAction action in Target.Clip.Actions)
+            {
+                if (action is CurveAction curve && action.Time <= time && action.Time >= latestStart
+                    && curve.Property.Property == "alpha" && curve.Property.ResolveComponent(Target) is CanvasGroup)
+                {
+                    latestStart = action.Time;
+                    _fade = Mathf.Clamp01(curve.ValueAt(time - action.Time));
+                }
+            }
             RenderPreview();
         }
 
@@ -75,36 +76,69 @@ namespace SibJam.EditorTools
                 AnimationMode.StopAnimationMode();
         }
 
-        // Ставит тело в позу через AnimationMode (сцена не меняется) и рендерит кадр глазами героя
+        // Последний начавшийся к этой секунде элемент типа: он и определяет кадр
+        private T Latest<T>(float time) where T : CutsceneAction
+        {
+            T latest = null;
+
+            foreach (CutsceneAction action in Target.Clip.Actions)
+            {
+                if (action is T typed && action.Time <= time && (latest == null || action.Time >= latest.Time))
+                    latest = typed;
+            }
+
+            return latest;
+        }
+
+        // Ставит позы через AnimationMode (сцена не меняется) и рендерит кадр с камеры элемента
         private void RenderPreview()
         {
-            var rig = (Animator)_rig.objectReferenceValue;
-            var eye = (Transform)_eye.objectReferenceValue;
+            CameraAnchorAction cameraAction = Latest<CameraAnchorAction>(_time);
 
-            if (rig == null || eye == null || Clip == null)
+            if (cameraAction == null)
                 return;
 
             if (!AnimationMode.InAnimationMode())
                 AnimationMode.StartAnimationMode();
 
+            var rigs = new List<Animator>();
             AnimationMode.BeginSampling();
-            AnimationMode.SampleAnimationClip(rig.gameObject, Clip, _time);
+
+            foreach (CutsceneAction action in Target.Clip.Actions)
+            {
+                if (action is not AnimationAction animation || animation.Clip == null || action.Time > _time)
+                    continue;
+
+                Animator rig = animation.ResolveRig(Target);
+
+                if (rig == null)
+                    continue;
+
+                AnimationMode.SampleAnimationClip(rig.gameObject, animation.Clip, animation.ClipTime(_time - action.Time));
+                rigs.Add(rig);
+            }
+
             AnimationMode.EndSampling();
 
             EnsurePreviewCamera();
-            _previewCamera.transform.SetPositionAndRotation(eye.position + eye.rotation * _serializedObject.FindProperty("_eyeOffset").vector3Value, eye.rotation);
 
-            var hiddenBones = new List<Transform>();
+            if (!cameraAction.TryGetPose(Target, out Pose pose))
+                return;
 
-            for (int i = 0; i < _hiddenBones.arraySize; i++)
+            _previewCamera.transform.SetPositionAndRotation(pose.position, pose.rotation);
+            HeadHider headHider = null;
+
+            foreach (Animator rig in rigs)
             {
-                if (_hiddenBones.GetArrayElementAtIndex(i).objectReferenceValue is Transform bone)
-                    hiddenBones.Add(bone);
+                if (headHider == null)
+                    headHider = rig.GetComponentInChildren<HeadHider>(true);
             }
 
-            // В игре катсцена выключает игрока, в превью просто не рисуем его
+            _previewCamera.nearClipPlane = headHider != null ? headHider.NearClipPlane : 0.3f;
+
+            // В игре игрок на время катсцены прячется, в превью просто не рисуем его
             var playerRenderers = new List<Renderer>();
-            GameObject player = GameObject.FindWithTag(_serializedObject.FindProperty("_playerTag").stringValue);
+            GameObject player = GameObject.FindWithTag(PlayerTag);
 
             if (player != null)
                 playerRenderers.AddRange(player.GetComponentsInChildren<Renderer>());
@@ -113,15 +147,15 @@ namespace SibJam.EditorTools
                 playerRenderer.forceRenderingOff = true;
 
             // Скин в редакторе сам не обновляется до перерисовки — запекаем меши в позе и рендерим их
-            var skinned = rig.GetComponentsInChildren<SkinnedMeshRenderer>();
-            var baked = new List<GameObject>();
-            var scales = new Vector3[hiddenBones.Count];
+            var skinned = new List<SkinnedMeshRenderer>();
 
-            for (int i = 0; i < hiddenBones.Count; i++)
-            {
-                scales[i] = hiddenBones[i].localScale;
-                hiddenBones[i].localScale = Vector3.zero;
-            }
+            foreach (Animator rig in rigs)
+                skinned.AddRange(rig.GetComponentsInChildren<SkinnedMeshRenderer>());
+
+            var baked = new List<GameObject>();
+
+            if (headHider != null)
+                headHider.SetBonesHidden(true);
 
             try
             {
@@ -157,8 +191,8 @@ namespace SibJam.EditorTools
                 foreach (Renderer playerRenderer in playerRenderers)
                     playerRenderer.forceRenderingOff = false;
 
-                for (int i = 0; i < hiddenBones.Count; i++)
-                    hiddenBones[i].localScale = scales[i];
+                if (headHider != null)
+                    headHider.SetBonesHidden(false);
             }
         }
 
@@ -174,7 +208,6 @@ namespace SibJam.EditorTools
             _previewCamera = cameraObject.AddComponent<Camera>();
             _previewCamera.enabled = false;
             _previewCamera.fieldOfView = 60f;
-            _previewCamera.nearClipPlane = 0.03f;
             _previewCamera.targetTexture = _previewTexture;
             cameraObject.AddComponent<UniversalAdditionalCameraData>().renderPostProcessing = true;
         }

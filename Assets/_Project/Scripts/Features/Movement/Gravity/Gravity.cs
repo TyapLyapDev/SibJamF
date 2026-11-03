@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using _Project.Scripts.Enemies;
 using SibJam.Feedback;
 using UnityEngine;
+using VContainer;
 
 namespace SibJam
 {
@@ -30,11 +31,15 @@ namespace SibJam
         private CharacterController _controller;
         private IGroundDetector _groundDetector;
 
+        private CameraShaker _shaker;
         private float _velocityY;
 
         private readonly Collider[] _overlaps = new Collider[MaxOverlaps];
         private readonly HashSet<Collider> _ignoredEnemies = new();
         private readonly HashSet<Collider> _touchedEnemies = new();
+
+        [Inject]
+        public void Construct(CameraShaker shaker) => _shaker = shaker;
 
         private void Awake()
         {
@@ -77,7 +82,7 @@ namespace SibJam
             if (_groundDetector.HasGround() && _velocityY <= 0f)
             {
                 if (_velocityY < -_landingMinSpeed)
-                    CameraShake.Dip(Mathf.Min(-_velocityY * _landingDipPerSpeed, _landingMaxDipSpeed));
+                    _shaker.Dip(Mathf.Min(-_velocityY * _landingDipPerSpeed, _landingMaxDipSpeed));
 
                 _velocityY = 0;
 

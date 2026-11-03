@@ -13,6 +13,9 @@ namespace SibJam.SecurityCameras
         [Tooltip("Сколько ударов нужно в окне контратаки (после парирования)")]
         [SerializeField, Min(1)] private int _counterHitsToBreak = 1;
 
+        [Tooltip("Тряска камеры, когда камера взрывается")]
+        [SerializeField, Range(0f, 1f)] private float _breakTrauma = 0.4f;
+
         [Header("Звук")]
         [SerializeField] private AudioMixerGroup _sfxOutput;
         [SerializeField] private SoundSet _hitSound;
@@ -58,7 +61,10 @@ namespace SibJam.SecurityCameras
             IsBroken = true;
             ImpactFx.Explosion(FxPoint);
             SfxEmitter.PlayAt(_breakSound, FxPoint, _sfxOutput);
-            CameraShake.AddTrauma(0.4f);
+            // Камер в сцене много и в DI они не попадают — тряску берём с главной камеры
+            if (Camera.main != null && Camera.main.TryGetComponent(out CameraShaker shaker))
+                shaker.AddTrauma(_breakTrauma);
+
             Broken?.Invoke(this);
             Destroy(gameObject);
         }

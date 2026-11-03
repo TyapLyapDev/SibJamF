@@ -2,6 +2,7 @@ using SibJam.Boss;
 using SibJam.Checkpoints;
 using SibJam.Credits;
 using SibJam.Cutscenes;
+using SibJam.Feedback;
 using SibJam.Defeat;
 using SibJam.Player;
 using UnityEngine;
@@ -17,6 +18,8 @@ namespace SibJam
         [SerializeField] private PopUp _gameButtons;
         [SerializeField] private Settings _settings;
         [SerializeField] private Anticlicker _anticlicker;
+        [Tooltip("На главной камере: тряска для отдачи игрока")]
+        [SerializeField] private CameraShaker _cameraShaker;
         [Tooltip("Плашка на сервисном канвасе субтитров")]
         [SerializeField, FormerlySerializedAs("_subtitles")] private SubtitlesView _subtitlesView;
         [Tooltip("Голос героя на сервисном объекте реплик")]
@@ -28,7 +31,7 @@ namespace SibJam
 
         [Header("Чекпоинты и поражение (пусто — сцена без них)")]
         [SerializeField] private GameLoop _gameLoop;
-        [SerializeField] private WakeUpCutscene _wakeUpCutscene;
+        [SerializeField] private Cutscene _wakeUpCutscene;
         [SerializeField] private PlayerHealth _playerHealth;
         [SerializeField] private DefeatScreen _defeatScreen;
 
@@ -43,6 +46,7 @@ namespace SibJam
             builder.RegisterComponent(_gameExitDialog);
             builder.RegisterComponent(_gameButtons);
             builder.RegisterComponent(_settings);
+            builder.RegisterComponent(_cameraShaker);
             builder.RegisterComponent(_anticlicker);
             builder.RegisterComponent(_subtitlesView);
             builder.Register<Subtitles>(Lifetime.Singleton);

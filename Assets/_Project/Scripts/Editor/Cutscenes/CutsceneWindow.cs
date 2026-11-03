@@ -100,8 +100,9 @@ namespace SibJam.EditorTools
             Undo.undoRedoPerformed += Repaint;
             Bind();
 
+            // После перезагрузки домена выделение восстанавливается позже OnEnable — читаем его на следующем тике
             if (!_locked)
-                OnSelectionChange();
+                EditorApplication.delayCall += OnSelectionChange;
         }
 
         private void OnDisable()
@@ -403,7 +404,8 @@ namespace SibJam.EditorTools
                     if (expanded != track.Expanded)
                         CutsceneTimelineDrawer.SetExpanded(track.Type, expanded);
 
-                    GUI.Label(new Rect(line.x + 22f, line.y + RowPad, 90f, 18f), track.Info.Name, EditorStyles.label);
+                    // До кнопок справа: глазик, «−», «+»
+                    GUI.Label(new Rect(line.x + 22f, line.y + RowPad, Mathf.Max(0f, line.width - 22f - 68f), 18f), track.Info.Name, EditorStyles.label);
                 }
 
                 // Скрытая дорожка — глазик, по нему вернуть. Скрыть — ПКМ по строке
