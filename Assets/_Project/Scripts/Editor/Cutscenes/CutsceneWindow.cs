@@ -100,7 +100,7 @@ namespace SibJam.EditorTools
             Undo.undoRedoPerformed += Repaint;
             Bind();
 
-            if (_cutscene == null && _clip == null)
+            if (!_locked)
                 OnSelectionChange();
         }
 
@@ -133,7 +133,8 @@ namespace SibJam.EditorTools
             else if (Selection.activeObject is CutsceneClip clip)
                 SetTarget(null, clip);
             else
-                return;
+                // Как окно Animation: выделение ушло с катсцены — окно пустое
+                SetTarget(null, null);
 
             Repaint();
         }
@@ -217,6 +218,10 @@ namespace SibJam.EditorTools
 
             if (_cutsceneObject != null && _cutsceneObject.targetObject == null)
                 SetTarget(null, _clip);
+
+            // Клип перезагрузили или вышли из Play: старый SerializedObject смотрит на уничтоженный объект — пересобираем
+            if (_clip != null && (_clipObject == null || _clipObject.targetObject != _clip))
+                Bind();
 
             HandleSplitter();
             Rect left = new Rect(0f, 0f, LeftWidth, position.height);
@@ -359,7 +364,7 @@ namespace SibJam.EditorTools
 
                 using (new EditorGUI.DisabledScope(_cutscene == null || Application.isPlaying))
                 {
-                    if (EditorGUILayout.DropdownButton(Icon("PlayButton On", "Запустить игру: с начала или с ползунка"), FocusType.Passive,
+                    if (EditorGUILayout.DropdownButton(Icon("PlayButton","Запустить игру: с начала или с ползунка"), FocusType.Passive,
                             EditorStyles.toolbarDropDown, GUILayout.Width(36)))
                     {
                         var menu = new GenericMenu();
@@ -370,8 +375,18 @@ namespace SibJam.EditorTools
                     }
                 }
 
-                _locked = GUILayout.Toggle(_locked, Icon(_locked ? "IN LockButton on" : "IN LockButton", "Закрепить: не переключаться на выделение"),
+                bool locked = GUILayout.Toggle(_locked, Icon(_locked ? "IN LockButton on" : "IN LockButton", "Закрепить: не переключаться на выделение"),
                     EditorStyles.toolbarButton, GUILayout.Width(26));
+
+                // Открыли замок — сразу показываем то, что выделено сейчас
+                if (locked != _locked)
+                {
+                    _locked = locked;
+
+                    // После кадра: посреди OnGUI менять цель нельзя, раскладка развалится
+                    if (!locked)
+                        EditorApplication.delayCall += OnSelectionChange;
+                }
             }
 
             GUILayout.EndArea();
@@ -862,7 +877,7 @@ namespace SibJam.EditorTools
             method?.Invoke(null, new object[] { clip, 0, false });
         }
 
-        private static void StopClips()
+        public static void StopClips()
         {
             MethodInfo method = AudioUtilType?.GetMethod("StopAllPreviewClips", BindingFlags.Static | BindingFlags.Public);
             method?.Invoke(null, null);

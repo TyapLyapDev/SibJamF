@@ -22,6 +22,17 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
+    - rid: 2001018870876078215
+      type: {class: EventAction, ns: SibJam.Cutscenes, asm: Assembly-CSharp}
+      data:
+        _time: 17.59
+        _call:
+          _target:
+            exposedName: e0864b8ede427474db72dc2df8bc4aa6
+            defaultValue: {fileID: 0}
+          _targetName: BrokenRobot
+          _component: SibJam.Cutscenes.WallBangingRobot, Assembly-CSharp
+          _method: StartBanging
     - rid: 2001018870876079001
       type: {class: SoundAction, ns: SibJam.Cutscenes, asm: Assembly-CSharp}
       data:
@@ -42,17 +53,6 @@ MonoBehaviour:
           defaultValue: {fileID: 0}
         _duration: 0
         _offset: 0
-    - rid: 2001018870876078215
-      type: {class: EventAction, ns: SibJam.Cutscenes, asm: Assembly-CSharp}
-      data:
-        _time: 17.6
-        _call:
-          _target:
-            exposedName: e0864b8ede427474db72dc2df8bc4aa6
-            defaultValue: {fileID: 0}
-          _targetName: BrokenRobot
-          _component: SibJam.Cutscenes.WallBangingRobot, Assembly-CSharp
-          _method: StartBanging
     - rid: 2001018870876079003
       type: {class: VoiceLineAction, ns: SibJam.Cutscenes, asm: Assembly-CSharp}
       data:

@@ -299,7 +299,8 @@ namespace SibJam.EditorTools
                     Action = action,
                     X = TimeToX(width, action.Time),
                     Width = clipWidth,
-                    Extent = action.Duration > 0f ? Mathf.Max(clipWidth, labelWidth) : FlagHead + labelWidth,
+                    // У клипа с длиной подпись обрезается по плашке, у разового — идёт дальше флажка
+                    Extent = action.Duration > 0f ? clipWidth : FlagHead + labelWidth,
                 });
             }
 
@@ -969,7 +970,10 @@ namespace SibJam.EditorTools
                     menu.AddItem(new GUIContent("Перемотать к концу"), false, () => _seek(action.End));
 
                 if (action.PreviewClip != null)
+                {
                     menu.AddItem(new GUIContent("Прослушать"), false, () => _playClip(action.PreviewClip));
+                    menu.AddItem(new GUIContent("Остановить прослушивание"), false, CutsceneWindow.StopClips);
+                }
 
                 menu.AddSeparator(string.Empty);
                 menu.AddItem(new GUIContent($"Копировать{count}"), false, Edit(actions, Copy));
