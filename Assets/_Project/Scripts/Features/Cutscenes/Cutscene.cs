@@ -1,41 +1,31 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 using VContainer;
 
 namespace SibJam.Cutscenes
 {
-    // Катсцена в сцене, по аналогии с Animator и AnimationClip: играет клип-файл (CutsceneClip)
-    // и держит то, чего в файле быть не может, — привязки клипа к объектам сцены.
-    // Сама по себе играет только клип (звуки, реплики, субтитры, вызовы).
-    // Наследник может добавить то, что происходит на экране (камера, анимация, финал), и взять длину оттуда
+    // Катсцена в сцене, по аналогии с Animator и AnimationClip: играет клип-файл (CutsceneClip).
+    // Здесь только ход времени, начало, конец и пропуск. Что делать в момент времени — решает клип (CutscenePlayback),
+    // привязки к сцене — CutsceneBindings, подсказку и нажатия пропуска — сервис SkipHint.
+    // Наследник добавляет то, что происходит на экране (камера, анимация, финал), через хуки On*
     public class Cutscene : MonoBehaviour, IExposedPropertyTable
     {
         [Header("Клип")]
         [SerializeField] private CutsceneClip _cutsceneClip;
         [Tooltip("2D-источник для звуков клипа без своего источника")]
-        [SerializeField, FormerlySerializedAs("_voiceSource")] private AudioSource _audioSource;
-
-        // Объекты сцены для ExposedReference в клипе: источники звука, цели вызовов и т.п.
-        [SerializeField, HideInInspector] private List<int> _bindingIds = new List<int>();
-        [SerializeField, HideInInspector] private List<UnityEngine.Object> _bindingValues = new List<UnityEngine.Object>();
+        [SerializeField, FormerlySerializedAs("_audioSource"), FormerlySerializedAs("_voiceSource")] private AudioSource _baseAudioSource;
+        [SerializeField, HideInInspector] private CutsceneBindings _bindings = new CutsceneBindings();
 
         [Header("Запуск и пропуск")]
         [SerializeField] private bool _playOnStart = true;
         [SerializeField] private bool _canSkip = true;
-        [Tooltip("Подсказка «нажми ещё раз, чтобы пропустить». Пусто — пропуск с первого нажатия")]
-        [SerializeField] private CanvasGroup _skipHint;
-        [Tooltip("Только в редакторе: начать просмотр с этой секунды. В билде катсцена всегда идёт с начала")]
-        [SerializeField, Min(0f)] private float _editorStartTime;
-        [SerializeField] private UnityEvent _finished;
 
         private VoiceLinePlayer _voiceLines;
         private Subtitles _subtitles;
-        private bool _skipRequested;
+        private SkipHint _skipHint;
         private CutscenePlayback _playback;
+        private bool _skipRequested;
 
         public event Action Started;
         public event Action Finished;
@@ -48,22 +38,19 @@ namespace SibJam.Cutscenes
         public virtual float Length => _cutsceneClip != null ? _cutsceneClip.Length : 0f;
 
         [Inject]
-        public void Construct(VoiceLinePlayer voiceLines, Subtitles subtitles)
+        public void Construct(VoiceLinePlayer voiceLines, Subtitles subtitles, SkipHint skipHint)
         {
             _voiceLines = voiceLines;
             _subtitles = subtitles;
+            _skipHint = skipHint;
         }
 
         protected virtual void Start()
         {
             if (_playOnStart)
-            {
                 Play();
-                return;
-            }
-
-            SetSkipHint(0f);
-            OnAutoPlayCancelled();
+            else
+                OnAutoPlayCancelled();
         }
 
         protected virtual void Update()
@@ -75,8 +62,8 @@ namespace SibJam.Cutscenes
             _playback?.Tick(CurrentTime);
             OnTick(CurrentTime);
 
-            if (_canSkip)
-                HandleSkip();
+            if (_canSkip && _skipHint.WantsSkip(Time.deltaTime))
+                Skip();
 
             if (CurrentTime >= Length || _skipRequested)
                 Finish();
@@ -92,21 +79,13 @@ namespace SibJam.Cutscenes
 
             _skipRequested = false;
             CurrentTime = 0f;
-            SetSkipHint(0f);
+            _skipHint.Hide();
 
             OnPlay();
             _playback = _cutsceneClip != null
-                ? new CutscenePlayback(_cutsceneClip, new CutsceneContext(_voiceLines, _subtitles, _audioSource, this))
+                ? new CutscenePlayback(_cutsceneClip, new CutsceneContext(_voiceLines, _subtitles, _baseAudioSource, this))
                 : null;
             IsPlaying = true;
-
-            // Для просмотра с середины: у пройденных меток выполняем только действия (без звука и субтитров)
-            if (Application.isEditor && _editorStartTime > 0f)
-            {
-                CurrentTime = Mathf.Min(_editorStartTime, Length);
-                Seek(CurrentTime);
-                _playback?.SkipTo(CurrentTime);
-            }
 
             Started?.Invoke();
         }
@@ -119,9 +98,6 @@ namespace SibJam.Cutscenes
 
         // Время на этом кадре. По умолчанию — свои часы; наследник может брать его, например, из анимации
         protected virtual float ReadTime(float previous) => previous + Time.deltaTime;
-
-        // Перемотка (просмотр с середины в редакторе)
-        protected virtual void Seek(float time) { }
 
         protected virtual void OnPlay() { }
 
@@ -137,86 +113,24 @@ namespace SibJam.Cutscenes
         {
             IsPlaying = false;
 
-            // Пропущенные действия всё равно выполняем: в них может быть то, без чего игра не продолжится (двери и т.п.)
+            // Пропущенные элементы всё равно выполняют обязательное (двери и т.п.), звучащее глушится
             _playback?.Finish();
             _playback = null;
 
-            if (_audioSource != null)
-                _audioSource.Stop();
+            if (_baseAudioSource != null)
+                _baseAudioSource.Stop();
 
-            SetSkipHint(0f);
+            _skipHint.Hide();
             OnFinish();
 
             Finished?.Invoke();
-            _finished?.Invoke();
         }
 
-        public UnityEngine.Object GetReferenceValue(PropertyName id, out bool idValid)
-        {
-            int index = FindBinding(id);
-            idValid = index >= 0;
-            return idValid ? _bindingValues[index] : null;
-        }
+        // Таблица привязок для ExposedReference: Unity ищет её на самом компоненте, поэтому отдаём через него
+        public UnityEngine.Object GetReferenceValue(PropertyName id, out bool idValid) => _bindings.GetReferenceValue(id, out idValid);
 
-        public void SetReferenceValue(PropertyName id, UnityEngine.Object value)
-        {
-            int index = FindBinding(id);
+        public void SetReferenceValue(PropertyName id, UnityEngine.Object value) => _bindings.SetReferenceValue(id, value);
 
-            if (index >= 0)
-            {
-                _bindingValues[index] = value;
-                return;
-            }
-
-            _bindingIds.Add(id.GetHashCode());
-            _bindingValues.Add(value);
-        }
-
-        public void ClearReferenceValue(PropertyName id)
-        {
-            int index = FindBinding(id);
-
-            if (index < 0)
-                return;
-
-            _bindingIds.RemoveAt(index);
-            _bindingValues.RemoveAt(index);
-        }
-
-        private int FindBinding(PropertyName id)
-        {
-            for (int i = 0; i < _bindingIds.Count; i++)
-            {
-                if (_bindingIds[i] == id.GetHashCode())
-                    return i;
-            }
-
-            return -1;
-        }
-
-        // Первое нажатие показывает подсказку, второе (пока подсказка видна) пропускает
-        private void HandleSkip()
-        {
-            Keyboard keyboard = Keyboard.current;
-
-            if (keyboard == null || !keyboard.spaceKey.wasPressedThisFrame)
-            {
-                if (_skipHint != null)
-                    _skipHint.alpha = Mathf.MoveTowards(_skipHint.alpha, 0f, Time.deltaTime * 0.5f);
-
-                return;
-            }
-
-            if (_skipHint == null || _skipHint.alpha > 0f)
-                _skipRequested = true;
-            else
-                _skipHint.alpha = 1f;
-        }
-
-        private void SetSkipHint(float alpha)
-        {
-            if (_skipHint != null)
-                _skipHint.alpha = alpha;
-        }
+        public void ClearReferenceValue(PropertyName id) => _bindings.ClearReferenceValue(id);
     }
 }

@@ -80,8 +80,6 @@ namespace SibJam.Cutscenes
 
         protected override float ReadTime(float previous) => (float)_clipPlayable.GetTime();
 
-        protected override void Seek(float time) => _clipPlayable.SetTime(time);
-
         protected override void OnPlay()
         {
             _player = GameObject.FindWithTag(_playerTag);

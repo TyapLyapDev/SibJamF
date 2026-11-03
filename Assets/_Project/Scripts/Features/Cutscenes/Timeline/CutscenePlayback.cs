@@ -35,21 +35,6 @@ namespace SibJam.Cutscenes
             }
         }
 
-        // Перемотка вперёд: у пройденных элементов выполняем только обязательное (без звука и субтитров)
-        public void SkipTo(float time)
-        {
-            for (int i = 0; i < _fired.Length; i++)
-            {
-                CutsceneAction action = _actions[i];
-
-                if (_fired[i] || action == null || action.Time >= time)
-                    continue;
-
-                _fired[i] = true;
-                action.PlaySkipped(_context);
-            }
-        }
-
         // Конец или пропуск: невыполненные элементы отдают обязательное, всё звучащее глушится
         public void Finish()
         {

@@ -5,11 +5,11 @@ namespace SibJam.Cutscenes
     // То, что нужно элементам таймлайна во время игры
     public class CutsceneContext
     {
-        public CutsceneContext(VoiceLinePlayer voiceLines, Subtitles subtitles, AudioSource defaultSource, IExposedPropertyTable bindings)
+        public CutsceneContext(VoiceLinePlayer voiceLines, Subtitles subtitles, AudioSource baseSource, IExposedPropertyTable bindings)
         {
             VoiceLines = voiceLines;
             Subtitles = subtitles;
-            DefaultSource = defaultSource;
+            BaseSource = baseSource;
             Bindings = bindings;
         }
 
@@ -17,7 +17,7 @@ namespace SibJam.Cutscenes
         public Subtitles Subtitles { get; }
 
         // 2D-источник катсцены для звуков без своего источника
-        public AudioSource DefaultSource { get; }
+        public AudioSource BaseSource { get; }
 
         // Объекты сцены, привязанные к клипу на компоненте катсцены
         public IExposedPropertyTable Bindings { get; }

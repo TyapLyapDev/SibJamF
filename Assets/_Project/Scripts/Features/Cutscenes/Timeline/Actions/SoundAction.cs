@@ -31,6 +31,13 @@ namespace SibJam.Cutscenes
 
             AudioSource source = GetSource(context);
 
+            // Ни своего источника, ни источника катсцены: звук пропускаем, катсцена идёт дальше
+            if (source == null)
+            {
+                Debug.LogWarning($"Катсцена: звуку «{_clip.name}» не указан источник, и у катсцены его нет", context.Bindings as UnityEngine.Object);
+                return;
+            }
+
             // С середины клипа PlayOneShot не умеет — ставим клип на источник
             if (_offset > 0f)
             {
@@ -50,13 +57,16 @@ namespace SibJam.Cutscenes
         public override void Stop(CutsceneContext context)
         {
             _cut?.Kill();
-            GetSource(context).Stop();
+            AudioSource source = GetSource(context);
+
+            if (source != null)
+                source.Stop();
         }
 
         private AudioSource GetSource(CutsceneContext context)
         {
             AudioSource source = context.Resolve(_source);
-            return source != null ? source : context.DefaultSource;
+            return source != null ? source : context.BaseSource;
         }
     }
 }

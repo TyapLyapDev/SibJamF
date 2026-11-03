@@ -21,6 +21,8 @@ namespace SibJam
         [SerializeField, FormerlySerializedAs("_subtitles")] private SubtitlesView _subtitlesView;
         [Tooltip("Голос героя на сервисном объекте реплик")]
         [SerializeField, FormerlySerializedAs("_voiceLinePlayer")] private VoiceSource _voiceSource;
+        [Tooltip("Подсказка пропуска катсцен на сервисном канвасе")]
+        [SerializeField] private SkipHintView _skipHintView;
         [Tooltip("Финальные титры на сервисном канвасе (пусто — сцена без них)")]
         [SerializeField] private CreditsView _creditsView;
 
@@ -46,6 +48,8 @@ namespace SibJam
             builder.Register<Subtitles>(Lifetime.Singleton);
             builder.RegisterComponent(_voiceSource);
             builder.Register<VoiceLinePlayer>(Lifetime.Singleton);
+            builder.RegisterComponent(_skipHintView);
+            builder.Register<SkipHint>(Lifetime.Singleton);
 
             if (_creditsView != null)
             {

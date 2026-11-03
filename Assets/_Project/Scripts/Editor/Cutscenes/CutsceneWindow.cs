@@ -362,19 +362,6 @@ namespace SibJam.EditorTools
                 }
 
 
-                using (new EditorGUI.DisabledScope(_cutscene == null || Application.isPlaying))
-                {
-                    if (EditorGUILayout.DropdownButton(Icon("PlayButton","Запустить игру: с начала или с ползунка"), FocusType.Passive,
-                            EditorStyles.toolbarDropDown, GUILayout.Width(36)))
-                    {
-                        var menu = new GenericMenu();
-                        menu.AddItem(new GUIContent("Игра с начала — как увидит игрок"), false, () => EnterPlayMode(0f));
-                        menu.AddItem(new GUIContent($"Игра с {_time:0.00} с (пройденное — без звука и субтитров)"), false,
-                            () => EnterPlayMode(_time));
-                        menu.ShowAsContext();
-                    }
-                }
-
                 bool locked = GUILayout.Toggle(_locked, Icon(_locked ? "IN LockButton on" : "IN LockButton", "Закрепить: не переключаться на выделение"),
                     EditorStyles.toolbarButton, GUILayout.Width(26));
 
@@ -489,34 +476,14 @@ namespace SibJam.EditorTools
 
             // Время правится прямо тут; клик по полю — ещё и выбор элемента
             EditorGUI.BeginChangeCheck();
-            float time = EditorGUI.DelayedFloatField(new Rect(line.x + 22f, line.y + RowPad, 44f, 17f), start.floatValue, EditorStyles.miniTextField);
+            float time = EditorGUI.DelayedFloatField(new Rect(line.x + 22f, line.y + RowPad, 44f, 17f), (float)Math.Round(start.floatValue, 2), EditorStyles.miniTextField);
 
             if (EditorGUI.EndChangeCheck())
                 start.floatValue = Mathf.Max(0f, (float)Math.Round(time, 2));
 
-            // Длина справа, перед корзиной: у растягиваемых правится, у остальных просто видна
-            SerializedProperty duration = CutsceneTimelineDrawer.FindDuration(action);
-            Rect length = new Rect(line.xMax - 70f, line.y + RowPad, 42f, 17f);
-
-            if (duration != null)
-            {
-                EditorGUI.BeginChangeCheck();
-                float value = EditorGUI.DelayedFloatField(length, (float)Math.Round(child.Action.Duration, 2), EditorStyles.miniTextField);
-
-                if (EditorGUI.EndChangeCheck())
-                {
-                    float max = child.Action.MaxDuration;
-                    CutsceneTimelineDrawer.SetDuration(duration, Mathf.Clamp(value, 0.01f, max), max);
-                }
-            }
-            else if (child.Action.Duration > 0f)
-            {
-                GUI.Label(length, $"{child.Action.Duration:0.00}", EditorStyles.miniLabel);
-            }
-
-            // Без длины главное поле тянется до корзины
+            // Главное поле тянется до кнопки настроек; длина и остальное — в настройках
             SerializedProperty main = FindMainField(action, child.Action.GetType());
-            float fieldEnd = duration != null || child.Action.Duration > 0f ? length.x - 4f : line.xMax - 28f;
+            float fieldEnd = line.xMax - 48f;
             Rect field = new Rect(line.x + 70f, line.y + RowPad, fieldEnd - line.x - 70f, 17f);
 
             if (main == null)
@@ -525,6 +492,12 @@ namespace SibJam.EditorTools
                 main.stringValue = EditorGUI.TextField(field, main.stringValue);
             else
                 EditorGUI.PropertyField(field, main, GUIContent.none);
+
+            // Все поля элемента (источник, начало клипа и т.п.) — во всплывающем окне
+            Rect settings = new Rect(line.xMax - 44f, line.y + RowPad, 18f, 16f);
+
+            if (GUI.Button(settings, Icon("_Popup", "Все настройки элемента"), EditorStyles.iconButton))
+                CutsceneActionPopup.Show(settings, actions, child.Index, _timeline.SelectedActions);
 
             // Удаление сразу, без подтверждения: отменяется Ctrl+Z
             if (GUI.Button(new Rect(line.xMax - 24f, line.y + RowPad, 18f, 16f), Icon("TreeEditor.Trash", "Удалить элемент"), EditorStyles.iconButton))
@@ -539,9 +512,22 @@ namespace SibJam.EditorTools
             // Клик по строке (мимо полей) — выбрать элемент и перемотать к нему
             if (Event.current.type == EventType.MouseDown && Event.current.button == 0 && line.Contains(Event.current.mousePosition))
             {
-                _timeline.Selected = child.Index;
-                Seek(child.Action.Time);
-                Event.current.Use();
+                Event e = Event.current;
+                var selection = _timeline.SelectedActions;
+
+                // Ctrl — добавить/убрать из выделения, Shift — добавить, как на таймлайне
+                if ((e.control || e.command) && selection.Contains(child.Index))
+                    _timeline.SetSelection(selection.Where(index => index != child.Index).ToList(), -1);
+                else if (e.control || e.command || e.shift)
+                    _timeline.SetSelection(selection.ToList(), child.Index);
+                else
+                {
+                    _timeline.Selected = child.Index;
+                    Seek(child.Action.Time);
+                }
+
+                e.Use();
+                Repaint();
             }
         }
 
@@ -852,15 +838,6 @@ namespace SibJam.EditorTools
                 StopPreview();
 
             Repaint();
-        }
-
-        private void EnterPlayMode(float startTime)
-        {
-            StopPreview();
-            var cutsceneObject = new SerializedObject(_cutscene);
-            cutsceneObject.FindProperty("_editorStartTime").floatValue = startTime;
-            cutsceneObject.ApplyModifiedProperties();
-            EditorApplication.isPlaying = true;
         }
 
         private static GUIContent Icon(string name, string tooltip) =>

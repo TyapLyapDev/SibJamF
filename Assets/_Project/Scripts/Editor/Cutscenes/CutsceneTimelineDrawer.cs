@@ -964,6 +964,11 @@ namespace SibJam.EditorTools
             {
                 CutsceneAction action = Get(actions, hit);
                 string count = _selection.Count > 1 ? $" ({_selection.Count})" : string.Empty;
+                Rect at = new Rect(Event.current.mousePosition, Vector2.zero);
+                int[] selected = _selection.ToArray();
+                SerializedProperty list = actions.Copy();
+                menu.AddItem(new GUIContent($"Настройки элемента{count}..."), false, () => CutsceneActionPopup.Show(at, list, hit, selected));
+                menu.AddSeparator(string.Empty);
                 menu.AddItem(new GUIContent("Перемотать к началу"), false, () => _seek(action.Time));
 
                 if (action.Duration > 0f)
