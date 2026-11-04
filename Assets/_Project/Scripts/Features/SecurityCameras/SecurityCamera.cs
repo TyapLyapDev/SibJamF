@@ -2,6 +2,7 @@ using System;
 using SibJam.Feedback;
 using UnityEngine;
 using UnityEngine.Audio;
+using VContainer;
 
 namespace SibJam.SecurityCameras
 {
@@ -21,6 +22,7 @@ namespace SibJam.SecurityCameras
         [SerializeField] private SoundSet _hitSound;
         [SerializeField] private SoundSet _breakSound;
 
+        private ImpactFx _impactFx;
         private int _hitsTaken;
         private WorldHealthBar _healthBar;
 
@@ -33,12 +35,18 @@ namespace SibJam.SecurityCameras
         private Vector3 FxPoint => TryGetComponent(out Collider ownCollider) ? ownCollider.bounds.center
             : GetComponentInChildren<Renderer>() is { } renderer ? renderer.bounds.center : transform.position;
 
+        [Inject]
+        public void Construct(ImpactFx impactFx)
+        {
+            _impactFx = impactFx ?? throw new ArgumentNullException(nameof(impactFx));
+        }
+
         private void Awake()
         {
             _healthBar = gameObject.AddComponent<WorldHealthBar>();
         }
 
-        public void TakeHit(bool isCounterAttack = false)
+        public void TakeHit(bool isCounterAttack = false, Vector3? hitPoint = null, Vector3? hitNormal = null)
         {
             if (IsBroken) return;
 
@@ -52,14 +60,20 @@ namespace SibJam.SecurityCameras
             }
 
             _healthBar.SetValue((float)HitsLeft / _hitsToBreak);
-            ImpactFx.Hit(FxPoint, Vector3.up, isCounterAttack);
-            SfxEmitter.PlayAt(_hitSound, FxPoint, _sfxOutput);
+            Vector3 normal = hitNormal.GetValueOrDefault(Vector3.up).normalized;
+            if (normal.sqrMagnitude < 0.0001f)
+                normal = Vector3.up;
+
+            // Выносим источник искр за поверхность, чтобы корпус камеры не перекрывал вспышку.
+            Vector3 point = hitPoint.GetValueOrDefault(FxPoint) + normal * 0.08f;
+            _impactFx.Hit(point, normal, isCounterAttack);
+            SfxEmitter.PlayAt(_hitSound, point, _sfxOutput);
         }
 
         private void Break()
         {
             IsBroken = true;
-            ImpactFx.Explosion(FxPoint);
+            _impactFx.Explosion(FxPoint);
             SfxEmitter.PlayAt(_breakSound, FxPoint, _sfxOutput);
             // Камер в сцене много и в DI они не попадают — тряску берём с главной камеры
             if (Camera.main != null && Camera.main.TryGetComponent(out CameraShaker shaker))

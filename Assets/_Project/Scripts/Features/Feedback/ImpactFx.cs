@@ -3,30 +3,30 @@ using UnityEngine;
 namespace SibJam.Feedback
 {
     // Одноразовые вспышки частиц из кода: искры от ударов и взрыв сломанной камеры. Материалы — в Resources/ImpactFx
-    public static class ImpactFx
+    public sealed class ImpactFx
     {
-        private static Material _sparkMaterial;
-        private static Material _smokeMaterial;
+        private Material _sparkMaterial;
+        private Material _smokeMaterial;
 
-        private static Material SparkMaterial => _sparkMaterial ??= Resources.Load<Material>("ImpactFx/Spark");
-        private static Material SmokeMaterial => _smokeMaterial ??= Resources.Load<Material>("ImpactFx/Smoke");
+        private Material SparkMaterial => _sparkMaterial ??= Resources.Load<Material>("ImpactFx/Spark");
+        private Material SmokeMaterial => _smokeMaterial ??= Resources.Load<Material>("ImpactFx/Smoke");
 
         // Попадание мечом: искры веером от точки удара по направлению замаха
-        public static void Hit(Vector3 point, Vector3 direction, bool isStrong)
+        public void Hit(Vector3 point, Vector3 direction, bool isStrong, float delay = 0f)
         {
             float power = isStrong ? 1.8f : 1f;
 
             Burst(point, direction, SparkMaterial, count: (int)(18 * power), speed: new Vector2(6f, 14f) * power,
                 lifetime: new Vector2(0.15f, 0.35f), size: new Vector2(0.04f, 0.09f),
-                color: isStrong ? new Color(1f, 0.35f, 0.15f) : new Color(1f, 0.8f, 0.4f), angle: 50f, gravity: 2f, stretch: true);
+                color: isStrong ? new Color(1f, 0.35f, 0.15f) : new Color(1f, 0.8f, 0.4f), angle: 50f, gravity: 2f, stretch: true, delay: delay);
 
             Burst(point, direction, SparkMaterial, count: 1, speed: Vector2.zero,
                 lifetime: new Vector2(0.08f, 0.08f), size: new Vector2(0.8f, 0.8f) * power,
-                color: new Color(1f, 0.9f, 0.7f, 0.8f), angle: 0f, gravity: 0f, stretch: false);
+                color: new Color(1f, 0.9f, 0.7f, 0.8f), angle: 0f, gravity: 0f, stretch: false, delay: delay);
         }
 
         // Удар с прыжка о землю: кольцо пыли вокруг цели
-        public static void Slam(Vector3 point)
+        public void Slam(Vector3 point)
         {
             Burst(point, Vector3.up, SmokeMaterial, count: 16, speed: new Vector2(3f, 6f),
                 lifetime: new Vector2(0.4f, 0.7f), size: new Vector2(0.5f, 1f),
@@ -34,7 +34,7 @@ namespace SibJam.Feedback
         }
 
         // Разрушение камеры: сноп искр, вспышка и дым
-        public static void Explosion(Vector3 point)
+        public void Explosion(Vector3 point)
         {
             Burst(point, Vector3.up, SparkMaterial, count: 45, speed: new Vector2(4f, 12f),
                 lifetime: new Vector2(0.3f, 0.8f), size: new Vector2(0.05f, 0.12f),
@@ -49,8 +49,8 @@ namespace SibJam.Feedback
                 color: new Color(0.2f, 0.2f, 0.22f, 0.7f), angle: 60f, gravity: -0.3f, stretch: false);
         }
 
-        private static void Burst(Vector3 point, Vector3 direction, Material material, int count, Vector2 speed,
-            Vector2 lifetime, Vector2 size, Color color, float angle, float gravity, bool stretch)
+        private void Burst(Vector3 point, Vector3 direction, Material material, int count, Vector2 speed,
+            Vector2 lifetime, Vector2 size, Color color, float angle, float gravity, bool stretch, float delay = 0f)
         {
             if (material == null || count <= 0) return;
 
@@ -64,6 +64,7 @@ namespace SibJam.Feedback
             main.duration = 0.1f;
             main.loop = false;
             main.playOnAwake = false;
+            main.startDelay = delay;
             main.startSpeed = new ParticleSystem.MinMaxCurve(speed.x, speed.y);
             main.startLifetime = new ParticleSystem.MinMaxCurve(lifetime.x, lifetime.y);
             main.startSize = new ParticleSystem.MinMaxCurve(size.x, size.y);
@@ -95,7 +96,7 @@ namespace SibJam.Feedback
             renderer.lengthScale = stretch ? 1f : 0f;
 
             particles.Play();
-            Object.Destroy(go, 0.1f + lifetime.y + 0.1f);
+            Object.Destroy(go, delay + 0.1f + lifetime.y + 0.1f);
         }
     }
 }

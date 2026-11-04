@@ -75,6 +75,7 @@ namespace SibJam.Weapons
         [SerializeField, Min(0f)] private float _jumpKnockbackStagger = 0.6f;
 
         private IPlayerInputReader _inputReader;
+        private ImpactFx _impactFx;
         private IGroundDetector _groundDetector;
         private IGravity _gravity;
         private bool _isJumpAttack;
@@ -115,9 +116,10 @@ namespace SibJam.Weapons
         private float ParryWindow => _config != null ? _config.ParryWindow : 0.2f;
 
         [Inject]
-        public void Construct(IPlayerInputReader inputReader)
+        public void Construct(IPlayerInputReader inputReader, ImpactFx impactFx)
         {
             _inputReader = inputReader ?? throw new ArgumentNullException(nameof(inputReader));
+            _impactFx = impactFx ?? throw new ArgumentNullException(nameof(impactFx));
         }
 
         private void Awake()
@@ -280,10 +282,10 @@ namespace SibJam.Weapons
                     if (wasAlive)
                     {
                         Vector3 point = hit.point != Vector3.zero ? hit.point : hit.collider.ClosestPoint(_aimTransform.position);
-                        ImpactFx.Hit(point, -_aimTransform.forward, _isJumpAttack || _isCounterAttack);
+                        _impactFx.Hit(point, -_aimTransform.forward, _isJumpAttack || _isCounterAttack, delay: 0.1f);
 
                         if (_isJumpAttack)
-                            ImpactFx.Slam(enemy.transform.position);
+                            _impactFx.Slam(enemy.transform.position);
 
                         if (!enemy.IsDead && enemy.TryGetComponent(out EnemyBrain brain))
                             KnockBack(brain);
@@ -298,7 +300,10 @@ namespace SibJam.Weapons
 
                 if (securityCamera != null)
                 {
-                    securityCamera.TakeHit(_isCounterAttack);
+                    bool hasContact = hit.distance > 0f && hit.normal.sqrMagnitude > 0.0001f;
+                    Vector3 point = hasContact ? hit.point : hit.collider.ClosestPoint(_aimTransform.position);
+                    Vector3 normal = hasContact ? hit.normal : -_aimTransform.forward;
+                    securityCamera.TakeHit(_isCounterAttack, point, normal);
                     continue;
                 }
 
@@ -337,7 +342,7 @@ namespace SibJam.Weapons
                     continue;
 
                 projectile.Reflect(_isMegaDeflect ? _megaDeflectMultiplier : 1f);
-                ImpactFx.Hit(projectile.transform.position, -toProjectile.normalized, _isMegaDeflect);
+                _impactFx.Hit(projectile.transform.position, -toProjectile.normalized, _isMegaDeflect);
                 deflectedNow = true;
             }
 
