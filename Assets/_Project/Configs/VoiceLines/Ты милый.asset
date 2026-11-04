@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f80ec644c2056a947ae2cb7ea65e5c87, type: 3}
-  m_Name: "\u041A\u043E\u0440\u043E\u0442\u043A\u0430\u044F 2.1"
+  m_Name: "\u0422\u044B \u043C\u0438\u043B\u044B\u0439"
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.VoiceLine
   <Clip>k__BackingField: {fileID: 8300000, guid: 9977f115fd57f354ca287cb32bd609d1, type: 3}
   <Speaker>k__BackingField: 

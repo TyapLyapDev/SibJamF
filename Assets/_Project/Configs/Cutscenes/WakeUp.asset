@@ -22,8 +22,8 @@ MonoBehaviour:
   - rid: 2001018870876079002
   - rid: 2001018870876078355
   - rid: 2001018870876078215
-  - rid: 2001018870876079003
-  - rid: 2001018870876079004
+  - rid: 5948967135942803520
+  - rid: 5948967135942803521
   - rid: 2001018870876078356
   - rid: 2001018870876078365
   - rid: 2001018870876078375
@@ -324,23 +324,25 @@ MonoBehaviour:
           defaultValue: {fileID: 0}
         _duration: 0
         _offset: 0
-    - rid: 2001018870876079003
-      type: {class: VoiceLineAction, ns: SibJam.Cutscenes, asm: Assembly-CSharp}
+    - rid: 5948967135942803520
+      type: {class: TVLineAction, ns: SibJam.Cutscenes, asm: Assembly-CSharp}
       data:
         _time: 18.2
         _line: {fileID: 11400000, guid: 167249a4170e7754785c7097974e3426, type: 2}
-        _source:
-          exposedName: 
+        _tv:
+          exposedName: WakeUp_TV
           defaultValue: {fileID: 0}
+        _face: 0
         _duration: 0
         _offset: 0
-    - rid: 2001018870876079004
-      type: {class: VoiceLineAction, ns: SibJam.Cutscenes, asm: Assembly-CSharp}
+    - rid: 5948967135942803521
+      type: {class: TVLineAction, ns: SibJam.Cutscenes, asm: Assembly-CSharp}
       data:
         _time: 20.5319
         _line: {fileID: 11400000, guid: 8fdbf5321e8a6dd42ae6d1ef629f9476, type: 2}
-        _source:
-          exposedName: 
+        _tv:
+          exposedName: WakeUp_TV
           defaultValue: {fileID: 0}
+        _face: 4
         _duration: 0
         _offset: 0

@@ -65,8 +65,8 @@ namespace SibJam
                 }
 
                 // Телики говорят через тот же сервис реплик
-                foreach (TV.TVReactions tv in FindObjectsByType<TV.TVReactions>(FindObjectsInactive.Include, FindObjectsSortMode.None))
-                    container.Inject(tv);
+                foreach (TV.TVRoom room in FindObjectsByType<TV.TVRoom>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                    container.Inject(room);
             });
 
             if (_creditsView != null)

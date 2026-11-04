@@ -4,15 +4,15 @@ using UnityEngine;
 
 namespace SibJam.Cutscenes
 {
-    // Реплика телевизора: озвучка из его динамика, на экране выбранное лицо, колонки пульсируют.
-    // После реплики телик возвращается к лицу простоя. Длина и обрезка — как у обычной реплики
+    // Реплика комнаты с теликами: озвучка из её телика, на всех экранах выбранное лицо, колонки пульсируют.
+    // После реплики телики возвращаются к базовому лицу. Длина и обрезка — как у обычной реплики
     [Serializable, CutsceneAction("Реплика телика", "#FFB347")]
     public class TVLineAction : CutsceneAction
     {
         [CutsceneLabel("Реплика"), CutsceneMainField]
         [SerializeField] private VoiceLine _line;
-        [CutsceneLabel("Телевизор")]
-        [SerializeField] private ExposedReference<TVScreen> _tv;
+        [CutsceneLabel("Комната с теликами")]
+        [SerializeField] private ExposedReference<TVRoom> _tv;
         [CutsceneLabel("Лицо")]
         [SerializeField] private TVFace _face = TVFace.Evil;
         [CutsceneLabel("Длина, с", "0 — вся реплика")]
@@ -20,7 +20,7 @@ namespace SibJam.Cutscenes
         [CutsceneLabel("Начать с, с", "Сколько секунд реплики пропустить в начале")]
         [SerializeField, Min(0f)] private float _offset;
 
-        [NonSerialized] private TVScreen _talking;
+        [NonSerialized] private TVRoom _talking;
 
         public override float MaxDuration => _line != null ? Mathf.Max(0f, _line.Duration - _offset) : 0f;
         public override float Duration => _duration > 0f ? Mathf.Min(_duration, MaxDuration) : MaxDuration;

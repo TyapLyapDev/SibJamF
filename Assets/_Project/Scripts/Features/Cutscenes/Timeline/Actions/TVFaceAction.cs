@@ -9,8 +9,8 @@ namespace SibJam.Cutscenes
     [Serializable, CutsceneAction("Лицо телика", "#FFD27F")]
     public class TVFaceAction : CutsceneAction
     {
-        [CutsceneLabel("Телевизор")]
-        [SerializeField] private ExposedReference<TVScreen> _tv;
+        [CutsceneLabel("Комната с теликами")]
+        [SerializeField] private ExposedReference<TVRoom> _tv;
         [CutsceneLabel("Лицо"), CutsceneMainField]
         [SerializeField] private TVFace _face = TVFace.Evil;
 
@@ -20,10 +20,10 @@ namespace SibJam.Cutscenes
 
         public override void Play(CutsceneContext context)
         {
-            TVScreen tv = context.Resolve(_tv);
+            TVRoom room = context.Resolve(_tv);
 
-            if (tv != null)
-                tv.Show(_face);
+            if (room != null)
+                room.ShowFace(_face);
         }
     }
 }

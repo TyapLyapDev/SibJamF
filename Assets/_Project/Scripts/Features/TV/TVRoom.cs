@@ -9,10 +9,10 @@ using Random = UnityEngine.Random;
 
 namespace SibJam.TV
 {
-    // Всё, что говорит телик, в одном месте: базовое лицо и список реакций «событие → фразы с лицами».
-    // Зона входа/выхода — коллайдер-триггер с TVZone (обычно дочерний объект Zone)
-    [RequireComponent(typeof(TVScreen))]
-    public class TVReactions : MonoBehaviour
+    // Комната с теликами: все телики — дочерние объекты, все говорят одно и то же одновременно.
+    // Здесь базовое лицо комнаты и реакции «событие → фразы с лицами». Зона входа/выхода — дочерний Zone с TVZone.
+    // Голос звучит из первого телика комнаты, колонки качаются у всех
+    public class TVRoom : MonoBehaviour
     {
         public enum Trigger
         {
@@ -56,23 +56,29 @@ namespace SibJam.TV
             [NonSerialized] public int Played;
         }
 
-        [SerializeField] private TVScreen _screen;
+        [SerializeField] private TVFace _idleFace = TVFace.Sleepy;
         [SerializeField] private BossFight _bossFight;
         [SerializeField] private List<Reaction> _reactions = new List<Reaction>();
 
         private VoiceLinePlayer _voiceLines;
+        private TVScreen[] _screens = Array.Empty<TVScreen>();
         private Coroutine _talking;
 
         [Inject]
         public void Construct(VoiceLinePlayer voiceLines) => _voiceLines = voiceLines;
 
-        public TVFace IdleFace
-        {
-            get => _screen.IdleFace;
-            set => _screen.IdleFace = value;
-        }
+        public TVFace IdleFace => _idleFace;
 
-        private void Reset() => _screen = GetComponent<TVScreen>();
+        public IReadOnlyList<TVScreen> Screens => _screens;
+
+        // Откуда звучит голос комнаты: первый телик
+        public AudioSource Voice => _screens.Length > 0 ? _screens[0].Voice : null;
+
+        private void Awake()
+        {
+            _screens = GetComponentsInChildren<TVScreen>(true);
+            ApplyIdleFace();
+        }
 
         private void OnEnable()
         {
@@ -120,6 +126,31 @@ namespace SibJam.TV
                 _bossFight.Started -= OnFightStarted;
                 _bossFight.Won -= OnFightWon;
             }
+        }
+
+        // Базовое лицо раздаётся всем теликам комнаты (зовёт и редактор, чтобы в сцене было видно)
+        public void ApplyIdleFace()
+        {
+            foreach (TVScreen screen in GetComponentsInChildren<TVScreen>(true))
+                screen.IdleFace = _idleFace;
+        }
+
+        public void BeginTalk(TVFace face)
+        {
+            foreach (TVScreen screen in _screens)
+                screen.BeginTalk(face);
+        }
+
+        public void ShowFace(TVFace face)
+        {
+            foreach (TVScreen screen in _screens)
+                screen.Show(face);
+        }
+
+        public void EndTalk()
+        {
+            foreach (TVScreen screen in _screens)
+                screen.EndTalk();
         }
 
         // Зовёт TVZone
@@ -187,10 +218,10 @@ namespace SibJam.TV
 
         private IEnumerator Talk(Phrase phrase)
         {
-            _screen.BeginTalk(phrase.Face);
-            _voiceLines.Play(phrase.Line, _screen.Voice);
+            BeginTalk(phrase.Face);
+            _voiceLines.Play(phrase.Line, Voice);
             yield return new WaitForSeconds(phrase.Line.Duration);
-            _screen.EndTalk();
+            EndTalk();
             _talking = null;
         }
     }
