@@ -274,14 +274,15 @@ namespace SibJam.Editor
         public static void StyleMainScene()
         {
             Transform hud = GameObject.Find("Core/Interface/HudCanvas").transform;
-            Transform health = hud.Find("HealthBar");
-            StylePanel(health.GetComponent<Image>(), Hex("0B0C0FB3"));
-            StyleBarFill(health.Find("Fill").GetComponent<Image>(), Alarm);
-            var healthText = health.Find("HealthText").GetComponent<TMP_Text>();
-            StyleTitle(healthText, 32f);
-            healthText.characterSpacing = 2f;
-            healthText.alignment = TextAlignmentOptions.MidlineLeft;
-            healthText.margin = new Vector4(14f, 0f, 0f, 0f);
+            StyleHealth(hud.Find("HealthBar"));
+
+            var camerasView = hud.GetComponent<SecurityCameras.UI.SecurityCamerasView>();
+            var camerasSo = new SerializedObject(camerasView);
+            camerasSo.FindProperty("_aliveColor").colorValue = Text;
+            camerasSo.FindProperty("_brokenColor").colorValue = new Color(Alarm.r, Alarm.g, Alarm.b, 0.85f);
+            camerasSo.ApplyModifiedPropertiesWithoutUndo();
+
+            StyleBackdrop(GameObject.Find("Core/Interface/UI").transform);
 
             foreach (string panelName in new[] { "CamerasPanel", "WavesPanel" })
             {
@@ -359,6 +360,114 @@ namespace SibJam.Editor
                 label.offsetMin = Vector2.zero;
                 label.offsetMax = Vector2.zero;
             }
+        }
+
+        // Здоровье как на макете: крупное число слева, справа 10 сегментов, заливка красная поверх тусклых
+        private static void StyleHealth(Transform health)
+        {
+            var root = health.GetComponent<Image>();
+            root.sprite = Solid;
+            root.color = new Color(0f, 0f, 0f, 0f);
+            Transform oldFrame = health.Find("Frame");
+
+            if (oldFrame != null)
+                Object.DestroyImmediate(oldFrame.gameObject);
+
+            ((RectTransform)health).sizeDelta = new Vector2(500f, 56f);
+            var segments = AssetDatabase.LoadAssetAtPath<Sprite>(SpritesPath + "UI_HealthSegments.png");
+
+            Transform track = health.Find("Track");
+
+            if (track == null)
+            {
+                track = new GameObject("Track", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).transform;
+                track.SetParent(health, false);
+            }
+
+            track.SetSiblingIndex(0);
+            var trackImage = track.GetComponent<Image>();
+            trackImage.sprite = segments;
+            trackImage.type = Image.Type.Simple;
+            trackImage.color = new Color(Text.r, Text.g, Text.b, 0.14f);
+            trackImage.raycastTarget = false;
+            PlaceBar((RectTransform)track);
+
+            var fill = health.Find("Fill").GetComponent<Image>();
+            fill.transform.SetSiblingIndex(1);
+            fill.sprite = segments;
+            fill.type = Image.Type.Filled;
+            fill.fillMethod = Image.FillMethod.Horizontal;
+            fill.fillOrigin = 0;
+            fill.color = Alarm;
+            PlaceBar((RectTransform)fill.transform);
+
+            var text = health.Find("HealthText").GetComponent<TMP_Text>();
+            StyleTitle(text, 48f);
+            text.characterSpacing = 0f;
+            text.alignment = TextAlignmentOptions.MidlineLeft;
+            text.margin = Vector4.zero;
+            var textRect = (RectTransform)text.transform;
+            textRect.anchorMin = new Vector2(0f, 0f);
+            textRect.anchorMax = new Vector2(0f, 1f);
+            textRect.pivot = new Vector2(0f, 0.5f);
+            textRect.anchoredPosition = Vector2.zero;
+            textRect.sizeDelta = new Vector2(100f, 0f);
+        }
+
+        private static void PlaceBar(RectTransform rect)
+        {
+            rect.anchorMin = rect.anchorMax = new Vector2(0f, 0.5f);
+            rect.pivot = new Vector2(0f, 0.5f);
+            rect.anchoredPosition = new Vector2(110f, 0f);
+            rect.sizeDelta = new Vector2(380f, 20f);
+        }
+
+        // Затемнение со строками, как на мониторе, за паузой, настройками и окном выхода
+        private static void StyleBackdrop(Transform ui)
+        {
+            Transform backdrop = ui.Find("Backdrop");
+
+            if (backdrop == null)
+            {
+                backdrop = new GameObject("Backdrop", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(PopupBackdrop)).transform;
+                backdrop.SetParent(ui, false);
+            }
+
+            backdrop.SetAsFirstSibling();
+            var rect = (RectTransform)backdrop;
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
+            rect.offsetMin = rect.offsetMax = Vector2.zero;
+
+            var image = backdrop.GetComponent<Image>();
+            image.sprite = Solid;
+            image.color = Hex("08090CB8");
+            image.raycastTarget = false;
+            EnsureScanlines(backdrop).transform.SetAsLastSibling();
+
+            var popups = new System.Collections.Generic.List<GameObject>();
+
+            foreach (string name in new[] { "GameButtonsPopUp", "SettingsPopUp", "GameExitDialog" })
+            {
+                Transform popup = ui.Find(name);
+
+                if (popup != null)
+                    popups.Add(popup.gameObject);
+            }
+
+            var so = new SerializedObject(backdrop.GetComponent<PopupBackdrop>());
+            SerializedProperty list = so.FindProperty("_popups");
+            list.arraySize = popups.Count;
+
+            for (int i = 0; i < popups.Count; i++)
+                list.GetArrayElementAtIndex(i).objectReferenceValue = popups[i];
+
+            so.FindProperty("_view").objectReferenceValue = image;
+            so.ApplyModifiedPropertiesWithoutUndo();
+
+            // В сцене подложка скрыта, её включает PopupBackdrop при открытом окне
+            foreach (Graphic graphic in backdrop.GetComponentsInChildren<Graphic>(true))
+                graphic.enabled = false;
         }
 
         private static void StyleBarFill(Image image, Color color)
