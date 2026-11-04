@@ -1,3 +1,4 @@
+using SibJam.SecurityCameras;
 using SibJam.Boss;
 using SibJam.Checkpoints;
 using SibJam.Credits;
@@ -43,6 +44,15 @@ namespace SibJam
             builder.RegisterEntryPoint<GameEntryPoint>(Lifetime.Singleton);
             builder.RegisterEntryPoint<GameButtonsShower>(Lifetime.Singleton).AsSelf();
             builder.Register<IPlayerInputReader, PlayerInputReader>(Lifetime.Singleton);
+            builder.Register<ImpactFx>(Lifetime.Singleton);
+            builder.RegisterBuildCallback(resolver =>
+            {
+                foreach (var root in gameObject.scene.GetRootGameObjects())
+                {
+                    foreach (var camera in root.GetComponentsInChildren<SecurityCamera>(true))
+                        resolver.Inject(camera);
+                }
+            });
             builder.RegisterComponent(_gameExitDialog);
             builder.RegisterComponent(_gameButtons);
             builder.RegisterComponent(_settings);

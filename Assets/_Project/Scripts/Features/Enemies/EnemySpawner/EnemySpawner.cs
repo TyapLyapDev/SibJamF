@@ -1,5 +1,6 @@
 using _Project.Scripts.Enemies;
 using SibJam.Combat;
+using SibJam.Feedback;
 using UnityEngine;
 
 namespace _Project.Scripts.EnemySpawner
@@ -21,6 +22,9 @@ namespace _Project.Scripts.EnemySpawner
 
             var enemy = Object.Instantiate(enemyConfig.Prefab, spawnPosition, rotation);
             enemy.Init(enemyConfig, target, statsMultiplier);
+            if (!enemy.TryGetComponent(out EnemySpawnHologram hologram))
+                hologram = enemy.gameObject.AddComponent<EnemySpawnHologram>();
+            hologram.Play();
             return enemy;
         }
     }
