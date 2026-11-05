@@ -48,7 +48,9 @@ namespace SibJam.Feedback
             if (!untouched)
                 _base = new Pose(cameraTransform.position, cameraTransform.rotation);
 
-            float deltaTime = Time.unscaledDeltaTime;
+            // Пружины считаются явным шагом: на подвисании кадра (первый удар грузит эффекты) большой шаг их «взрывает».
+            // Ограничиваем шаг — тряска на лаге просто чуть замедлится
+            float deltaTime = Mathf.Min(Time.unscaledDeltaTime, 1f / 30f);
             _applied = new Pose(_base.position + SampleOffset(deltaTime), _base.rotation * SampleRotation(deltaTime));
             cameraTransform.SetPositionAndRotation(_applied.position, _applied.rotation);
             _hasApplied = true;
