@@ -13,6 +13,7 @@ namespace SibJam.Editor
         private static readonly string[] TriggerNames =
         {
             "Игрок вошёл в зону", "Игрок вышел из зоны", "Сломали камеру", "Сломали генератор", "Начался бой с боссом", "Победа над боссом",
+            "Босс атакует", "Босс оглушён", "Босс встал после оглушения",
         };
 
         private static readonly string[] OrderNames = { "По очереди", "Случайно" };
@@ -40,6 +41,19 @@ namespace SibJam.Editor
             DrawScreens(room);
             DrawZone(room);
             EditorGUILayout.PropertyField(serializedObject.FindProperty("_bossFight"), new GUIContent("Бой с боссом", "Нужен для реакций на начало боя и победу"));
+            SerializedProperty boss = serializedObject.FindProperty("_boss");
+            EditorGUILayout.PropertyField(boss, new GUIContent("Босс", "Нужен для реакций и лиц на атаку, оглушение и подъём босса"));
+
+            if (boss.objectReferenceValue != null)
+            {
+                EditorGUI.indentLevel++;
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("_bossFightFace"), new GUIContent("Лицо в бою"));
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("_bossAttackFace"), new GUIContent("Лицо: атака"));
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("_bossStaggeredFace"), new GUIContent("Лицо: оглушён"));
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("_bossRecoveredFace"), new GUIContent("Лицо: встал"));
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("_bossDeadFace"), new GUIContent("Лицо: победа"));
+                EditorGUI.indentLevel--;
+            }
 
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("Реакции", EditorStyles.boldLabel);

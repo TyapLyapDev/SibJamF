@@ -223,10 +223,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Music
   _source: {fileID: 1497399640414434541}
   _menu: {fileID: 8300000, guid: dd127d40cbdce1b439e16e45f5775475, type: 3}
+  _calm: {fileID: 8300000, guid: 6cdd87c90fabe4848b60e43f8dbca647, type: 3}
   _game: {fileID: 8300000, guid: 87cd940f5477da3499c8d3cbdd2f2bca, type: 3}
   _boss: {fileID: 8300000, guid: 6d4bfd949ed9f16409f9a5c7a5d45cb4, type: 3}
+  _fadeTime: 1.2
   _ambienceSource: {fileID: 6467107006480391807}
   _ambience: {fileID: 8300000, guid: b6e6927c1a2329f49b3e95c653fdd58a, type: 3}
+  _ambienceCombatVolume: 0.5
 --- !u!1 &5022525249900094740
 GameObject:
   m_ObjectHideFlags: 0

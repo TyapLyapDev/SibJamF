@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using SibJam.Boss;
@@ -22,6 +22,9 @@ namespace SibJam.TV
             GeneratorBroken,
             BossFightStarted,
             BossFightWon,
+            BossAttack,
+            BossStaggered,
+            BossRecovered,
         }
 
         public enum Order
@@ -59,6 +62,14 @@ namespace SibJam.TV
         [SerializeField] private TVFace _idleFace = TVFace.Sleepy;
         [SerializeField] private BossFight _bossFight;
         [SerializeField] private List<Reaction> _reactions = new List<Reaction>();
+
+        [Header("Лица по состоянию босса (пусто — не реагировать)")]
+        [SerializeField] private BossController _boss;
+        [SerializeField] private TVFace _bossFightFace = TVFace.Evil;
+        [SerializeField] private TVFace _bossAttackFace = TVFace.Crazy;
+        [SerializeField] private TVFace _bossStaggeredFace = TVFace.Scared;
+        [SerializeField] private TVFace _bossRecoveredFace = TVFace.Mad;
+        [SerializeField] private TVFace _bossDeadFace = TVFace.Sad;
 
         private VoiceLinePlayer _voiceLines;
         private TVScreen[] _screens = Array.Empty<TVScreen>();
@@ -102,6 +113,15 @@ namespace SibJam.TV
                 _bossFight.Started += OnFightStarted;
                 _bossFight.Won += OnFightWon;
             }
+
+            if (_boss != null)
+            {
+                _boss.AttackStarted += OnBossAttack;
+                _boss.AttackFinished += OnBossCalm;
+                _boss.Staggered += OnBossStaggered;
+                _boss.Recovered += OnBossRecovered;
+                _boss.Died += OnBossDied;
+            }
         }
 
         private void OnDisable()
@@ -125,6 +145,15 @@ namespace SibJam.TV
             {
                 _bossFight.Started -= OnFightStarted;
                 _bossFight.Won -= OnFightWon;
+            }
+
+            if (_boss != null)
+            {
+                _boss.AttackStarted -= OnBossAttack;
+                _boss.AttackFinished -= OnBossCalm;
+                _boss.Staggered -= OnBossStaggered;
+                _boss.Recovered -= OnBossRecovered;
+                _boss.Died -= OnBossDied;
             }
         }
 
@@ -162,9 +191,53 @@ namespace SibJam.TV
 
         private void OnGeneratorBroken(BossGenerator generator) => Fire(Trigger.GeneratorBroken, generator);
 
-        private void OnFightStarted() => Fire(Trigger.BossFightStarted, null);
+        private void OnFightStarted()
+        {
+            SetMood(_bossFightFace);
+            Fire(Trigger.BossFightStarted, null);
+        }
 
-        private void OnFightWon() => Fire(Trigger.BossFightWon, null);
+        private void OnFightWon()
+        {
+            SetMood(_bossDeadFace);
+            Fire(Trigger.BossFightWon, null);
+        }
+
+        private void OnBossAttack()
+        {
+            SetMood(_bossAttackFace);
+            Fire(Trigger.BossAttack, null);
+        }
+
+        private void OnBossCalm()
+        {
+            if (_boss != null && !_boss.IsStaggered && !_boss.IsDead)
+                SetMood(_bossFightFace);
+        }
+
+        private void OnBossStaggered()
+        {
+            SetMood(_bossStaggeredFace);
+            Fire(Trigger.BossStaggered, null);
+        }
+
+        private void OnBossRecovered()
+        {
+            SetMood(_bossRecoveredFace);
+            Fire(Trigger.BossRecovered, null);
+        }
+
+        private void OnBossDied() => SetMood(_bossDeadFace);
+
+        // Лицо «по настроению»: становится лицом простоя, реплика поверх него не прерывается
+        private void SetMood(TVFace face)
+        {
+            if (_boss == null)
+                return;
+
+            foreach (TVScreen screen in _screens)
+                screen.IdleFace = face;
+        }
 
         private void Fire(Trigger trigger, UnityEngine.Object source)
         {

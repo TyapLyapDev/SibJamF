@@ -1,3 +1,4 @@
+﻿using SibJam.SecurityCameras;
 using SibJam.Weapons;
 using UnityEngine;
 
@@ -13,6 +14,8 @@ namespace SibJam.Locations
         [Tooltip("Пусто — стартовая комната: дверь откроется сразу или после подбора _requiredPickup")]
         [SerializeField] private LocationLoop _fromLocation;
         [SerializeField] private WeaponPickup _requiredPickup;
+        [Tooltip("Для стартовой комнаты: дверь откроется, когда сломаны эти камеры")]
+        [SerializeField] private CameraDestructionGoal _requiredCameras;
         [SerializeField] private LocationLoop _toLocation;
         [Tooltip("Можно оставить пустым, если комнаты соединены открыто")]
         [SerializeField] private LocationDoor _door;
@@ -30,6 +33,9 @@ namespace SibJam.Locations
             if (_requiredPickup != null)
                 _requiredPickup.PickedUp += OnPickedUp;
 
+            if (_requiredCameras != null)
+                _requiredCameras.Completed += OnCamerasBroken;
+
             _roomEntryZone.Entered += OnRoomEntered;
             _gameLoop.LocationChanged += OnLocationChanged;
         }
@@ -42,19 +48,24 @@ namespace SibJam.Locations
             if (_requiredPickup != null)
                 _requiredPickup.PickedUp -= OnPickedUp;
 
+            if (_requiredCameras != null)
+                _requiredCameras.Completed -= OnCamerasBroken;
+
             _roomEntryZone.Entered -= OnRoomEntered;
             _gameLoop.LocationChanged -= OnLocationChanged;
         }
 
         private void Start()
         {
-            if (_fromLocation == null && _requiredPickup == null)
+            if (_fromLocation == null && _requiredPickup == null && _requiredCameras == null)
                 OpenDoor();
         }
 
         private void OnFromLocationCompleted(LocationLoop location) => OpenDoor();
 
         private void OnPickedUp() => OpenDoor();
+
+        private void OnCamerasBroken() => OpenDoor();
 
         // Старт с чекпоинта: предыдущая локация не проходилась в этой сессии, но дверь в текущую должна быть открыта
         private void OnLocationChanged(LocationLoop location)
