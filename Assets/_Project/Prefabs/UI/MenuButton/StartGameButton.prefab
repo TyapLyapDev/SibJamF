@@ -402,13 +402,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SibJam.HoverSound
   _clips:
-  - {fileID: 8300000, guid: 9a7cc55255f1cb0478ba082b0a5429be, type: 3}
-  - {fileID: 8300000, guid: b8d7e57b4d06072478c69875bfcbf8d8, type: 3}
-  - {fileID: 8300000, guid: 97f16eb7502d2014ba9114f67f8279f9, type: 3}
-  - {fileID: 8300000, guid: 0c1dbae364504d74e813e782615c1767, type: 3}
-  - {fileID: 8300000, guid: 6e0604faaf294104c96e5a5c1eda5a45, type: 3}
-  - {fileID: 8300000, guid: d5607ce5dce52574b80536b352f78bbc, type: 3}
-  - {fileID: 8300000, guid: a09bea6dd281e4a48ad39049415938d6, type: 3}
+  - {fileID: 8300000, guid: f06462006d327284583228fe5a0344f4, type: 3}
 --- !u!114 &5622951439270842046
 MonoBehaviour:
   m_ObjectHideFlags: 0
