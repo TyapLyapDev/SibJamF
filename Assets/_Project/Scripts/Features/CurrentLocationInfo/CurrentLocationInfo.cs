@@ -11,6 +11,9 @@ namespace SibJam
         [SerializeField] private GameLoop _gameLoop;
 
         private LocationLoop _subscribedLocation;
+        private IWavesLoopInfo _overrideWaves;
+        private ICameraDestructionGoalInfo _overrideCameras;
+        private bool _hasOverride;
 
         public event Action LocationChanged;
 
@@ -19,13 +22,36 @@ namespace SibJam
 
         public int LocationIndex => _gameLoop.CurrentLocationIndex;
 
-        public bool IsActive => Location.State == LocationLoopState.Running;
+        public bool IsActive => _hasOverride || Location.State == LocationLoopState.Running;
 
-        public IWavesLoopInfo Waves => Location.Waves;
+        public IWavesLoopInfo Waves => _hasOverride ? _overrideWaves : Location.Waves;
 
-        public ICameraDestructionGoalInfo Cameras => Location.Cameras;
+        public ICameraDestructionGoalInfo Cameras => _hasOverride ? _overrideCameras : Location.Cameras;
 
         private LocationLoop Location => _gameLoop.CurrentLocationLoop;
+
+        // Зона вне GameLoop (например, тренировка) показывает в HUD свои волны и камеры
+        public void ShowOverride(IWavesLoopInfo waves, ICameraDestructionGoalInfo cameras)
+        {
+            _overrideWaves = waves;
+            _overrideCameras = cameras;
+            _hasOverride = true;
+            NotifyChanged();
+        }
+
+        public void ClearOverride()
+        {
+            _hasOverride = false;
+            _overrideWaves = null;
+            _overrideCameras = null;
+            NotifyChanged();
+        }
+
+        private void NotifyChanged()
+        {
+            LocationChanged?.Invoke();
+            ActiveChanged?.Invoke();
+        }
 
         private void OnEnable()
         {
@@ -42,8 +68,7 @@ namespace SibJam
         private void OnLocationChanged(LocationLoop location)
         {
             SubscribeLocation();
-            LocationChanged?.Invoke();
-            ActiveChanged?.Invoke();
+            NotifyChanged();
         }
 
         private void SubscribeLocation()

@@ -6,7 +6,7 @@ using VContainer;
 
 namespace SibJam.SecurityCameras
 {
-    public class SecurityCamera : MonoBehaviour
+    public class SecurityCamera : MonoBehaviour, IInjectedFromScene
     {
         // Одинаково для всех камер, поэтому не сериализуется (сцены не могут переопределить)
         private const int _hitsToBreak = 6;
@@ -21,24 +21,29 @@ namespace SibJam.SecurityCameras
         [SerializeField] private AudioMixerGroup _sfxOutput;
         [SerializeField] private SoundSet _hitSound;
         [SerializeField] private SoundSet _breakSound;
+        [SerializeField] private SoundSet _appearSound;
 
         private ImpactFx _impactFx;
+        private CameraShaker _shaker;
         private int _hitsTaken;
         private WorldHealthBar _healthBar;
 
         public event Action<SecurityCamera> Broken;
+        public event Action<SecurityCamera> Repaired;
 
         public bool IsBroken { get; private set; }
 
         public int HitsLeft => _hitsToBreak - _hitsTaken;
+        public AudioMixerGroup SfxOutput => _sfxOutput;
 
         private Vector3 FxPoint => TryGetComponent(out Collider ownCollider) ? ownCollider.bounds.center
             : GetComponentInChildren<Renderer>() is { } renderer ? renderer.bounds.center : transform.position;
 
         [Inject]
-        public void Construct(ImpactFx impactFx)
+        public void Construct(ImpactFx impactFx, CameraShaker shaker)
         {
             _impactFx = impactFx ?? throw new ArgumentNullException(nameof(impactFx));
+            _shaker = shaker;
         }
 
         private void Awake()
@@ -75,12 +80,25 @@ namespace SibJam.SecurityCameras
             IsBroken = true;
             _impactFx.Explosion(FxPoint);
             SfxEmitter.PlayAt(_breakSound, FxPoint, _sfxOutput);
-            // Камер в сцене много и в DI они не попадают — тряску берём с главной камеры
-            if (Camera.main != null && Camera.main.TryGetComponent(out CameraShaker shaker))
-                shaker.AddTrauma(_breakTrauma);
+            if (_shaker != null)
+                _shaker.AddTrauma(_breakTrauma);
 
             Broken?.Invoke(this);
-            Destroy(gameObject);
+            gameObject.SetActive(false);
+        }
+
+        public void Repair()
+        {
+            if (!IsBroken) return;
+            _hitsTaken = 0;
+            IsBroken = false;
+            _healthBar.Hide();
+            gameObject.SetActive(true);
+            if (!TryGetComponent(out EnemySpawnHologram hologram))
+                hologram = gameObject.AddComponent<EnemySpawnHologram>();
+            hologram.Play();
+            SfxEmitter.PlayAt(_appearSound, FxPoint, _sfxOutput);
+            Repaired?.Invoke(this);
         }
     }
 }

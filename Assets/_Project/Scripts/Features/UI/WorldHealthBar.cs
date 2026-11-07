@@ -30,6 +30,12 @@ namespace SibJam
             _slider.value = Mathf.Clamp01(value01);
         }
 
+        public void Hide()
+        {
+            _shown = false;
+            if (_bar != null) _bar.gameObject.SetActive(false);
+        }
+
         private void LateUpdate()
         {
             if (!_bar.gameObject.activeSelf) return;

@@ -19,5 +19,9 @@ namespace SibJam
         public void Enable();
 
         public void Disable();
+
+        public void BlockJump();
+
+        public void UnblockJump();
     }
 }

@@ -2,7 +2,6 @@ using System;
 using SibJam.Cutscenes;
 using SibJam.Locations;
 using SibJam.Player;
-using SibJam.Weapons;
 using UnityEngine;
 using VContainer.Unity;
 
@@ -57,24 +56,11 @@ namespace SibJam.Checkpoints
         private void Restore(int locationIndex)
         {
             LocationLoop location = _gameLoop.StartFrom(locationIndex);
-            GameObject player = _player.gameObject;
 
-            if (location.RespawnPoint != null)
-            {
-                var controller = player.GetComponent<CharacterController>();
-                if (controller != null) controller.enabled = false;
-                player.transform.SetPositionAndRotation(location.RespawnPoint.position, location.RespawnPoint.rotation);
-                if (controller != null) controller.enabled = true;
-            }
-            else
-            {
+            if (location.RespawnPoint == null)
                 Debug.LogWarning($"[CheckpointFlow] {location.name} has no RespawnPoint, player stays at scene position");
-            }
 
-            if (player.TryGetComponent(out MeleeWeapon weapon))
-                weapon.enabled = true;
-
-            player.SetActive(true);
+            _player.GetComponent<PlayerCutsceneHandOver>().AppearAt(location.RespawnPoint);
         }
 
         private void OnLocationChanged(LocationLoop location) => _checkpoint.Save(_gameLoop.CurrentLocationIndex);

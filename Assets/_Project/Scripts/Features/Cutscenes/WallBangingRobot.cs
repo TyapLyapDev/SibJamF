@@ -1,12 +1,15 @@
 using System.Collections;
+using _Project.Scripts.Enemies;
 using SibJam.Feedback;
 using UnityEngine;
+using VContainer;
 
 namespace SibJam.Cutscenes
 {
     // Сломанный робот: раз за разом отходит и врезается вперёд (по своей оси Z) в стену.
     // Либо стартует сам, либо ждёт StartBanging (например, из события катсцены)
-    public class WallBangingRobot : MonoBehaviour
+    [RequireComponent(typeof(Enemy))]
+    public class WallBangingRobot : MonoBehaviour, IInjectedFromScene
     {
         private const float WindUpDuration = 0.35f;
         private const float LungeDuration = 0.08f;
@@ -22,6 +25,9 @@ namespace SibJam.Cutscenes
         [SerializeField] private AudioClip[] _bodyClips;
         [Tooltip("Глаз мигает при ударе")]
         [SerializeField] private Light _eyeLight;
+
+        [Header("Здоровье")]
+        [SerializeField] private EnemyConfig _healthConfig;
 
         [Header("Ритм")]
         [SerializeField] private Vector2 _pauseRange = new Vector2(0.8f, 2f);
@@ -42,9 +48,18 @@ namespace SibJam.Cutscenes
         private Quaternion _restRotation;
         private float _eyeIntensity;
         private CameraShaker _shaker;
+        private Enemy _enemy;
+
+        [Inject]
+        public void Construct(CameraShaker shaker) => _shaker = shaker;
 
         private void Awake()
         {
+            // Используем обычный урон и смерть врагов, включая попадания мечом и снарядами.
+            _enemy = GetComponent<Enemy>();
+            _enemy.Init(_healthConfig, null);
+            _enemy.Died += OnDied;
+
             _restPosition = _body.localPosition;
             _restRotation = _body.localRotation;
 
@@ -61,6 +76,19 @@ namespace SibJam.Cutscenes
         // Выключение объекта обрывает корутину — после включения робота снова можно запустить
         private void OnDisable() => IsBanging = false;
 
+        private void OnDied(Enemy enemy)
+        {
+            StopAllCoroutines();
+            IsBanging = false;
+            if (_audioSource != null) _audioSource.Stop();
+            if (_eyeLight != null) _eyeLight.enabled = false;
+        }
+
+        private void OnDestroy()
+        {
+            if (_enemy != null) _enemy.Died -= OnDied;
+        }
+
         public bool IsBanging { get; private set; }
 
         public bool CameraShakeEnabled
@@ -76,7 +104,7 @@ namespace SibJam.Cutscenes
 
         public void StartBanging()
         {
-            if (IsBanging)
+            if (IsBanging || (_enemy != null && _enemy.IsDead))
                 return;
 
             IsBanging = true;
@@ -146,12 +174,6 @@ namespace SibJam.Cutscenes
         private void ShakeCamera()
         {
             if (!_cameraShakeEnabled)
-                return;
-
-            Camera camera = Camera.main;
-
-            // Робот в DI не попадает — тряску берём с главной камеры
-            if (_shaker == null && (camera == null || !camera.TryGetComponent(out _shaker)))
                 return;
 
             float falloff = _cameraShakeRadius > 0f

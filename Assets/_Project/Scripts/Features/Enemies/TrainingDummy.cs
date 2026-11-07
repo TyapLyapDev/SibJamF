@@ -1,4 +1,5 @@
 using SibJam.Combat;
+using SibJam.Feedback;
 using UnityEngine;
 
 namespace _Project.Scripts.Enemies
@@ -8,7 +9,6 @@ namespace _Project.Scripts.Enemies
     public class TrainingDummy : MonoBehaviour
     {
         [SerializeField] private EnemyConfig _config;
-        [SerializeField] private PlayerTarget _target;
         [SerializeField, Min(0f)] private float _turnSpeed = 360f;
         [Tooltip("Сколько манекен стоит оглушённым после того, как его удар отпарировали")]
         [SerializeField, Min(0f)] private float _parryStaggerDuration = 1.2f;
@@ -16,6 +16,7 @@ namespace _Project.Scripts.Enemies
         private Enemy _enemy;
         private IEnemyAttack _attack;
         private float _staggerTimer;
+        private PlayerTarget _target;
 
         private void Awake()
         {
@@ -23,13 +24,22 @@ namespace _Project.Scripts.Enemies
             _attack = GetComponent<IEnemyAttack>();
         }
 
-        private void Start()
+        public void Init(float statsMultiplier, PlayerTarget target)
         {
-            if (_target == null)
-                _target = FindFirstObjectByType<PlayerTarget>();
+            if (_config == null)
+            {
+                Debug.LogError("[TrainingDummy] Enemy config is missing", this);
+                return;
+            }
 
-            _enemy.Init(_config, _target);
+            _target = target;
+
+            _enemy.Init(_config, _target, statsMultiplier);
             _attack?.Init(_config, _enemy.StatsMultiplier);
+
+            if (!TryGetComponent(out EnemySpawnHologram hologram))
+                hologram = gameObject.AddComponent<EnemySpawnHologram>();
+            hologram.Play();
         }
 
         private void OnEnable()
@@ -41,7 +51,10 @@ namespace _Project.Scripts.Enemies
         private void OnDisable()
         {
             if (_attack != null)
+            {
                 _attack.Parried -= OnAttackParried;
+                _attack.Cancel();
+            }
         }
 
         private void Update()

@@ -28,8 +28,7 @@ namespace SibJam.SecurityCameras.UI
             _currentLocation.LocationChanged += Bind;
             _currentLocation.ActiveChanged += RefreshVisibility;
 
-            if (_cameras != null)
-                Bind();
+            Bind();
         }
 
         private void OnDisable()
@@ -44,6 +43,11 @@ namespace SibJam.SecurityCameras.UI
             Unbind();
 
             _cameras = _currentLocation.Cameras;
+            if (_cameras == null)
+            {
+                _panel.SetVisible(false);
+                return;
+            }
             _cameras.Changed += Refresh;
             Refresh();
         }

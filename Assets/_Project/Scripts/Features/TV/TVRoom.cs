@@ -12,7 +12,7 @@ namespace SibJam.TV
     // Комната с теликами: все телики — дочерние объекты, все говорят одно и то же одновременно.
     // Здесь базовое лицо комнаты и реакции «событие → фразы с лицами». Зона входа/выхода — дочерний Zone с TVZone.
     // Голос звучит из первого телика комнаты, колонки качаются у всех
-    public class TVRoom : MonoBehaviour
+    public class TVRoom : MonoBehaviour, IInjectedFromScene
     {
         public enum Trigger
         {

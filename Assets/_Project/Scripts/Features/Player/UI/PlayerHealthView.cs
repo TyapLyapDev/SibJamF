@@ -16,23 +16,39 @@ namespace SibJam.Player.UI
         [SerializeField, Min(0.01f)] private float _flashFadeSpeed = 1.5f;
 
         private IPlayerHealthInfo _info;
+        private bool _subscribed;
 
         [Inject]
-        public void Construct(IPlayerHealthInfo health) =>
+        public void Construct(IPlayerHealthInfo health)
+        {
+            Unsubscribe();
             _info = health ?? throw new ArgumentNullException(nameof(health));
+            if (isActiveAndEnabled) Subscribe();
+        }
 
         private void OnEnable()
         {
-            _info.Changed += Refresh;
-            _info.Damaged += OnDamaged;
-            Refresh();
+            Subscribe();
             SetFlashAlpha(0f);
         }
 
-        private void OnDisable()
+        private void Subscribe()
         {
+            if (_info == null || _subscribed) return;
+            _info.Changed += Refresh;
+            _info.Damaged += OnDamaged;
+            _subscribed = true;
+            Refresh();
+        }
+
+        private void OnDisable() => Unsubscribe();
+
+        private void Unsubscribe()
+        {
+            if (!_subscribed) return;
             _info.Changed -= Refresh;
             _info.Damaged -= OnDamaged;
+            _subscribed = false;
         }
 
         private void Update()
@@ -45,7 +61,7 @@ namespace SibJam.Player.UI
         private void Refresh()
         {
             if (_fill != null)
-                _fill.fillAmount = _info.Current / _info.Max;
+                _fill.fillAmount = _info.Max > 0f ? Mathf.Clamp01(_info.Current / _info.Max) : 0f;
 
             if (_text != null)
                 _text.text = $"{Mathf.CeilToInt(_info.Current)}";

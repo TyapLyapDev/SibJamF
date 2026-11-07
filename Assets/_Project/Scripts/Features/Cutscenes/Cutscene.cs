@@ -11,7 +11,7 @@ namespace SibJam.Cutscenes
     // Наследник может добавить своё через хуки On*, но анимация, камера и затемнение — элементы клипа.
     // После CameraFollow: камера катсцены ставится поверх камеры игрока
     [DefaultExecutionOrder(100)]
-    public class Cutscene : MonoBehaviour, IExposedPropertyTable
+    public class Cutscene : MonoBehaviour, IExposedPropertyTable, IInjectedFromScene
     {
         [Header("Клип")]
         [SerializeField] private CutsceneClip _cutsceneClip;
@@ -26,8 +26,12 @@ namespace SibJam.Cutscenes
         private VoiceLinePlayer _voiceLines;
         private Subtitles _subtitles;
         private SkipHint _skipHint;
+        private ActiveCutscenes _activeCutscenes;
         private CutscenePlayback _playback;
         private bool _skipRequested;
+        private IPlayerInputReader _playerInput;
+        private CutsceneInputReader _cutsceneInput;
+        private bool _inputActive;
 
         public event Action Started;
         public event Action Finished;
@@ -40,12 +44,24 @@ namespace SibJam.Cutscenes
         public virtual float Length => _cutsceneClip != null ? _cutsceneClip.Length : 0f;
 
         [Inject]
-        public void Construct(VoiceLinePlayer voiceLines, Subtitles subtitles, SkipHint skipHint)
+        public void Construct(VoiceLinePlayer voiceLines, Subtitles subtitles, SkipHint skipHint,
+            IPlayerInputReader playerInput, CutsceneInputReader cutsceneInput, ActiveCutscenes activeCutscenes)
         {
             _voiceLines = voiceLines;
             _subtitles = subtitles;
             _skipHint = skipHint;
+            _playerInput = playerInput;
+            _cutsceneInput = cutsceneInput;
+            _activeCutscenes = activeCutscenes;
         }
+
+        protected virtual void OnEnable()
+        {
+            if (IsPlaying)
+                ActivateInput();
+        }
+
+        protected virtual void OnDisable() => DeactivateInput();
 
         protected virtual void Start()
         {
@@ -95,11 +111,13 @@ namespace SibJam.Cutscenes
             CurrentTime = 0f;
             _skipHint.Hide();
 
+            ActivateInput();
             OnPlay();
             _playback = _cutsceneClip != null
                 ? new CutscenePlayback(_cutsceneClip, CreateContext())
                 : null;
             IsPlaying = true;
+            _activeCutscenes.Enter();
 
             Started?.Invoke();
         }
@@ -128,6 +146,7 @@ namespace SibJam.Cutscenes
         private void Finish()
         {
             IsPlaying = false;
+            _activeCutscenes.Exit();
 
             // Пропущенные элементы всё равно выполняют обязательное (двери и т.п.), звучащее глушится
             _playback?.Finish();
@@ -137,9 +156,30 @@ namespace SibJam.Cutscenes
                 _baseAudioSource.Stop();
 
             _skipHint.Hide();
+            DeactivateInput();
             OnFinish();
 
             Finished?.Invoke();
+        }
+
+        private void ActivateInput()
+        {
+            if (_inputActive)
+                return;
+
+            _inputActive = true;
+            _playerInput.BlockJump();
+            _cutsceneInput.Enable();
+        }
+
+        private void DeactivateInput()
+        {
+            if (!_inputActive)
+                return;
+
+            _inputActive = false;
+            _cutsceneInput.Disable();
+            _playerInput.UnblockJump();
         }
 
         // Таблица привязок для ExposedReference: Unity ищет её на самом компоненте, поэтому отдаём через него

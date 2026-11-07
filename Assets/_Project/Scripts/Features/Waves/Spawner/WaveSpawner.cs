@@ -9,12 +9,14 @@ namespace SibJam.Waves
         [SerializeField] private Transform[] _spawnPoints;
         [SerializeField] private PlayerTarget _target;
 
+        protected PlayerTarget Target => _target;
+
         private readonly EnemySpawner _enemySpawner = new();
         private int _lastSpawnPointIndex = -1;
 
         public Wave Spawn(WaveConfig config) => Spawn(config, WaveDifficulty.Default);
 
-        public Wave Spawn(WaveConfig config, WaveDifficulty difficulty)
+        public virtual Wave Spawn(WaveConfig config, WaveDifficulty difficulty)
         {
             var wave = new Wave();
             if (config == null) return wave;

@@ -22,6 +22,8 @@ namespace SibJam
         private InputAction _jumpAction;
         private InputAction _attackAction;
         private InputAction _blockAction;
+        private bool _enabled;
+        private int _jumpBlockCount;
 
         public PlayerInputReader(InputActionAsset inputActions)
         {
@@ -58,10 +60,15 @@ namespace SibJam
 
         public void Enable()
         {
+            if (_enabled)
+                return;
+
+            _enabled = true;
             _moveAction.Enable();
             _sprintAction.Enable();
             _lookAction.Enable();
-            _jumpAction.Enable();
+            if (_jumpBlockCount == 0)
+                _jumpAction.Enable();
             _attackAction.Enable();
             _blockAction.Enable();
 
@@ -86,6 +93,7 @@ namespace SibJam
 
         public void Disable()
         {
+            _enabled = false;
             _moveAction.performed -= OnMove;
             _moveAction.canceled -= OnMove;
 
@@ -117,6 +125,25 @@ namespace SibJam
             IsJumpPressed = false;
             IsAttackPressed = false;
             IsBlockPressed = false;
+        }
+
+        public void BlockJump()
+        {
+            _jumpBlockCount++;
+            _jumpAction.Disable();
+            IsJumpPressed = false;
+        }
+
+        public void UnblockJump()
+        {
+            if (_jumpBlockCount == 0)
+                return;
+
+            _jumpBlockCount--;
+
+            // Button без initialStateCheck не подхватит зажатый при пропуске пробел.
+            if (_jumpBlockCount == 0 && _enabled)
+                _jumpAction.Enable();
         }
 
         private void OnMove(InputAction.CallbackContext context) =>
