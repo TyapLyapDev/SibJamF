@@ -21,16 +21,19 @@ namespace SibJam.SecurityCameras
         [SerializeField] private AudioMixerGroup _sfxOutput;
         [SerializeField] private SoundSet _hitSound;
         [SerializeField] private SoundSet _breakSound;
+        [SerializeField] private SoundSet _appearSound;
 
         private ImpactFx _impactFx;
         private int _hitsTaken;
         private WorldHealthBar _healthBar;
 
         public event Action<SecurityCamera> Broken;
+        public event Action<SecurityCamera> Repaired;
 
         public bool IsBroken { get; private set; }
 
         public int HitsLeft => _hitsToBreak - _hitsTaken;
+        public AudioMixerGroup SfxOutput => _sfxOutput;
 
         private Vector3 FxPoint => TryGetComponent(out Collider ownCollider) ? ownCollider.bounds.center
             : GetComponentInChildren<Renderer>() is { } renderer ? renderer.bounds.center : transform.position;
@@ -80,7 +83,21 @@ namespace SibJam.SecurityCameras
                 shaker.AddTrauma(_breakTrauma);
 
             Broken?.Invoke(this);
-            Destroy(gameObject);
+            gameObject.SetActive(false);
+        }
+
+        public void Repair()
+        {
+            if (!IsBroken) return;
+            _hitsTaken = 0;
+            IsBroken = false;
+            _healthBar.Hide();
+            gameObject.SetActive(true);
+            if (!TryGetComponent(out EnemySpawnHologram hologram))
+                hologram = gameObject.AddComponent<EnemySpawnHologram>();
+            hologram.Play();
+            SfxEmitter.PlayAt(_appearSound, FxPoint, _sfxOutput);
+            Repaired?.Invoke(this);
         }
     }
 }
