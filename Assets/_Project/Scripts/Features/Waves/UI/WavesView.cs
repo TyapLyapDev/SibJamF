@@ -24,8 +24,7 @@ namespace SibJam.Waves.UI
             _currentLocation.LocationChanged += Bind;
             _currentLocation.ActiveChanged += RefreshVisibility;
 
-            if (_waves != null)
-                Bind();
+            Bind();
         }
 
         private void OnDisable()
@@ -59,6 +58,11 @@ namespace SibJam.Waves.UI
             Unbind();
 
             _waves = _currentLocation.Waves;
+            if (_waves == null)
+            {
+                _panel.SetVisible(false);
+                return;
+            }
             _waves.StateChanged += OnStateChanged;
             OnStateChanged(_waves.State);
         }

@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace SibJam.Cutscenes
 {
@@ -11,10 +10,12 @@ namespace SibJam.Cutscenes
         private const float FadeSpeed = 0.5f;
 
         private readonly SkipHintView _view;
+        private readonly CutsceneInputReader _input;
 
-        public SkipHint(SkipHintView view)
+        public SkipHint(SkipHintView view, CutsceneInputReader input)
         {
             _view = view ?? throw new ArgumentNullException(nameof(view));
+            _input = input ?? throw new ArgumentNullException(nameof(input));
         }
 
         public bool IsVisible => _view.Alpha > 0f;
@@ -24,9 +25,7 @@ namespace SibJam.Cutscenes
         // Вызывать каждый кадр, пока идёт катсцена. true — игрок подтвердил пропуск
         public bool WantsSkip(float deltaTime)
         {
-            Keyboard keyboard = Keyboard.current;
-
-            if (keyboard == null || !keyboard.spaceKey.wasPressedThisFrame)
+            if (!_input.IsSkipPressed)
             {
                 _view.Alpha = Mathf.MoveTowards(_view.Alpha, 0f, deltaTime * FadeSpeed);
                 return false;

@@ -1,4 +1,5 @@
 using System.Collections;
+using _Project.Scripts.Enemies;
 using SibJam.Feedback;
 using UnityEngine;
 
@@ -23,6 +24,10 @@ namespace SibJam.Cutscenes
         [Tooltip("Глаз мигает при ударе")]
         [SerializeField] private Light _eyeLight;
 
+        [Header("Здоровье")]
+        [Tooltip("Если не задано, робот получает стандартные 100 HP")]
+        [SerializeField] private EnemyConfig _healthConfig;
+
         [Header("Ритм")]
         [SerializeField] private Vector2 _pauseRange = new Vector2(0.8f, 2f);
         [SerializeField, Min(0f)] private float _windUpDistance = 0.15f;
@@ -42,9 +47,23 @@ namespace SibJam.Cutscenes
         private Quaternion _restRotation;
         private float _eyeIntensity;
         private CameraShaker _shaker;
+        private Enemy _enemy;
+        private EnemyConfig _runtimeHealthConfig;
 
         private void Awake()
         {
+            // Используем обычный урон и смерть врагов, включая попадания мечом и снарядами.
+            if (!TryGetComponent(out _enemy))
+                _enemy = gameObject.AddComponent<Enemy>();
+
+            if (_healthConfig == null)
+            {
+                _runtimeHealthConfig = ScriptableObject.CreateInstance<EnemyConfig>();
+                _healthConfig = _runtimeHealthConfig;
+            }
+            _enemy.Init(_healthConfig, null);
+            _enemy.Died += OnDied;
+
             _restPosition = _body.localPosition;
             _restRotation = _body.localRotation;
 
@@ -61,6 +80,20 @@ namespace SibJam.Cutscenes
         // Выключение объекта обрывает корутину — после включения робота снова можно запустить
         private void OnDisable() => IsBanging = false;
 
+        private void OnDied(Enemy enemy)
+        {
+            StopAllCoroutines();
+            IsBanging = false;
+            if (_audioSource != null) _audioSource.Stop();
+            if (_eyeLight != null) _eyeLight.enabled = false;
+        }
+
+        private void OnDestroy()
+        {
+            if (_enemy != null) _enemy.Died -= OnDied;
+            if (_runtimeHealthConfig != null) Destroy(_runtimeHealthConfig);
+        }
+
         public bool IsBanging { get; private set; }
 
         public bool CameraShakeEnabled
@@ -76,7 +109,7 @@ namespace SibJam.Cutscenes
 
         public void StartBanging()
         {
-            if (IsBanging)
+            if (IsBanging || (_enemy != null && _enemy.IsDead))
                 return;
 
             IsBanging = true;

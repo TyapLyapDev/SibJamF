@@ -3,6 +3,7 @@ using SibJam.Locations;
 using SibJam.SecurityCameras;
 using SibJam.Waves;
 using UnityEngine;
+using _Project.Scripts.Enemies;
 
 namespace SibJam
 {
@@ -11,6 +12,9 @@ namespace SibJam
         [SerializeField] private GameLoop _gameLoop;
 
         private LocationLoop _subscribedLocation;
+        private TrainingDummyWaveSpawner _training;
+        private bool _showTraining;
+        private bool _trainingVisible;
 
         public event Action LocationChanged;
 
@@ -19,13 +23,33 @@ namespace SibJam
 
         public int LocationIndex => _gameLoop.CurrentLocationIndex;
 
-        public bool IsActive => Location.State == LocationLoopState.Running;
+        public bool IsActive => _showTraining ? _trainingVisible : Location.State == LocationLoopState.Running;
 
-        public IWavesLoopInfo Waves => Location.Waves;
+        public IWavesLoopInfo Waves => _showTraining ? _training.Info : Location.Waves;
 
-        public ICameraDestructionGoalInfo Cameras => Location.Cameras;
+        public ICameraDestructionGoalInfo Cameras => _showTraining ? _training : Location.Cameras;
 
         private LocationLoop Location => _gameLoop.CurrentLocationLoop;
+
+        public void SetTraining(TrainingDummyWaveSpawner training)
+        {
+            _training = training;
+            RefreshTraining();
+        }
+
+        private void Update() => RefreshTraining();
+
+        private void RefreshTraining()
+        {
+            bool showTraining = _training != null && LocationIndex == 0 && _training.IsPlayerInside;
+            bool visible = showTraining;
+            bool sourceChanged = showTraining != _showTraining;
+            bool visibilityChanged = visible != _trainingVisible;
+            _showTraining = showTraining;
+            _trainingVisible = visible;
+            if (sourceChanged) LocationChanged?.Invoke();
+            if (sourceChanged || visibilityChanged) ActiveChanged?.Invoke();
+        }
 
         private void OnEnable()
         {
@@ -42,6 +66,7 @@ namespace SibJam
         private void OnLocationChanged(LocationLoop location)
         {
             SubscribeLocation();
+            RefreshTraining();
             LocationChanged?.Invoke();
             ActiveChanged?.Invoke();
         }

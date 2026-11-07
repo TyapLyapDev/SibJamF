@@ -28,6 +28,9 @@ namespace SibJam.Cutscenes
         private SkipHint _skipHint;
         private CutscenePlayback _playback;
         private bool _skipRequested;
+        private IPlayerInputReader _playerInput;
+        private CutsceneInputReader _cutsceneInput;
+        private bool _inputActive;
 
         public event Action Started;
         public event Action Finished;
@@ -40,12 +43,23 @@ namespace SibJam.Cutscenes
         public virtual float Length => _cutsceneClip != null ? _cutsceneClip.Length : 0f;
 
         [Inject]
-        public void Construct(VoiceLinePlayer voiceLines, Subtitles subtitles, SkipHint skipHint)
+        public void Construct(VoiceLinePlayer voiceLines, Subtitles subtitles, SkipHint skipHint,
+            IPlayerInputReader playerInput, CutsceneInputReader cutsceneInput)
         {
             _voiceLines = voiceLines;
             _subtitles = subtitles;
             _skipHint = skipHint;
+            _playerInput = playerInput;
+            _cutsceneInput = cutsceneInput;
         }
+
+        protected virtual void OnEnable()
+        {
+            if (IsPlaying)
+                ActivateInput();
+        }
+
+        protected virtual void OnDisable() => DeactivateInput();
 
         protected virtual void Start()
         {
@@ -95,6 +109,7 @@ namespace SibJam.Cutscenes
             CurrentTime = 0f;
             _skipHint.Hide();
 
+            ActivateInput();
             OnPlay();
             _playback = _cutsceneClip != null
                 ? new CutscenePlayback(_cutsceneClip, CreateContext())
@@ -137,9 +152,30 @@ namespace SibJam.Cutscenes
                 _baseAudioSource.Stop();
 
             _skipHint.Hide();
+            DeactivateInput();
             OnFinish();
 
             Finished?.Invoke();
+        }
+
+        private void ActivateInput()
+        {
+            if (_inputActive)
+                return;
+
+            _inputActive = true;
+            _playerInput.BlockJump();
+            _cutsceneInput.Enable();
+        }
+
+        private void DeactivateInput()
+        {
+            if (!_inputActive)
+                return;
+
+            _inputActive = false;
+            _cutsceneInput.Disable();
+            _playerInput.UnblockJump();
         }
 
         // Таблица привязок для ExposedReference: Unity ищет её на самом компоненте, поэтому отдаём через него

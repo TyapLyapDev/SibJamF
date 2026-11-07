@@ -64,6 +64,7 @@ namespace SibJam
             builder.Register<VoiceLinePlayer>(Lifetime.Singleton);
             builder.RegisterComponent(_skipHintView);
             builder.Register<SkipHint>(Lifetime.Singleton);
+            builder.Register<CutsceneInputReader>(Lifetime.Singleton);
 
             if (_creditsView != null)
             {

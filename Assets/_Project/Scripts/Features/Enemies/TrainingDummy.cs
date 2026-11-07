@@ -1,4 +1,5 @@
 using SibJam.Combat;
+using SibJam.Feedback;
 using UnityEngine;
 
 namespace _Project.Scripts.Enemies
@@ -16,6 +17,10 @@ namespace _Project.Scripts.Enemies
         private Enemy _enemy;
         private IEnemyAttack _attack;
         private float _staggerTimer;
+        private bool _initialized;
+
+        public EnemyConfig Config => _config;
+        public bool IsInitialized => _initialized;
 
         private void Awake()
         {
@@ -25,11 +30,28 @@ namespace _Project.Scripts.Enemies
 
         private void Start()
         {
+            if (_initialized) return;
+            if (_config == null)
+            {
+                Debug.LogError("[TrainingDummy] Enemy config is missing", this);
+                return;
+            }
+
+            TrainingDummyWaveSpawner.CreateForScene(this);
+        }
+
+        public void Init(float statsMultiplier)
+        {
             if (_target == null)
                 _target = FindFirstObjectByType<PlayerTarget>();
 
-            _enemy.Init(_config, _target);
+            _initialized = true;
+            _enemy.Init(_config, _target, statsMultiplier);
             _attack?.Init(_config, _enemy.StatsMultiplier);
+
+            if (!TryGetComponent(out EnemySpawnHologram hologram))
+                hologram = gameObject.AddComponent<EnemySpawnHologram>();
+            hologram.Play();
         }
 
         private void OnEnable()
@@ -41,7 +63,10 @@ namespace _Project.Scripts.Enemies
         private void OnDisable()
         {
             if (_attack != null)
+            {
                 _attack.Parried -= OnAttackParried;
+                _attack.Cancel();
+            }
         }
 
         private void Update()

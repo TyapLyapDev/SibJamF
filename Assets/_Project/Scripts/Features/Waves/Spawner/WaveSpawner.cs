@@ -14,7 +14,7 @@ namespace SibJam.Waves
 
         public Wave Spawn(WaveConfig config) => Spawn(config, WaveDifficulty.Default);
 
-        public Wave Spawn(WaveConfig config, WaveDifficulty difficulty)
+        public virtual Wave Spawn(WaveConfig config, WaveDifficulty difficulty)
         {
             var wave = new Wave();
             if (config == null) return wave;
