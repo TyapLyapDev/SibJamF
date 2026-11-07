@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using SibJam.Combat;
 using SibJam.Weapons;
@@ -105,6 +105,7 @@ namespace SibJam.Boss
         private float _stagger;
         private BossStrip _currentStrip;
 
+        public event Action AttackStarted;
         public event Action AttackFinished;
         public event Action Staggered;
         public event Action Recovered;
@@ -263,6 +264,7 @@ namespace SibJam.Boss
                 yield return Chase();
 
                 float distance = DistanceToPlayer();
+                AttackStarted?.Invoke();
 
                 if (_forceStrip || _attacksSinceStrip >= ForPhase(_attacksBetweenStripsPerPhase))
                     yield return StripAttack();

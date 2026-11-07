@@ -7,8 +7,9 @@ namespace SibJam
     // Скрыт, пока владелец не получил урон
     public class WorldHealthBar : MonoBehaviour
     {
-        private const float Width = 1.2f;
-        private const float Height = 0.12f;
+        private const float Width = 1.1f;
+        private const float Height = 0.11f;
+        private const float Inset = 0.02f;
         private const float TopOffset = 0.35f;
 
         private Slider _slider;
@@ -78,14 +79,17 @@ namespace SibJam
             var canvasRect = (RectTransform)_bar;
             canvasRect.sizeDelta = new Vector2(Width, Height);
 
-            var background = CreateImage("Background", canvasRect, new Color(0f, 0f, 0f, 0.6f));
+            // Стиль HUD: почти чёрная подложка, внутри красная заливка с отступом в пару пикселей
+            var background = CreateImage("Background", canvasRect, new Color(0.043f, 0.047f, 0.059f, 0.9f));
             Stretch(background.rectTransform);
 
             var fillArea = new GameObject("Fill Area", typeof(RectTransform)).GetComponent<RectTransform>();
             fillArea.SetParent(canvasRect, false);
             Stretch(fillArea);
+            fillArea.offsetMin = new Vector2(Inset, Inset);
+            fillArea.offsetMax = new Vector2(-Inset, -Inset);
 
-            var fill = CreateImage("Fill", fillArea, new Color(0.85f, 0.15f, 0.15f));
+            var fill = CreateImage("Fill", fillArea, new Color(0.898f, 0.282f, 0.302f));
             Stretch(fill.rectTransform);
 
             _slider = canvasGo.AddComponent<Slider>();
