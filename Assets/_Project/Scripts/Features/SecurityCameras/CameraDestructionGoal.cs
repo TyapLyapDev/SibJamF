@@ -22,8 +22,10 @@ namespace SibJam.SecurityCameras
         {
             foreach (SecurityCamera securityCamera in _securityCameras)
             {
-                if (securityCamera != null)
-                    securityCamera.Broken += OnCameraBroken;
+                if (securityCamera == null) continue;
+
+                securityCamera.Broken += OnCameraBroken;
+                securityCamera.Repaired += OnCameraRepaired;
             }
         }
 
@@ -31,9 +33,20 @@ namespace SibJam.SecurityCameras
         {
             foreach (SecurityCamera securityCamera in _securityCameras)
             {
-                if (securityCamera != null)
-                    securityCamera.Broken -= OnCameraBroken;
+                if (securityCamera == null) continue;
+
+                securityCamera.Broken -= OnCameraBroken;
+                securityCamera.Repaired -= OnCameraRepaired;
             }
+        }
+
+        // Починенную камеру снова нужно ломать; Completed сработает повторно
+        private void OnCameraRepaired(SecurityCamera securityCamera)
+        {
+            securityCamera.Broken += OnCameraBroken;
+            BrokenCount = Mathf.Max(0, BrokenCount - 1);
+            IsCompleted = false;
+            Changed?.Invoke();
         }
 
         private void OnCameraBroken(SecurityCamera securityCamera)

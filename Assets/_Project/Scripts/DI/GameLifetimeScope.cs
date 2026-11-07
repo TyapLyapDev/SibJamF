@@ -1,4 +1,3 @@
-using SibJam.SecurityCameras;
 using SibJam.Boss;
 using SibJam.Checkpoints;
 using SibJam.Credits;
@@ -27,6 +26,8 @@ namespace SibJam
         [SerializeField, FormerlySerializedAs("_voiceLinePlayer")] private VoiceSource _voiceSource;
         [Tooltip("Подсказка пропуска катсцен на сервисном канвасе")]
         [SerializeField] private SkipHintView _skipHintView;
+        [Tooltip("Окно обучения (пусто — сцена без него)")]
+        [SerializeField] private Tutorial.TutorialHintView _tutorialHintView;
         [Tooltip("Финальные титры на сервисном канвасе (пусто — сцена без них)")]
         [SerializeField] private CreditsView _creditsView;
 
@@ -49,8 +50,8 @@ namespace SibJam
             {
                 foreach (var root in gameObject.scene.GetRootGameObjects())
                 {
-                    foreach (var camera in root.GetComponentsInChildren<SecurityCamera>(true))
-                        resolver.Inject(camera);
+                    foreach (var injected in root.GetComponentsInChildren<IInjectedFromScene>(true))
+                        resolver.Inject(injected);
                 }
             });
             builder.RegisterComponent(_gameExitDialog);
@@ -65,24 +66,10 @@ namespace SibJam
             builder.RegisterComponent(_skipHintView);
             builder.Register<SkipHint>(Lifetime.Singleton);
             builder.Register<CutsceneInputReader>(Lifetime.Singleton);
+            builder.Register<ActiveCutscenes>(Lifetime.Singleton);
 
-            // Остальные катсцены сцены (реплики теликов по триггерам и т.п.) тоже получают сервисы реплик и субтитров
-            builder.RegisterBuildCallback(container =>
-            {
-                foreach (Cutscene cutscene in FindObjectsByType<Cutscene>(FindObjectsInactive.Include, FindObjectsSortMode.None))
-                {
-                    if (cutscene != _wakeUpCutscene)
-                        container.Inject(cutscene);
-                }
-
-                // Телики говорят через тот же сервис реплик
-                foreach (TV.TVRoom room in FindObjectsByType<TV.TVRoom>(FindObjectsInactive.Include, FindObjectsSortMode.None))
-                    container.Inject(room);
-
-                // Зоны обучения читают ввод игрока
-                foreach (Tutorial.TutorialZone zone in FindObjectsByType<Tutorial.TutorialZone>(FindObjectsInactive.Include))
-                    container.Inject(zone);
-            });
+            if (_tutorialHintView != null)
+                builder.RegisterComponent(_tutorialHintView);
 
             if (_creditsView != null)
             {

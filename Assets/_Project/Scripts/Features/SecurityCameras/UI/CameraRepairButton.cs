@@ -2,7 +2,6 @@ using SibJam.Weapons;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 
 namespace SibJam.SecurityCameras.UI
 {
@@ -14,30 +13,11 @@ namespace SibJam.SecurityCameras.UI
         [SerializeField] private Material _housingMaterial;
         [SerializeField] private Material _buttonMaterial;
         [SerializeField] private SoundSet _pressSound;
-        private bool _ownsHousingMaterial;
         private bool _ownsButtonMaterial;
         private Coroutine _pressRoutine;
         private Vector3 _capRestPosition;
         private Vector3 _capRestScale;
         private bool _hasRestPose;
-
-        public static CameraRepairButton Create(SecurityCamera camera)
-        {
-            foreach (var existing in FindObjectsByType<CameraRepairButton>(FindObjectsInactive.Include))
-                if (existing._camera == camera) return existing;
-
-            var root = new GameObject("Camera Repair Button");
-            SceneManager.MoveGameObjectToScene(root, camera.gameObject.scene);
-            // Стартовая камера находится над нижним ярусом; кнопка — на высоте руки.
-            root.transform.position = new Vector3(camera.transform.position.x, 0.95f,
-                camera.transform.position.z);
-            var button = root.AddComponent<CameraRepairButton>();
-            button._camera = camera;
-            button.Build();
-            button.Bind();
-            button.Refresh(camera);
-            return button;
-        }
 
         private void OnEnable() => Bind();
 
@@ -81,38 +61,6 @@ namespace SibJam.SecurityCameras.UI
             if (_camera == null) return;
             _camera.Broken -= Refresh;
             _camera.Repaired -= Refresh;
-        }
-
-        private void Build()
-        {
-            _housingMaterial = MakeMaterial(new Color(0.08f, 0.1f, 0.12f));
-            _buttonMaterial = MakeMaterial(Color.red);
-            _ownsHousingMaterial = Application.isPlaying;
-            _ownsButtonMaterial = Application.isPlaying;
-            _buttonMaterial.EnableKeyword("_EMISSION");
-            AddPart("Stand", new Vector3(0, -0.45f, 0), new Vector3(.12f, .9f, .12f), _housingMaterial);
-            AddPart("Housing", Vector3.zero, new Vector3(.65f, .45f, .22f), _housingMaterial);
-            _cap = AddPart("Repair", new Vector3(0, 0, .15f), new Vector3(.3f, .25f, .1f), _buttonMaterial);
-
-        }
-
-        private Renderer AddPart(string name, Vector3 position, Vector3 size, Material material)
-        {
-            var part = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            part.name = name;
-            part.transform.SetParent(transform, false);
-            part.transform.localPosition = position;
-            part.transform.localScale = size;
-            var renderer = part.GetComponent<Renderer>();
-            renderer.sharedMaterial = material;
-            return renderer;
-        }
-
-        private static Material MakeMaterial(Color color)
-        {
-            var material = new Material(Shader.Find("Universal Render Pipeline/Lit"));
-            material.color = color;
-            return material;
         }
 
         private void Update()
@@ -179,7 +127,6 @@ namespace SibJam.SecurityCameras.UI
                 _camera.Broken -= Refresh;
                 _camera.Repaired -= Refresh;
             }
-            if (_ownsHousingMaterial && _housingMaterial != null) Destroy(_housingMaterial);
             if (_ownsButtonMaterial && _buttonMaterial != null) Destroy(_buttonMaterial);
         }
     }

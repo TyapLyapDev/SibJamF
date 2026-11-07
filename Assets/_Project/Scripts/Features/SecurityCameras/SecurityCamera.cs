@@ -6,7 +6,7 @@ using VContainer;
 
 namespace SibJam.SecurityCameras
 {
-    public class SecurityCamera : MonoBehaviour
+    public class SecurityCamera : MonoBehaviour, IInjectedFromScene
     {
         // Одинаково для всех камер, поэтому не сериализуется (сцены не могут переопределить)
         private const int _hitsToBreak = 6;
@@ -24,6 +24,7 @@ namespace SibJam.SecurityCameras
         [SerializeField] private SoundSet _appearSound;
 
         private ImpactFx _impactFx;
+        private CameraShaker _shaker;
         private int _hitsTaken;
         private WorldHealthBar _healthBar;
 
@@ -39,9 +40,10 @@ namespace SibJam.SecurityCameras
             : GetComponentInChildren<Renderer>() is { } renderer ? renderer.bounds.center : transform.position;
 
         [Inject]
-        public void Construct(ImpactFx impactFx)
+        public void Construct(ImpactFx impactFx, CameraShaker shaker)
         {
             _impactFx = impactFx ?? throw new ArgumentNullException(nameof(impactFx));
+            _shaker = shaker;
         }
 
         private void Awake()
@@ -78,9 +80,8 @@ namespace SibJam.SecurityCameras
             IsBroken = true;
             _impactFx.Explosion(FxPoint);
             SfxEmitter.PlayAt(_breakSound, FxPoint, _sfxOutput);
-            // Камер в сцене много и в DI они не попадают — тряску берём с главной камеры
-            if (Camera.main != null && Camera.main.TryGetComponent(out CameraShaker shaker))
-                shaker.AddTrauma(_breakTrauma);
+            if (_shaker != null)
+                _shaker.AddTrauma(_breakTrauma);
 
             Broken?.Invoke(this);
             gameObject.SetActive(false);

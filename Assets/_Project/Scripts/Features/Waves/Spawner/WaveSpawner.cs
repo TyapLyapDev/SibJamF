@@ -9,6 +9,8 @@ namespace SibJam.Waves
         [SerializeField] private Transform[] _spawnPoints;
         [SerializeField] private PlayerTarget _target;
 
+        protected PlayerTarget Target => _target;
+
         private readonly EnemySpawner _enemySpawner = new();
         private int _lastSpawnPointIndex = -1;
 

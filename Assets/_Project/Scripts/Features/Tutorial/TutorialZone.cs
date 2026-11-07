@@ -1,5 +1,4 @@
 using System;
-using _Project.Scripts.Enemies;
 using SibJam.Cutscenes;
 using SibJam.SecurityCameras;
 using UnityEngine;
@@ -11,7 +10,7 @@ namespace SibJam.Tutorial
     // (после катсцены и после предыдущей зоны). Каждый выполненный шаг гаснет; окно пропадает,
     // когда выполнены все шаги, даже если игрок уже вышел из зоны
     [RequireComponent(typeof(Collider))]
-    public class TutorialZone : MonoBehaviour
+    public class TutorialZone : MonoBehaviour, IInjectedFromScene
     {
         public enum Action
         {
@@ -21,9 +20,7 @@ namespace SibJam.Tutorial
             Jump,
             Attack,
             Block,
-            HitTarget,
-            ParryTarget,
-            CamerasBroken,
+            CamerasBroken = 8,
         }
 
         [Serializable]
@@ -40,92 +37,42 @@ namespace SibJam.Tutorial
         private enum State { Waiting, Shown, Done }
 
         [SerializeField] private Step[] _steps = new Step[0];
-        [Tooltip("Для «Ударить цель» / «Отпарировать цель»: пугала или враги")]
-        [SerializeField] private Enemy[] _targets = new Enemy[0];
         [Tooltip("Для «Камеры сломаны»: цель с камерами")]
         [SerializeField] private CameraDestructionGoal _cameras;
-        [Tooltip("Показать только после того, как выполнена эта зона")]
-        [SerializeField] private TutorialZone _after;
         [Tooltip("Окно висит не меньше этого времени, сек")]
         [SerializeField, Min(0f)] private float _minShowTime = 1.5f;
         [Tooltip("Сколько держать окно после последнего шага, сек")]
         [SerializeField, Min(0f)] private float _holdAfterDone = 0.8f;
         [SerializeField] private string _playerTag = "Player";
 
-        private static TutorialHintView _view;
-        private static Cutscene[] _cutscenes;
-
         private IPlayerInputReader _input;
+        private TutorialHintView _view;
+        private ActiveCutscenes _activeCutscenes;
         private State _state;
         private bool _inside;
-        private bool _hit;
-        private bool _parried;
         private float _shownAt;
         private float _doneAt = -1f;
         private bool _visible;
+        private bool _unlocked;
+
+        public event Action<TutorialZone> Completed;
 
         public bool IsDone => _state == State.Done;
 
+        // Порядок зон задаёт StartLocationFlow
+        public void Unlock() => _unlocked = true;
+
         [Inject]
-        public void Construct(IPlayerInputReader input) => _input = input;
+        public void Construct(IPlayerInputReader input, TutorialHintView view, ActiveCutscenes activeCutscenes)
+        {
+            _input = input;
+            _view = view;
+            _activeCutscenes = activeCutscenes;
+        }
 
         private void Reset() => GetComponent<Collider>().isTrigger = true;
 
-        private static TutorialHintView View
-        {
-            get
-            {
-                if (_view == null)
-                    _view = FindAnyObjectByType<TutorialHintView>(FindObjectsInactive.Include);
-
-                return _view;
-            }
-        }
-
-        private static bool CutscenePlaying
-        {
-            get
-            {
-                if (_cutscenes == null || _cutscenes.Length == 0 || _cutscenes[0] == null)
-                    _cutscenes = FindObjectsByType<Cutscene>(FindObjectsInactive.Include);
-
-                foreach (Cutscene cutscene in _cutscenes)
-                    if (cutscene != null && cutscene.IsPlaying)
-                        return true;
-
-                return false;
-            }
-        }
-
-        private void OnEnable()
-        {
-            foreach (Enemy target in _targets)
-            {
-                if (target == null)
-                    continue;
-
-                target.Damaged += OnTargetDamaged;
-
-                if (target.TryGetComponent(out IEnemyAttack attack))
-                    attack.Parried += OnTargetParried;
-            }
-        }
-
-        private void OnDisable()
-        {
-            foreach (Enemy target in _targets)
-            {
-                if (target == null)
-                    continue;
-
-                target.Damaged -= OnTargetDamaged;
-
-                if (target.TryGetComponent(out IEnemyAttack attack))
-                    attack.Parried -= OnTargetParried;
-            }
-
-            SetVisible(false);
-        }
+        private void OnDisable() => SetVisible(false);
 
         private void OnTriggerEnter(Collider other)
         {
@@ -144,11 +91,10 @@ namespace SibJam.Tutorial
             switch (_state)
             {
                 case State.Waiting:
-                    if (_inside && (_after == null || _after.IsDone) && !CutscenePlaying)
+                    if (_inside && _unlocked && !_activeCutscenes.IsAnyPlaying)
                     {
                         _state = State.Shown;
                         _shownAt = Time.unscaledTime;
-                        _hit = _parried = false;
                     }
                     break;
 
@@ -159,12 +105,15 @@ namespace SibJam.Tutorial
                         _doneAt = Time.unscaledTime + _holdAfterDone;
 
                     if (_doneAt >= 0f && Time.unscaledTime >= _doneAt)
+                    {
                         _state = State.Done;
+                        Completed?.Invoke(this);
+                    }
                     break;
             }
 
             // Во время катсцены окно прячем, после — возвращаем
-            SetVisible(_state == State.Shown && !CutscenePlaying);
+            SetVisible(_state == State.Shown && !_activeCutscenes.IsAnyPlaying);
         }
 
         private void UpdateSteps()
@@ -179,7 +128,7 @@ namespace SibJam.Tutorial
                 step.Done = true;
 
                 if (_visible)
-                    View?.MarkDone(this, i);
+                    _view.MarkDone(this, i);
             }
         }
 
@@ -197,8 +146,6 @@ namespace SibJam.Tutorial
             switch (action)
             {
                 case Action.None: return !_inside;
-                case Action.HitTarget: return _hit;
-                case Action.ParryTarget: return _parried;
                 case Action.CamerasBroken: return _cameras == null || _cameras.IsCompleted;
             }
 
@@ -218,19 +165,6 @@ namespace SibJam.Tutorial
             }
         }
 
-        // Удар засчитывается только пока окно висит, иначе его «выполнят» заранее
-        private void OnTargetDamaged(float amount)
-        {
-            if (_state == State.Shown)
-                _hit = true;
-        }
-
-        private void OnTargetParried()
-        {
-            if (_state == State.Shown)
-                _parried = true;
-        }
-
         private void SetVisible(bool visible)
         {
             if (_visible == visible)
@@ -240,15 +174,15 @@ namespace SibJam.Tutorial
 
             if (!visible)
             {
-                View?.Hide(this);
+                _view.Hide(this);
                 return;
             }
 
-            View?.Show(this, _steps);
+            _view.Show(this, _steps);
 
             for (int i = 0; i < _steps.Length; i++)
                 if (_steps[i].Done)
-                    View?.MarkDone(this, i);
+                    _view.MarkDone(this, i);
         }
 
         private void OnDrawGizmos()

@@ -3,7 +3,6 @@ using SibJam.Locations;
 using SibJam.SecurityCameras;
 using SibJam.Waves;
 using UnityEngine;
-using _Project.Scripts.Enemies;
 
 namespace SibJam
 {
@@ -12,9 +11,9 @@ namespace SibJam
         [SerializeField] private GameLoop _gameLoop;
 
         private LocationLoop _subscribedLocation;
-        private TrainingDummyWaveSpawner _training;
-        private bool _showTraining;
-        private bool _trainingVisible;
+        private IWavesLoopInfo _overrideWaves;
+        private ICameraDestructionGoalInfo _overrideCameras;
+        private bool _hasOverride;
 
         public event Action LocationChanged;
 
@@ -23,32 +22,35 @@ namespace SibJam
 
         public int LocationIndex => _gameLoop.CurrentLocationIndex;
 
-        public bool IsActive => _showTraining ? _trainingVisible : Location.State == LocationLoopState.Running;
+        public bool IsActive => _hasOverride || Location.State == LocationLoopState.Running;
 
-        public IWavesLoopInfo Waves => _showTraining ? _training.Info : Location.Waves;
+        public IWavesLoopInfo Waves => _hasOverride ? _overrideWaves : Location.Waves;
 
-        public ICameraDestructionGoalInfo Cameras => _showTraining ? _training : Location.Cameras;
+        public ICameraDestructionGoalInfo Cameras => _hasOverride ? _overrideCameras : Location.Cameras;
 
         private LocationLoop Location => _gameLoop.CurrentLocationLoop;
 
-        public void SetTraining(TrainingDummyWaveSpawner training)
+        // Зона вне GameLoop (например, тренировка) показывает в HUD свои волны и камеры
+        public void ShowOverride(IWavesLoopInfo waves, ICameraDestructionGoalInfo cameras)
         {
-            _training = training;
-            RefreshTraining();
+            _overrideWaves = waves;
+            _overrideCameras = cameras;
+            _hasOverride = true;
+            NotifyChanged();
         }
 
-        private void Update() => RefreshTraining();
-
-        private void RefreshTraining()
+        public void ClearOverride()
         {
-            bool showTraining = _training != null && LocationIndex == 0 && _training.IsPlayerInside;
-            bool visible = showTraining;
-            bool sourceChanged = showTraining != _showTraining;
-            bool visibilityChanged = visible != _trainingVisible;
-            _showTraining = showTraining;
-            _trainingVisible = visible;
-            if (sourceChanged) LocationChanged?.Invoke();
-            if (sourceChanged || visibilityChanged) ActiveChanged?.Invoke();
+            _hasOverride = false;
+            _overrideWaves = null;
+            _overrideCameras = null;
+            NotifyChanged();
+        }
+
+        private void NotifyChanged()
+        {
+            LocationChanged?.Invoke();
+            ActiveChanged?.Invoke();
         }
 
         private void OnEnable()
@@ -66,9 +68,7 @@ namespace SibJam
         private void OnLocationChanged(LocationLoop location)
         {
             SubscribeLocation();
-            RefreshTraining();
-            LocationChanged?.Invoke();
-            ActiveChanged?.Invoke();
+            NotifyChanged();
         }
 
         private void SubscribeLocation()

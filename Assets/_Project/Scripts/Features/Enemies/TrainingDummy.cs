@@ -9,7 +9,6 @@ namespace _Project.Scripts.Enemies
     public class TrainingDummy : MonoBehaviour
     {
         [SerializeField] private EnemyConfig _config;
-        [SerializeField] private PlayerTarget _target;
         [SerializeField, Min(0f)] private float _turnSpeed = 360f;
         [Tooltip("Сколько манекен стоит оглушённым после того, как его удар отпарировали")]
         [SerializeField, Min(0f)] private float _parryStaggerDuration = 1.2f;
@@ -17,10 +16,7 @@ namespace _Project.Scripts.Enemies
         private Enemy _enemy;
         private IEnemyAttack _attack;
         private float _staggerTimer;
-        private bool _initialized;
-
-        public EnemyConfig Config => _config;
-        public bool IsInitialized => _initialized;
+        private PlayerTarget _target;
 
         private void Awake()
         {
@@ -28,24 +24,16 @@ namespace _Project.Scripts.Enemies
             _attack = GetComponent<IEnemyAttack>();
         }
 
-        private void Start()
+        public void Init(float statsMultiplier, PlayerTarget target)
         {
-            if (_initialized) return;
             if (_config == null)
             {
                 Debug.LogError("[TrainingDummy] Enemy config is missing", this);
                 return;
             }
 
-            TrainingDummyWaveSpawner.CreateForScene(this);
-        }
+            _target = target;
 
-        public void Init(float statsMultiplier)
-        {
-            if (_target == null)
-                _target = FindFirstObjectByType<PlayerTarget>();
-
-            _initialized = true;
             _enemy.Init(_config, _target, statsMultiplier);
             _attack?.Init(_config, _enemy.StatsMultiplier);
 

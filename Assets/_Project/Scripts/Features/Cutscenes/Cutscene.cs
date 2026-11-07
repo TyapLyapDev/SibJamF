@@ -11,7 +11,7 @@ namespace SibJam.Cutscenes
     // Наследник может добавить своё через хуки On*, но анимация, камера и затемнение — элементы клипа.
     // После CameraFollow: камера катсцены ставится поверх камеры игрока
     [DefaultExecutionOrder(100)]
-    public class Cutscene : MonoBehaviour, IExposedPropertyTable
+    public class Cutscene : MonoBehaviour, IExposedPropertyTable, IInjectedFromScene
     {
         [Header("Клип")]
         [SerializeField] private CutsceneClip _cutsceneClip;
@@ -26,6 +26,7 @@ namespace SibJam.Cutscenes
         private VoiceLinePlayer _voiceLines;
         private Subtitles _subtitles;
         private SkipHint _skipHint;
+        private ActiveCutscenes _activeCutscenes;
         private CutscenePlayback _playback;
         private bool _skipRequested;
         private IPlayerInputReader _playerInput;
@@ -44,13 +45,14 @@ namespace SibJam.Cutscenes
 
         [Inject]
         public void Construct(VoiceLinePlayer voiceLines, Subtitles subtitles, SkipHint skipHint,
-            IPlayerInputReader playerInput, CutsceneInputReader cutsceneInput)
+            IPlayerInputReader playerInput, CutsceneInputReader cutsceneInput, ActiveCutscenes activeCutscenes)
         {
             _voiceLines = voiceLines;
             _subtitles = subtitles;
             _skipHint = skipHint;
             _playerInput = playerInput;
             _cutsceneInput = cutsceneInput;
+            _activeCutscenes = activeCutscenes;
         }
 
         protected virtual void OnEnable()
@@ -115,6 +117,7 @@ namespace SibJam.Cutscenes
                 ? new CutscenePlayback(_cutsceneClip, CreateContext())
                 : null;
             IsPlaying = true;
+            _activeCutscenes.Enter();
 
             Started?.Invoke();
         }
@@ -143,6 +146,7 @@ namespace SibJam.Cutscenes
         private void Finish()
         {
             IsPlaying = false;
+            _activeCutscenes.Exit();
 
             // Пропущенные элементы всё равно выполняют обязательное (двери и т.п.), звучащее глушится
             _playback?.Finish();

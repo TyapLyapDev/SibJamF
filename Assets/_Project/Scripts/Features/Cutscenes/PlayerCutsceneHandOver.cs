@@ -1,3 +1,4 @@
+using SibJam.Weapons;
 using UnityEngine;
 
 namespace SibJam.Cutscenes
@@ -8,6 +9,23 @@ namespace SibJam.Cutscenes
     public class PlayerCutsceneHandOver : MonoBehaviour
     {
         private float _floorHeight;
+
+        // Старт с чекпоинта: катсцены не было, игрок сразу готов к бою. Без точки остаётся где стоит
+        public void AppearAt(Transform point)
+        {
+            if (point != null)
+            {
+                var controller = GetComponent<CharacterController>();
+                if (controller != null) controller.enabled = false;
+                transform.SetPositionAndRotation(point.position, point.rotation);
+                if (controller != null) controller.enabled = true;
+            }
+
+            if (TryGetComponent(out MeleeWeapon weapon))
+                weapon.enabled = true;
+
+            gameObject.SetActive(true);
+        }
 
         public void Hide()
         {
