@@ -1,19 +1,21 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 namespace SibJam.Feedback
 {
     [DisallowMultipleComponent]
     public sealed class EnemySpawnHologram : MonoBehaviour
     {
-        [SerializeField, Min(0.05f)] private float _duration = 1.4f;
-        [SerializeField, ColorUsage(false, true)] private Color _hologramColor = new Color(0.05f, 2f, 3f, 1f);
-        [SerializeField, Min(1f)] private float _scanDensity = 35f;
-        [SerializeField, Range(0f, 0.2f)] private float _glitchStrength = 0.035f;
+        [SerializeField, Min(0.05f)] private float _duration = 2.2f;
+        [SerializeField, ColorUsage(false, true)] private Color _hologramColor = new Color(3f, 0.05f, 0.05f, 1f);
+        [SerializeField, Range(2f, 16f)] private float _coarseGridScale = 6f;
+        [SerializeField, Range(8f, 64f)] private float _fineGridScale = 24f;
+        [SerializeField, Range(4f, 32f)] private float _fragmentScale = 14f;
+        [SerializeField, Range(0f, 5f)] private float _gridIntensity = 1.5f;
 
         private static readonly int ProgressId = Shader.PropertyToID("_Progress");
         private static readonly int BoundsId = Shader.PropertyToID("_BoundsY");
+        private static readonly int OriginId = Shader.PropertyToID("_SpawnOrigin");
         private readonly List<Surface> _surfaces = new List<Surface>();
         private float _elapsed;
         private float _bottomOffset;
@@ -24,7 +26,6 @@ namespace SibJam.Feedback
             public Renderer Renderer;
             public Material[] Originals;
             public Material[] Temporary;
-            public ShadowCastingMode Shadows;
         }
 
         public void Play()
@@ -46,15 +47,14 @@ namespace SibJam.Feedback
                 var surface = new Surface
                 {
                     Renderer = renderer,
-                    Originals = renderer.sharedMaterials,
-                    Shadows = renderer.shadowCastingMode
+                    Originals = renderer.sharedMaterials
                 };
                 surface.Temporary = new Material[surface.Originals.Length];
                 for (int i = 0; i < surface.Temporary.Length; i++)
                 {
                     Material source = surface.Originals[i];
                     if (source == null) continue;
-                    var material = new Material(shader) { name = source.name + " (Spawn Hologram)" };
+                    var material = new Material(shader) { name = source.name + " (Spawn Construction)" };
                     // The project's atlas graph uses _Atlat rather than _BaseMap.
                     string map = source.HasProperty("_Atlat") ? "_Atlat"
                         : source.HasProperty("_BaseMap") ? "_BaseMap"
@@ -68,15 +68,18 @@ namespace SibJam.Feedback
                     if (source.HasProperty("_BaseColor")) material.SetColor("_BaseColor", source.GetColor("_BaseColor"));
                     else if (source.HasProperty("_Color")) material.SetColor("_BaseColor", source.GetColor("_Color"));
                     if (source.HasProperty("_Smoothness")) material.SetFloat("_Smoothness", source.GetFloat("_Smoothness"));
+                    // AtlasBase uses a constant matte surface (smoothness 0), not Lit's 0.5 default.
+                    else if (source.HasProperty("_Atlat")) material.SetFloat("_Smoothness", 0f);
                     if (source.HasProperty("_Metallic")) material.SetFloat("_Metallic", source.GetFloat("_Metallic"));
                     material.SetColor("_HologramColor", _hologramColor);
-                    material.SetFloat("_ScanDensity", _scanDensity);
-                    material.SetFloat("_GlitchStrength", _glitchStrength);
+                    material.SetFloat("_CoarseGridScale", _coarseGridScale);
+                    material.SetFloat("_FineGridScale", _fineGridScale);
+                    material.SetFloat("_FragmentScale", _fragmentScale);
+                    material.SetFloat("_GridIntensity", _gridIntensity);
                     surface.Temporary[i] = material;
                 }
                 _surfaces.Add(surface);
                 renderer.sharedMaterials = surface.Temporary;
-                renderer.shadowCastingMode = ShadowCastingMode.Off;
             }
             _bottomOffset = bounds.min.y - transform.position.y;
             _height = Mathf.Max(bounds.size.y, 0.01f);
@@ -102,6 +105,7 @@ namespace SibJam.Feedback
                     if (material == null) continue;
                     material.SetFloat(ProgressId, progress);
                     material.SetVector(BoundsId, bounds);
+                    material.SetVector(OriginId, transform.position);
                 }
         }
 
@@ -115,7 +119,6 @@ namespace SibJam.Feedback
                 if (surface.Renderer != null)
                 {
                     surface.Renderer.sharedMaterials = surface.Originals;
-                    surface.Renderer.shadowCastingMode = surface.Shadows;
                 }
                 foreach (Material material in surface.Temporary)
                     if (material != null) Destroy(material);
