@@ -253,8 +253,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c8c779749e7bcd47807e0cbd3d64e91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovementLesson.Gravity
-  _gravity: 20
-  _fallMultiplier: 1.5
+  _gravity: 22
+  _fallMultiplier: 1.35
 --- !u!114 &5392770592696378694
 MonoBehaviour:
   m_ObjectHideFlags: 0
