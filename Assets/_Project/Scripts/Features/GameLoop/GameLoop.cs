@@ -14,6 +14,8 @@ namespace SibJam
 
         public int CurrentLocationIndex { get; private set; }
 
+        public int LocationCount => _locations.Length;
+
         public LocationLoop CurrentLocationLoop => _locations[CurrentLocationIndex];
 
         private bool HasNext => CurrentLocationIndex + 1 < _locations.Length;
