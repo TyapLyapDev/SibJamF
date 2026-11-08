@@ -41,6 +41,11 @@ namespace SibJam.Boss
                 yield break;
             }
 
+            // Точка стоит на мосту перед дверью арены: делаем босса текущей локацией, чтобы дверь открылась
+            var gameLoop = FindFirstObjectByType<GameLoop>(FindObjectsInactive.Include);
+            if (gameLoop != null && gameLoop.LocationCount > 0)
+                gameLoop.StartFrom(gameLoop.LocationCount - 1);
+
             GameObject player = health.gameObject;
             var controller = player.GetComponent<CharacterController>();
             if (controller != null) controller.enabled = false;
